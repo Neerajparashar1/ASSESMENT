@@ -126,4 +126,75 @@ $string['w_rev_q_upload'] = 'Upload file - {$a->valid} ready, {$a->errors} will 
 $string['w_rev_q_category'] = 'From an existing question category';
 $string['w_rev_q_later'] = 'To be added later';
 
+// ===== Exam Control home (Phase 3) =====
+$string['home_title'] = 'Exam Control';
+$string['home_intro'] = 'Everything you need to run an exam - set up, build, monitor and mark - in one place.';
+$string['g_exams'] = 'Exams';
+$string['g_students'] = 'Students';
+$string['g_subjects'] = 'Subjects';
+$string['g_live'] = 'Live now';
+$string['copied'] = 'Copied';
+
+$string['chk_title'] = 'Getting started';
+$string['chk_progress'] = '{$a->done} of {$a->total} done';
+$string['chk_dismiss'] = 'Hide';
+$string['chk_show'] = 'Show the getting-started checklist';
+$string['chk_branding'] = 'Apply your institute branding';
+$string['chk_students'] = 'Add your students';
+$string['chk_exam'] = 'Create your first exam';
+$string['chk_sebpw'] = 'Set the Safe Exam Browser quit password';
+$string['chk_testrun'] = 'Do a test run of an exam';
+
+$string['qa_title'] = 'Quick actions';
+$string['qa_createexam'] = 'Create an exam';
+$string['qa_upload'] = 'Upload questions';
+$string['qa_students'] = 'Add students';
+$string['qa_seb'] = 'SEB settings';
+
+$string['ye_title'] = 'Your exams';
+$string['ye_empty'] = 'No exams yet. Use "Create an exam" above to build your first one.';
+$string['ye_exam'] = 'Exam';
+$string['ye_status'] = 'Status';
+$string['ye_attempts'] = 'Attempts';
+$string['ye_monitor'] = 'Monitor';
+$string['ye_grades'] = 'Grades';
+$string['ye_seb'] = 'Get .seb';
+$string['ye_attcount'] = '{$a->live} in progress / {$a->done} submitted';
+
+$string['stat_live'] = 'Live';
+$string['stat_open'] = 'Open';
+$string['stat_scheduled'] = 'Scheduled';
+$string['stat_closed'] = 'Closed';
+
+$string['help_title'] = 'Handy to know';
+$string['help_sebpw'] = 'Safe Exam Browser quit password';
+$string['help_reveal'] = 'show';
+$string['help_copy'] = 'Copy';
+$string['help_setsebpw'] = 'Not set yet - set it in SEB settings';
+$string['help_studentlogin'] = 'How students sign in';
+$string['help_studentlogin_d'] = 'They open {$a}/login and use the username and password from the roster you uploaded.';
+$string['help_distribute'] = 'Giving out the .seb file';
+$string['help_distribute_d'] = 'Download the .seb from an exam row and email it to candidates. If you change any SEB setting on that exam, send the file again - the old one stops working.';
+
+// ===== Bulk add students (Phase 3) =====
+$string['st_title'] = 'Add students';
+$string['st_intro'] = 'Upload a roster to create the student accounts and enrol them into this subject in one go.';
+$string['st_file'] = 'Student roster (CSV or Excel)';
+$string['st_defaultpw'] = 'Default password';
+$string['st_defaultpw_help'] = 'Used for any row that leaves the Password column blank. Give this to those students so they can sign in.';
+$string['st_err_header'] = 'The first row must have the column headers - at least "username" and "firstname" (or "name").';
+$string['st_err_nousername'] = 'Username is empty';
+$string['st_err_baduser'] = 'Username "{$a}" has spaces or symbols that are not allowed';
+$string['st_err_dupuser'] = 'Username "{$a}" appears more than once in the file';
+$string['st_err_noname'] = 'First name / name is empty';
+$string['st_err_bademail'] = '"{$a}" is not a valid email address';
+$string['st_ready'] = '{$a} student(s) ready';
+$string['st_name'] = 'Name';
+$string['st_username'] = 'Username';
+$string['st_confirm'] = 'Create & enrol {$a} student(s)';
+$string['st_done'] = 'Roster processed';
+$string['st_done_msg'] = '{$a->created} new account(s) created, {$a->existing} already existed, {$a->enrolled} enrolled into this subject.';
+$string['st_viewparticipants'] = 'View participants';
+$string['st_addmore'] = 'Add more students';
+
 $string['privacy:metadata'] = 'The Exam Wizard plugin does not store any personal data; imported questions are stored by Moodle\'s question bank.';

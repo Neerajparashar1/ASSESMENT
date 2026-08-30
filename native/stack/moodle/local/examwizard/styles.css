@@ -179,6 +179,150 @@
 
 .path-local-examwizard .ew-review-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
 
+/* =====================  Exam Control home  ===================== */
+.path-local-examwizard .ew-glance {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin: 0 0 1.4rem;
+}
+.path-local-examwizard .ew-glance-item {
+    flex: 1 1 130px;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    padding: .75rem 1rem;
+    background: #fff;
+    border: 1px solid var(--ew-line);
+    border-left: 3px solid var(--ew-maroon);
+    border-radius: 10px;
+}
+.path-local-examwizard .ew-glance-n { font-size: 1.6rem; font-weight: 800; color: var(--ew-maroon-d); line-height: 1; }
+.path-local-examwizard .ew-glance-l { font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; color: var(--ew-slate); }
+.path-local-examwizard .ew-glance-live { border-left-color: var(--ew-ok); }
+.path-local-examwizard .ew-glance-live .ew-glance-n { color: var(--ew-ok); }
+
+.path-local-examwizard .ew-card {
+    background: #fff;
+    border: 1px solid var(--ew-line);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.1rem;
+    box-shadow: 0 10px 30px -26px rgba(74, 13, 23, .4);
+}
+.path-local-examwizard .ew-card-h,
+.path-local-examwizard .ew-card-head h3 {
+    margin: 0 0 .8rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ew-maroon-d);
+}
+.path-local-examwizard .ew-card-head {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin-bottom: .6rem;
+}
+.path-local-examwizard .ew-card-head h3 { margin: 0; flex: 1; }
+.path-local-examwizard .ew-chk-progress {
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--ew-slate);
+    background: var(--ew-tint);
+    padding: .15rem .6rem;
+    border-radius: 999px;
+}
+.path-local-examwizard .ew-chk-dismiss { font-size: .8rem; }
+.path-local-examwizard .ew-card-checklist { border-left: 3px solid var(--ew-gold); }
+.path-local-examwizard .ew-checklist { list-style: none; padding: 0; margin: 0; }
+.path-local-examwizard .ew-checklist li {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .45rem 0;
+    border-top: 1px solid var(--ew-line);
+    font-size: .92rem;
+}
+.path-local-examwizard .ew-checklist li:first-child { border-top: 0; }
+.path-local-examwizard .ew-chk-box {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 2px solid var(--ew-line);
+    font-size: .75rem;
+    color: #fff;
+}
+.path-local-examwizard .ew-chk-done .ew-chk-box { background: var(--ew-ok); border-color: var(--ew-ok); }
+.path-local-examwizard .ew-chk-done { color: var(--ew-slate); }
+
+.path-local-examwizard .ew-actions { display: flex; flex-wrap: wrap; gap: .7rem; }
+.path-local-examwizard .ew-action {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .7rem 1.15rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--ew-line);
+}
+.path-local-examwizard .ew-action .icon { margin: 0; }
+.path-local-examwizard .ew-action-primary {
+    background: var(--ew-maroon);
+    border-color: var(--ew-maroon-d);
+    color: #fff;
+}
+.path-local-examwizard .ew-action-primary .icon { filter: brightness(0) invert(1); }
+.path-local-examwizard .ew-action-secondary { background: #fff; color: var(--ew-maroon-d); }
+.path-local-examwizard .ew-action-secondary:hover { background: var(--ew-tint); text-decoration: none; }
+.path-local-examwizard .ew-action-primary:hover { background: var(--ew-maroon-d); color: #fff; text-decoration: none; }
+
+.path-local-examwizard .ew-exams { width: 100%; border-collapse: collapse; }
+.path-local-examwizard .ew-exams th {
+    text-align: left;
+    font-size: .74rem;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--ew-slate);
+    padding: .4rem .6rem;
+    border-bottom: 2px solid var(--ew-line);
+}
+.path-local-examwizard .ew-exams td { padding: .6rem .6rem; border-bottom: 1px solid var(--ew-line); vertical-align: top; }
+.path-local-examwizard .ew-ename { font-weight: 600; color: var(--ew-ink); }
+.path-local-examwizard .ew-emeta { font-size: .78rem; color: var(--ew-slate); }
+.path-local-examwizard .ew-elinks { white-space: nowrap; text-align: right; }
+.path-local-examwizard .ew-tlink { display: inline-block; margin-left: .6rem; font-size: .84rem; }
+.path-local-examwizard .ew-row-bad { background: #fffafb; }
+
+.path-local-examwizard .ew-badge {
+    display: inline-block;
+    padding: .12rem .6rem;
+    border-radius: 999px;
+    font-size: .74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+.path-local-examwizard .ew-badge-live { background: var(--ew-ok-bg); color: #14512f; }
+.path-local-examwizard .ew-badge-open { background: #eaf2fb; color: #2d5782; }
+.path-local-examwizard .ew-badge-scheduled { background: var(--ew-tint); color: var(--ew-maroon-d); }
+.path-local-examwizard .ew-badge-closed { background: #f1f0f0; color: #6b6b6b; }
+
+.path-local-examwizard .ew-card-help dl.ew-help { margin: 0; }
+.path-local-examwizard .ew-help dt { font-weight: 700; color: var(--ew-maroon-d); margin-top: .7rem; font-size: .9rem; }
+.path-local-examwizard .ew-help dt:first-child { margin-top: 0; }
+.path-local-examwizard .ew-help dd { margin: .15rem 0 0; font-size: .88rem; color: var(--ew-slate); }
+.path-local-examwizard .ew-help code {
+    background: var(--ew-tint);
+    padding: .1rem .4rem;
+    border-radius: 5px;
+    color: var(--ew-maroon-d);
+}
+.path-local-examwizard .ew-masked { filter: blur(5px); user-select: none; }
+
 /* ---- drag/drop hint on the file field (JS adds .ew-dropzone-over) ---- */
 .path-local-examwizard .ew-dropzone {
     border: 2px dashed var(--ew-line);
