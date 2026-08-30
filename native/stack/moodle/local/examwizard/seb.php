@@ -5,8 +5,20 @@
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
 
+use local_examwizard\local\seb_config;
+
 require_login();
 require_capability('moodle/site:config', context_system::instance());
+
+// Download the portal bootstrap .seb.
+if (optional_param('portalseb', 0, PARAM_BOOL)) {
+    $body = seb_config::portal_plist();
+    header('Content-Type: application/seb');
+    header('Content-Disposition: attachment; filename="' . seb_config::portal_filename() . '"');
+    header('Content-Length: ' . strlen($body));
+    echo $body;
+    exit;
+}
 
 $baseurl = new moodle_url('/local/examwizard/seb.php');
 $PAGE->set_url($baseurl);
@@ -104,6 +116,23 @@ echo html_writer::end_div();
 echo html_writer::start_div('ew-card');
 echo html_writer::div($s('seb_warn'), 'alert alert-warning');
 $mform->display();
+echo html_writer::end_div();
+
+// ---- portal bootstrap .seb ----
+$portalurl = new moodle_url($baseurl, ['portalseb' => 1]);
+echo html_writer::start_div('ew-card');
+echo html_writer::tag('h3', $s('ps_title'), ['class' => 'ew-card-h']);
+echo html_writer::div($s('ps_intro'), 'text-muted mb-2');
+echo html_writer::tag('ol', implode('', array_map(
+    fn($k) => html_writer::tag('li', $s($k)),
+    ['ps_step1', 'ps_step2', 'ps_step3'])), ['class' => 'mb-3']);
+echo html_writer::div(
+    html_writer::link($portalurl, $OUTPUT->pix_icon('i/down', '') . ' ' . $s('ps_download'),
+        ['class' => 'btn btn-primary']) . ' ' .
+    html_writer::tag('button', $s('ps_copylink'),
+        ['type' => 'button', 'class' => 'ew-copy btn btn-outline-secondary', 'data-copy' => $portalurl->out(false)]),
+    'mb-2');
+echo html_writer::div($s('ps_note'), 'small text-muted');
 echo html_writer::end_div();
 
 $PAGE->requires->js_amd_inline("

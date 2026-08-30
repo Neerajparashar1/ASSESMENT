@@ -120,6 +120,12 @@ class quiz_builder {
     protected static function wire_seb(\stdClass $quiz, \stdClass $cm): void {
         global $DB, $USER, $CFG;
 
+        // Make sure SEB will re-fetch a quiz's config on launch when the key
+        // doesn't match - this is what lets candidates keep one portal .seb file.
+        if (!get_config('quizaccess_seb', 'autoreconfigureseb')) {
+            set_config('autoreconfigureseb', 1, 'quizaccess_seb');
+        }
+
         // The SEB access rule may already have stubbed a row during add_moduleinfo;
         // replace it wholesale so our quit-link / quit settings win.
         $DB->delete_records('quizaccess_seb_quizsettings', ['quizid' => $quiz->id]);
