@@ -5,7 +5,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_examwizard';
-$plugin->version   = 2026083005;
+$plugin->version   = 2026083006;
 $plugin->requires  = 2024100700;          // Moodle 4.5.
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.5.0 (Phase 4b - SEB quit password manager)';
+$plugin->release   = '0.6.0 (Phase 4c - live exam control)';

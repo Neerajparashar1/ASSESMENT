@@ -167,6 +167,43 @@ $string['stat_scheduled'] = 'Scheduled';
 $string['stat_closed'] = 'Closed';
 $string['ye_results'] = 'Results';
 
+// Live control.
+$string['lc_title'] = 'Live control';
+$string['lc_control'] = 'Live control';
+$string['lc_intro'] = 'Stop, extend or resume this exam - for one candidate or for everyone.';
+$string['lc_examcontrols'] = 'Whole exam';
+$string['lc_state'] = 'State';
+$string['lc_inprogress_n'] = '{$a} attempt(s) in progress';
+$string['lc_pause'] = 'Pause exam (close now)';
+$string['lc_reopen'] = 'Reopen for 2 hours';
+$string['lc_endall'] = 'End exam & submit everyone';
+$string['lc_candidates'] = 'Candidates';
+$string['lc_noattempts'] = 'No one has started this exam yet.';
+$string['lc_started'] = 'Started';
+$string['lc_attemptn'] = 'attempt {$a}';
+$string['lc_endsubmit'] = 'End & submit now';
+$string['lc_extend15'] = 'Give +15 min';
+$string['lc_resume'] = 'Resume';
+$string['lc_delete'] = 'Delete attempt';
+$string['lc_back'] = 'Back to Exam Control';
+$string['lc_st_overdue'] = 'Overdue';
+$string['lc_confirm_pause'] = 'Close this exam right now? No new attempts can start; anyone still working will be handled by the overdue rule.';
+$string['lc_confirm_reopen'] = 'Reopen this exam for the next 2 hours?';
+$string['lc_confirm_endall'] = 'End the exam and force-submit EVERY attempt still in progress? This cannot be undone.';
+$string['lc_confirm_submit'] = 'Submit {$a}\'s attempt now? Their exam ends immediately and is graded.';
+$string['lc_confirm_extend'] = 'Give {$a} 15 more minutes?';
+$string['lc_confirm_resume'] = 'Resume {$a}\'s attempt so they can carry on?';
+$string['lc_confirm_delete'] = 'Delete {$a}\'s attempt completely? Their answers and mark are lost and they can start again.';
+$string['lc_msg_paused'] = 'The exam is now closed.';
+$string['lc_msg_reopened'] = 'The exam is open again for {$a} hour(s).';
+$string['lc_msg_endedall'] = 'Exam closed; {$a} attempt(s) were submitted.';
+$string['lc_msg_submitted'] = 'The attempt was submitted.';
+$string['lc_msg_resumed'] = 'The attempt is back in progress.';
+$string['lc_msg_cantresume'] = 'That attempt cannot be resumed (only abandoned / overdue attempts can).';
+$string['lc_msg_extended'] = 'Added {$a} minutes for that candidate.';
+$string['lc_msg_deleted'] = 'The attempt was deleted.';
+$string['lc_msg_notimed'] = 'This exam has no time limit or close time, so there is nothing to extend.';
+
 // Live now spotlight.
 $string['live_title'] = 'Live now';
 $string['live_refresh'] = 'This card refreshes every 30 seconds.';

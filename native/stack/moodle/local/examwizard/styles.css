@@ -382,3 +382,5 @@
     border-color: var(--ew-maroon);
     background: var(--ew-tint);
 }
+
+.path-local-examwizard .ew-tlink-strong { font-weight: 700; color: var(--ew-maroon); }

@@ -204,8 +204,10 @@ if ($liveexams) {
         echo html_writer::end_div();
         echo html_writer::div(html_writer::div('', 'ew-live-fill', ['style' => 'width:' . $bar . '%']), 'ew-live-bar');
         echo html_writer::div(
+            html_writer::link(new moodle_url('/local/examwizard/control.php', ['cmid' => $e['cmid']]),
+                $s('lc_control'), ['class' => 'btn btn-primary btn-sm mr-2']) .
             html_writer::link(new moodle_url('/mod/quiz/report.php', ['id' => $e['cmid'], 'mode' => 'overview']),
-                $s('live_monitor'), ['class' => 'btn btn-primary btn-sm mr-2']) .
+                $s('live_monitor'), ['class' => 'btn btn-outline-secondary btn-sm mr-2']) .
             html_writer::link(new moodle_url('/local/examwizard/results.php', ['cmid' => $e['cmid']]),
                 $s('ye_results'), ['class' => 'btn btn-outline-secondary btn-sm']),
             'mt-2');
@@ -280,7 +282,12 @@ if (!$exams) {
     foreach ($exams as $e) {
         $statusbadge = html_writer::tag('span', $s('stat_' . $e['status']),
             ['class' => 'ew-badge ew-badge-' . $e['status']]);
-        $links = html_writer::link(new moodle_url('/mod/quiz/report.php',
+        $links = '';
+        if ($e['status'] === 'live' || $e['started'] > 0) {
+            $links .= html_writer::link(new moodle_url('/local/examwizard/control.php',
+                ['cmid' => $e['cmid']]), $s('lc_control'), ['class' => 'ew-tlink ew-tlink-strong']);
+        }
+        $links .= html_writer::link(new moodle_url('/mod/quiz/report.php',
             ['id' => $e['cmid'], 'mode' => 'overview']), $s('ye_monitor'), ['class' => 'ew-tlink']);
         $links .= html_writer::link(new moodle_url('/local/examwizard/results.php',
             ['cmid' => $e['cmid']]), $s('ye_results'), ['class' => 'ew-tlink']);
