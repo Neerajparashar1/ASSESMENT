@@ -1070,6 +1070,477 @@ body.pagelayout-mydashboard {
 }
 
 // =================================================================
+//  SITE ADMINISTRATION  --  friendlier admin settings UI  (Phase 1: CSS)
+//  Scoped to body.pagelayout-admin. The landing/category card-grid
+//  restructure, the sticky action bar, the section jump-nav, the
+//  per-page filter box and description-collapse are injected/enhanced
+//  by exam-ui.js (admin branch) - this block only styles what Moodle
+//  already renders (templates core_admin/settings + core_admin/setting).
+// =================================================================
+body.pagelayout-admin {
+  background: linear-gradient(180deg, #fbf7f8 0%, #f5edef 100%);
+
+  // long admin content runs edge-to-edge by default -> give it a measure
+  #page.drawers .main-inner,
+  #region-main .region-main-content {
+    max-width: 1180px;
+    margin-inline: auto;
+  }
+
+  #page-header h1,
+  .page-context-header .page-header-headings h1 { color: var(--itm-maroon-900); }
+
+  // ---- secondary / category nav as a branded strip ----
+  .secondary-navigation .nav-tabs { border-bottom: 2px solid var(--itm-line); gap: .15rem; }
+  .secondary-navigation .nav-tabs .nav-link {
+    border: 0;
+    border-radius: 8px 8px 0 0;
+    font-weight: 600;
+    color: var(--itm-slate);
+    padding: .55rem .95rem;
+  }
+  .secondary-navigation .nav-tabs .nav-link:hover {
+    background: var(--itm-maroon-050);
+    color: var(--itm-maroon-900);
+  }
+  .secondary-navigation .nav-tabs .nav-link.active {
+    color: var(--itm-maroon-900);
+    background: #fff;
+    box-shadow: inset 0 -3px 0 var(--itm-maroon);
+  }
+
+  // ---- admin search box (header action + on-page) ----
+  .adminsearchform input[type="text"],
+  form[action*="/admin/search.php"] input[type="text"] {
+    border: 1.5px solid var(--itm-line);
+    border-radius: 999px;
+    padding: .45rem .95rem;
+    &:focus {
+      border-color: var(--itm-maroon);
+      box-shadow: 0 0 0 3px rgba(138, 27, 44, .15);
+      outline: 0;
+    }
+  }
+
+  // ---- notifications ("Changes saved") ----
+  .alert-success { border-left: 4px solid #1f7a4d; border-radius: 8px; }
+  .alert-danger, .alert-warning { border-radius: 8px; }
+}
+
+// ================= the settings form =================
+#adminsettings .settingsform {
+  > h2 {
+    font-family: var(--itm-serif);
+    color: var(--itm-maroon-900);
+    font-size: 1.5rem;
+    padding-bottom: .6rem;
+    border-bottom: 2px solid var(--itm-line);
+    margin-bottom: 1.4rem;
+  }
+
+  // section heading -> full-width sticky sub-header
+  h3.main {
+    position: sticky;
+    top: 56px;
+    z-index: 20;
+    margin: 2rem 0 1rem;
+    padding: .6rem 0 .5rem;
+    scroll-margin-top: 96px;
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--itm-maroon-900);
+    background: linear-gradient(180deg, #fbf7f8 78%, rgba(251, 247, 248, 0));
+    border-bottom: 2px solid var(--itm-line);
+
+    &::after {
+      content: "";
+      display: block;
+      width: 42px;
+      height: 2px;
+      margin-top: .5rem;
+      background: var(--itm-gold);
+    }
+  }
+  .box.formsettingheading {
+    margin: -.4rem 0 1.1rem;
+    padding: .85rem 1.1rem;
+    background: var(--itm-maroon-050);
+    border: 1px solid var(--itm-line);
+    border-radius: 10px;
+    font-size: .9rem;
+    color: var(--itm-slate);
+  }
+
+  // ---- each setting -> a card ----
+  .form-item.row {
+    margin: 0 0 .8rem;
+    padding: 1rem 1.1rem;
+    background: #fff;
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    box-shadow: 0 1px 2px rgba(74, 13, 23, .05);
+    transition: border-color .12s ease, box-shadow .12s ease;
+
+    &:hover { border-color: #d8c9cc; }
+    &:focus-within {
+      border-color: var(--itm-maroon);
+      box-shadow: 0 0 0 3px rgba(138, 27, 44, .12);
+    }
+  }
+
+  // label column: left-align, de-emphasise the internal "s_xxx" name
+  .form-item .form-label {
+    text-align: left !important;
+    padding-top: 0;
+
+    > label, > p { font-weight: 600; color: var(--itm-ink); margin-bottom: .2rem; }
+  }
+  .form-item .form-shortname {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    color: #9a8f91;
+    opacity: .5;
+    transition: opacity .12s ease;
+  }
+  .form-item.row:hover .form-shortname { opacity: 1; }
+
+  // control column
+  .form-item .form-setting { min-width: 0; }
+  .form-item .form-description {
+    max-width: 62ch;
+    font-size: .82rem;
+    line-height: 1.55;
+    color: var(--itm-slate);
+    margin-top: .5rem !important;
+  }
+  .form-item .form-defaultinfo {
+    display: inline-block;
+    margin-top: .5rem;
+    padding: .12rem .5rem;
+    font-size: .72rem;
+    background: var(--itm-maroon-050);
+    border: 1px solid var(--itm-line);
+    border-radius: 6px;
+    color: var(--itm-slate);
+  }
+
+  // locked / overridden in config.php -> a clear amber badge, dim the control
+  .form-item .form-label .alert-info {
+    margin: .35rem 0 0;
+    padding: .3rem .55rem;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    color: #8a5a12;
+    background: #fdf3e2;
+    border: 1px solid #edd9b3;
+    border-radius: 6px;
+  }
+  .form-item:has(.form-label .alert-info) { background: #fefdfb; border-color: #edd9b3; }
+  .form-item:has(.form-label .alert-info) .form-setting :is(input, select, textarea) { opacity: .6; }
+
+  // changed rows - exam-ui.js adds .itm-changed on first input
+  .form-item.itm-changed { border-left: 4px solid var(--itm-gold); }
+
+  // Save button (JS also clones it into a sticky bottom bar)
+  .btn-primary { padding: .6rem 1.7rem; font-weight: 700; border-radius: 10px; }
+}
+
+// ---- admin category page (admin/category.php): bare <h3><a> nav list
+//      + a few inline settings, no .settingsform wrapper. Structure is
+//      #region-main > h2  and  #adminsettings > fieldset > (h3 | .form-item) ----
+body.pagelayout-admin #region-main > h2,
+body.pagelayout-admin #region-main [role="main"] > h2 {
+  font-family: var(--itm-serif);
+  color: var(--itm-maroon-900);
+  font-size: 1.5rem;
+  padding-bottom: .6rem;
+  border-bottom: 2px solid var(--itm-line);
+  margin-bottom: 1rem;
+}
+#adminsettings:not(:has(.settingsform)) fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  > h3 {
+    margin: 0;
+    padding: .7rem .25rem;
+    border-bottom: 1px solid var(--itm-line);
+    font: 600 .95rem/1.35 var(--itm-sans);
+
+    a {
+      color: var(--itm-maroon-700);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    a::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 8px;
+      height: 8px;
+      border-radius: 3px;
+      background: var(--itm-gold);
+    }
+    a:hover { color: var(--itm-maroon-900); text-decoration: underline; }
+
+    // cycle the marker through the card-accent palette
+    &:nth-of-type(8n+1) a::before { background: #8a1b2c; }
+    &:nth-of-type(8n+2) a::before { background: #1f7a6f; }
+    &:nth-of-type(8n+3) a::before { background: #42509b; }
+    &:nth-of-type(8n+4) a::before { background: #7c3b6c; }
+    &:nth-of-type(8n+5) a::before { background: #3f7a45; }
+    &:nth-of-type(8n+6) a::before { background: #b5652d; }
+    &:nth-of-type(8n+7) a::before { background: #3a6ea5; }
+    &:nth-of-type(8n)   a::before { background: #a9822f; }
+  }
+
+  // inline settings on the category page get the same card treatment
+  > .form-item.row {
+    margin: .8rem 0 0;
+    padding: 1rem 1.1rem;
+    background: #fff;
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+
+    .form-label { text-align: left !important; }
+    .form-label > label { font-weight: 600; color: var(--itm-ink); }
+    .form-description { max-width: 62ch; font-size: .82rem; color: var(--itm-slate); }
+  }
+}
+
+// ---- admin search results page ----
+#page-admin-search {
+  h3.adminpagetitle {
+    font-family: var(--itm-serif);
+    color: var(--itm-maroon-900);
+    margin-top: 1.6rem;
+  }
+  .adminpagepath {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    padding: 0;
+    margin: .2rem 0 .8rem;
+    list-style: none;
+
+    li { font-size: .74rem; color: var(--itm-slate); }
+    li + li::before { content: "\203a"; margin-right: .35rem; color: #b7a9ab; }
+  }
+
+}
+
+// ---- landing / category : card grid (built by exam-ui.js) ----
+//  Each card carries an accent colour (data-accent 1..8, set by the JS)
+//  from a muted jewel/earth palette chosen to sit with maroon + gold.
+$itm-card-accents: (
+  1: (#8a1b2c, #fbf3f4, #6d1422),   // maroon (identity)
+  2: (#1f7a6f, #ecf5f3, #175f56),   // teal
+  3: (#42509b, #eef0f9, #333f7d),   // indigo
+  4: (#7c3b6c, #f6eef3, #612e55),   // plum
+  5: (#3f7a45, #edf5ee, #315f36),   // forest
+  6: (#b5652d, #fbf1e8, #8f4f22),   // terracotta
+  7: (#3a6ea5, #edf3f9, #2d5782),   // steel blue
+  8: (#a9822f, #f8f1e1, #856625),   // ochre
+);
+
+.itm-admin-cardgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+.itm-admin-card {
+  --acc:      #{nth(map-get($itm-card-accents, 1), 1)};
+  --acc-tint: #{nth(map-get($itm-card-accents, 1), 2)};
+  --acc-dark: #{nth(map-get($itm-card-accents, 1), 3)};
+
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--itm-line);
+  border-top: 3px solid var(--acc);
+  border-radius: var(--itm-radius);
+  box-shadow: 0 10px 30px -24px rgba(74, 13, 23, .4);
+  overflow: hidden;
+  transition: box-shadow .14s ease, transform .14s ease;
+}
+@each $n, $c in $itm-card-accents {
+  .itm-admin-card[data-accent="#{$n}"] {
+    --acc:      #{nth($c, 1)};
+    --acc-tint: #{nth($c, 2)};
+    --acc-dark: #{nth($c, 3)};
+  }
+}
+a.itm-admin-card:hover,
+.itm-admin-card:has(a.itm-admin-card-head:hover) {
+  box-shadow: 0 20px 40px -22px rgba(74, 13, 23, .5);
+  transform: translateY(-2px);
+}
+.itm-admin-card-head {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .8rem 1rem;
+  background: var(--acc-tint);
+  border-bottom: 1px solid var(--itm-line);
+  text-decoration: none;
+}
+.itm-admin-card-chip {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--acc), var(--acc-dark));
+  color: #fdf7ec;
+  font-family: var(--itm-serif);
+  font-weight: 700;
+  font-size: .95rem;
+  box-shadow: 0 4px 10px -5px var(--acc);
+}
+.itm-admin-card-title {
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--itm-ink);
+}
+a.itm-admin-card-head:hover .itm-admin-card-title {
+  color: var(--acc-dark);
+  text-decoration: underline;
+}
+.itm-admin-card-body {
+  padding: .5rem .35rem;
+
+  ul { margin: 0; padding: 0; list-style: none; }
+  li > a {
+    display: block;
+    padding: .42rem .7rem;
+    border-radius: 8px;
+    font-size: .86rem;
+    color: var(--itm-maroon-700);
+    text-decoration: none;
+  }
+  li > a:hover { background: var(--acc-tint); color: var(--acc-dark); }
+  // nested sub-lists (is_short_branch)
+  ul ul { margin-left: .6rem; border-left: 1px solid var(--itm-line); padding-left: .3rem; }
+}
+
+// ---- injected by exam-ui.js (admin branch) ----------------------
+.itm-filter-hide { display: none !important; }
+
+// sticky save bar
+.itm-admin-savebar {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 1085;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: calc(100vw - 2rem);
+  padding: .6rem .6rem .6rem 1.1rem;
+  background: #fff;
+  border: 1px solid var(--itm-line);
+  border-radius: 999px;
+  box-shadow: 0 18px 44px -16px rgba(74, 13, 23, .45);
+
+  .itm-admin-savecount { font-size: .85rem; font-weight: 700; color: var(--itm-maroon-900); }
+  .itm-admin-savebtns { display: flex; gap: .5rem; }
+  .btn { border-radius: 999px; padding: .38rem 1rem; font-weight: 600; }
+  .itm-admin-save { background: var(--itm-maroon); border-color: var(--itm-maroon-700); }
+  .itm-admin-save:hover { background: var(--itm-maroon-700); }
+}
+
+// section jump-nav (fixed right rail, wide screens only)
+.itm-admin-jump { display: none; }
+@media (min-width: 1400px) {
+  .itm-admin-jump {
+    display: block;
+    position: fixed;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1040;
+    max-height: 70vh;
+    overflow-y: auto;
+    width: 210px;
+    padding: .75rem .9rem;
+    background: rgba(255, 255, 255, .96);
+    border: 1px solid var(--itm-line);
+    border-radius: 12px;
+    box-shadow: 0 14px 36px -18px rgba(74, 13, 23, .4);
+
+    ul { list-style: none; margin: 0; padding: 0; }
+    li + li { margin-top: .15rem; }
+    a {
+      display: block;
+      padding: .3rem .5rem;
+      border-left: 2px solid transparent;
+      border-radius: 0 6px 6px 0;
+      font-size: .78rem;
+      line-height: 1.35;
+      color: var(--itm-slate);
+      text-decoration: none;
+    }
+    a:hover { background: var(--itm-maroon-050); color: var(--itm-maroon-900); }
+    a.is-active {
+      border-left-color: var(--itm-maroon);
+      background: var(--itm-maroon-050);
+      color: var(--itm-maroon-900);
+      font-weight: 700;
+    }
+  }
+}
+
+// filter box
+.itm-admin-filter {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 0 0 1.2rem;
+
+  input {
+    flex: 1;
+    max-width: 340px;
+    border: 1.5px solid var(--itm-line);
+    border-radius: 999px;
+    padding: .45rem .95rem;
+    font-size: .88rem;
+  }
+  input:focus {
+    outline: 0;
+    border-color: var(--itm-maroon);
+    box-shadow: 0 0 0 3px rgba(138, 27, 44, .15);
+  }
+  .itm-admin-filter-n { font-size: .78rem; color: var(--itm-slate); font-variant-numeric: tabular-nums; }
+}
+
+// collapsible descriptions
+.form-description.itm-desc-collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.itm-desc-more {
+  margin-top: .3rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--itm-maroon-700);
+  cursor: pointer;
+}
+.itm-desc-more:hover { text-decoration: underline; }
+
+// =================================================================
 //  DARK MODE  (light touch)
 // =================================================================
 @media (prefers-color-scheme: dark) {

@@ -10,3 +10,8 @@ moodledata/
 # Local native stack: live DB data + re-downloadable installers (too large for GitHub)
 native/stack/mariadb-data/
 native/stack/_downloads/
+
+# Native stack runtime logs/tmp
+native/stack/Apache24/logs/
+native/stack/logs/
+native/stack/tmp/
