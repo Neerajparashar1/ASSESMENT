@@ -4,6 +4,9 @@ seb/generated/
 scripts/__pycache__/
 exports/
 
+# Moodle runtime data (cache, sessions, secrets) - not source
+moodledata/
+
 # Local native stack: live DB data + re-downloadable installers (too large for GitHub)
 native/stack/mariadb-data/
 native/stack/_downloads/
