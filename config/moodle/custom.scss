@@ -72,64 +72,126 @@ a:hover { color: var(--itm-maroon); }
 .text-primary { color: var(--itm-maroon) !important; }
 a.dimmed, .dimmed_text { color: var(--itm-slate); }
 
-// ---------- Top navbar --------------------------------------------
-.navbar.fixed-top {
-  background: linear-gradient(100deg, var(--itm-maroon-900), var(--itm-maroon-700) 70%, var(--itm-maroon)) !important;
-  border-bottom: 3px solid var(--itm-gold);
+// ==================================================================
+//  TOP STRIP + WHITE NAVBAR   --   modelled on itmgoi.in's header
+//  itmgoi.in = a thin dark-maroon utility strip over a WHITE main bar
+//  so the full ITM logo (mark + name + tagline) reads on its natural
+//  background. #itm-topstrip is injected by exam-ui.js (not on the
+//  login page or a live exam attempt); it also adds .itm-has-topstrip.
+// ==================================================================
+:root { --itm-topstrip-h: 30px; --itm-navbar-h: 80px; }
+
+// taller white bar so the full logo reads clearly (all pages)
+.navbar.fixed-top { min-height: var(--itm-navbar-h); }
+body:not(.pagelayout-login) #page,
+body:not(.pagelayout-login) #page.drawers { margin-top: var(--itm-navbar-h) !important; }
+body:not(.pagelayout-login) .drawer { top: var(--itm-navbar-h) !important; }
+
+#itm-topstrip {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--itm-topstrip-h);
+  z-index: 1031;                       // above .navbar.fixed-top (1030)
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1.15rem;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #ecdfca;
+  background: linear-gradient(to right, #2a0101 0%, #7a1020 50%, #2a0101 100%);
+  border-bottom: 1px solid rgba(201, 162, 75, .35);
+  white-space: nowrap;
+  overflow: hidden;
+
+  .itm-topstrip-l {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    font-size: 10.5px;
+    color: var(--itm-gold);
+  }
+  .itm-topstrip-r { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  a { color: #f6ecd8; text-decoration: none; }
+  a:hover { color: #fff; text-decoration: underline; }
 }
-// cream text ONLY for links sitting directly on the maroon bar
+@media (max-width: 640px) {
+  #itm-topstrip { justify-content: center; }
+  #itm-topstrip .itm-topstrip-r { display: none; }
+}
+
+// push the (fixed) navbar + content down by the strip height too
+.itm-has-topstrip {
+  .navbar.fixed-top { top: var(--itm-topstrip-h); }
+  #page,
+  #page.drawers { margin-top: calc(var(--itm-navbar-h) + var(--itm-topstrip-h)) !important; }
+  .drawer { top: calc(var(--itm-navbar-h) + var(--itm-topstrip-h)) !important; }
+  .secondary-navigation.is-sticky,
+  [data-region="secondary-navigation"].is-sticky {
+    top: calc(var(--itm-navbar-h) + var(--itm-topstrip-h)) !important;
+  }
+}
+
+// ---------- white navbar ----------
+.navbar.fixed-top {
+  background: #ffffff !important;
+  border-bottom: 3px solid var(--itm-gold);
+  box-shadow: 0 14px 34px -20px rgba(74, 13, 23, .28);
+}
+// dark slate text on the white bar
 .navbar.fixed-top .navbar-nav .nav-link,
 .navbar.fixed-top .navbar-brand,
 .navbar.fixed-top .nav-link > i,
 .navbar.fixed-top #usernavigation .nav-link,
 .navbar.fixed-top .editmode-switch-form,
 .navbar.fixed-top .editmode-switch-form label {
-  color: #f6ebdd !important;
+  color: #1f2937 !important;
 }
-// hover / focus / open: subtle translucent highlight, text stays light & readable
+.navbar.fixed-top .icon,
+.navbar.fixed-top .nav-link .icon { color: #6d1422; }
+// hover / focus / open -> soft maroon tint pill
 .navbar.fixed-top .navbar-nav .nav-link:hover,
 .navbar.fixed-top .navbar-nav .nav-link:focus,
 .navbar.fixed-top .navbar-nav .nav-link.show,
 .navbar.fixed-top .navbar-nav .nav-item:hover > .nav-link,
 .navbar.fixed-top .navbar-nav .nav-item.show > .nav-link {
-  color: #ffffff !important;
-  background-color: rgba(255, 255, 255, 0.14) !important;
+  color: var(--itm-maroon-900) !important;
+  background-color: var(--itm-maroon-050) !important;
   border-radius: 8px;
 }
-// The ITM mark is maroon ink -> sit it on a white "plate" so it reads on
-// the maroon navbar (this is how itmgoi.in shows the logo: on a light bar).
-// Markup is  a.navbar-brand > img.logo  (the "ITM" bars crop, ~2.8:1).
+// full ITM logo, no "plate" - it sits on white now, like itmgoi.in
 .navbar.fixed-top .navbar-brand {
   display: inline-flex;
   align-items: center;
   padding: 4px 0;
 }
 .navbar.fixed-top .navbar-brand img.logo {
-  height: 34px;
+  height: 62px;
   max-height: none;
   width: auto;
-  background: #fff;
-  border-radius: 9px;
-  padding: 6px 12px;
-  box-shadow: 0 4px 14px -5px rgba(0, 0, 0, .55);
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 .navbar.fixed-top .btn { border-radius: 8px; }
 
-// current-page nav item gets a light "pill" from Boost -> keep its text dark
+// current-page nav item -> maroon text on a pink pill
 .navbar.fixed-top .navbar-nav .nav-link.active,
 .navbar.fixed-top .navbar-nav .nav-link[aria-current],
 .navbar.fixed-top .navbar-nav .active > .nav-link {
   color: var(--itm-maroon-900) !important;
-  background-color: #ffffff !important;
+  background-color: #f4e2e5 !important;
   border-radius: 8px;
 }
 .navbar.fixed-top .navbar-nav .nav-link.active:hover,
 .navbar.fixed-top .navbar-nav .nav-link[aria-current]:hover {
   color: var(--itm-maroon-900) !important;
-  background-color: #f4e2e5 !important;
+  background-color: #efd7db !important;
 }
 
-// dropdowns opened FROM the navbar are white panels -> dark text, not cream
+// dropdowns opened FROM the navbar are white panels -> dark text
 .navbar .dropdown-menu {
   border: 1px solid var(--itm-line);
   border-radius: 10px;
@@ -149,6 +211,103 @@ a.dimmed, .dimmed_text { color: var(--itm-slate); }
 }
 .navbar .dropdown-menu .dropdown-item i,
 .navbar .dropdown-menu .dropdown-item .icon { color: var(--itm-maroon-700) !important; }
+
+// ---------- right-side action cluster: bell / messages / user ----------
+.navbar.fixed-top {
+  #usernavigation { gap: .3rem; align-items: center; }
+  .popover-region { position: relative; display: flex; align-items: center; }
+
+  // circular icon buttons for notifications + messages
+  .popover-region-toggle,
+  [data-region="popover-region-toggle"] {
+    width: 40px;
+    height: 40px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+    color: #6d1422 !important;
+    transition: background-color .12s ease, color .12s ease;
+
+    .icon { margin: 0; font-size: 1.05rem; width: 1.05rem; height: 1.05rem; }
+  }
+  .popover-region-toggle:hover,
+  .popover-region-toggle:focus {
+    background-color: var(--itm-maroon-050);
+    color: var(--itm-maroon-900) !important;
+  }
+  .popover-region-toggle[aria-expanded="true"] {
+    background-color: var(--itm-maroon);
+    color: #fff !important;
+  }
+
+  // unread-count badge on the bell / messages
+  .count-container {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    background: var(--itm-maroon);
+    border: 2px solid #fff;
+    border-radius: 999px;
+  }
+  .count-container.hidden,
+  .count-container:empty { display: none; }
+
+  // user-menu button -> a tidy pill with a branded avatar
+  #user-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    margin-left: .15rem;
+    padding: 3px 10px 3px 3px;
+    border-radius: 999px;
+    border: 1px solid var(--itm-line);
+    background: #fff;
+    transition: border-color .12s ease, box-shadow .12s ease;
+  }
+  #user-menu-toggle:hover,
+  #user-menu-toggle:focus,
+  #user-menu-toggle[aria-expanded="true"] {
+    border-color: var(--itm-maroon);
+    box-shadow: 0 0 0 3px rgba(138, 27, 44, .12);
+  }
+  #user-menu-toggle .userinitials {
+    background: linear-gradient(135deg, var(--itm-maroon), var(--itm-maroon-700)) !important;
+    color: #f3e6c7 !important;
+    font-weight: 700;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+  }
+  #user-menu-toggle img.userpicture {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--itm-maroon-050);
+  }
+  #user-menu-toggle::after,
+  #user-menu-toggle .icon {
+    color: var(--itm-slate);
+    border-top-color: var(--itm-slate);
+  }
+
+  // edit-mode switch -> compact, on a subtle divider
+  .editmode-switch-form {
+    margin-left: .35rem;
+    padding-left: .7rem;
+    border-left: 1px solid var(--itm-line);
+  }
+}
 
 // ---------- Page header ------------------------------------------
 #page-header .page-context-header,
@@ -519,7 +678,7 @@ body#page-mod-quiz-attempt {
 // ---- top progress bar (JS builds .itm-progress) -----------------
 #page-mod-quiz-attempt .itm-progress {
   position: sticky;
-  top: 60px;
+  top: var(--itm-navbar-h, 60px);
   z-index: 1030;
   display: flex;
   align-items: center;
@@ -721,7 +880,7 @@ body#page-mod-quiz-attempt {
 // ---- question navigation panel + JS legend ------------------
 #page-mod-quiz-attempt #mod_quiz_navblock {
   position: sticky;
-  top: 84px;
+  top: calc(var(--itm-navbar-h, 60px) + 24px);
   align-self: flex-start;
 
   .card-body, .content { padding: 1rem; }
@@ -1139,13 +1298,14 @@ body.pagelayout-admin {
   }
 
   // section heading -> full-width sticky sub-header
+  // (admin pages carry #itm-topstrip, so offset by its height too)
   h3.main {
     position: sticky;
-    top: 56px;
+    top: calc(56px + var(--itm-topstrip-h, 0px));
     z-index: 20;
     margin: 2rem 0 1rem;
     padding: .6rem 0 .5rem;
-    scroll-margin-top: 96px;
+    scroll-margin-top: calc(96px + var(--itm-topstrip-h, 0px));
     font-family: var(--itm-serif);
     font-weight: 700;
     font-size: 1.15rem;

@@ -28,6 +28,26 @@
   }
 
   /* -----------------------------------------------------------------
+   * Thin maroon utility strip above the navbar (echoes itmgoi.in's
+   * two-tier header). Skipped on the login page (its own full-bleed
+   * branding) and on a live exam attempt (kept distraction-free).
+   * CSS: custom.scss #itm-topstrip / .itm-has-topstrip.
+   * --------------------------------------------------------------- */
+  if (body &&
+      !/ pagelayout-login /.test(" " + body.className + " ") &&
+      body.id !== "page-mod-quiz-attempt" &&
+      !document.getElementById("itm-topstrip")) {
+    var itmStrip = document.createElement("div");
+    itmStrip.id = "itm-topstrip";
+    itmStrip.innerHTML =
+      '<span class="itm-topstrip-l">Online Examination Portal</span>' +
+      '<span class="itm-topstrip-r">Examination Cell&nbsp;&middot;&nbsp;' +
+      '<a href="mailto:examcell@itmgoi.in">examcell@itmgoi.in</a></span>';
+    body.insertBefore(itmStrip, body.firstChild);
+    body.classList.add("itm-has-topstrip");
+  }
+
+  /* -----------------------------------------------------------------
    * 0. LOGIN PAGE : build the split-view left panel (campus photo +
    *    college info). CSS in custom.scss styles .itm-loginhero.
    * --------------------------------------------------------------- */

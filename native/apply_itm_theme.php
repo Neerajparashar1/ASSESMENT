@@ -24,9 +24,9 @@ $assets = __DIR__ . '/assets';
 //    prefers them over core_admin's - so both must be set.)
 // ---------------------------------------------------------------
 // 'logo'        = full official ITM GOI logo  (login card, dashboard plate)
-// 'logocompact' = the "ITM" bars mark cropped out of it (native\make_logo_mark.php)
-//                 - the tagline lines are illegible at navbar size.
-$logos = ['logo' => 'itm-logo.png', 'logocompact' => 'itm-logo-mark.png'];
+// 'logocompact' = ALSO the full logo now - the navbar is white (itmgoi.in
+//                 style), so the mark + name + tagline read fine at ~46px.
+$logos = ['logo' => 'itm-logo.png', 'logocompact' => 'itm-logo.png'];
 $logotargets = [
     ['core_admin', 'setcore'],
     ['theme_boost_union', 'theme_boost_union'],
@@ -53,7 +53,7 @@ foreach ($logos as $area => $fname) {
 // logo option - the login card already renders the logo via custom.scss
 // (.loginform::before); Boost Union's own logo there would double it up.
 set_config('loginpagebrand', 'heading', 'theme_boost_union');
-set_config('maxcompactlogowidth', '190', 'theme_boost_union');
+set_config('maxcompactlogowidth', '300', 'theme_boost_union');   // full logo on the white bar
 // favicon (use the compact mark)
 if (is_readable("$assets/itm-logo-compact.svg")) {
     $fs->delete_area_files($syscontext->id, 'core_admin', 'favicon');
