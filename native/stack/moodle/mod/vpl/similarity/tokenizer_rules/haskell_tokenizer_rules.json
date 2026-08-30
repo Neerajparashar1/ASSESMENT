@@ -1,0 +1,96 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Haskell",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/haskell_highlight_rules.js",
+  "name": "haskell-tokenizer",
+  "extension": [".hs", ".lhs"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "^>\\s*", "next": "code" },
+      { "token": "vpl_null", "regex": "(?=.)", "next": "code" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "code": [
+      { "token": "vpl_null", "regex": "--.*$" },
+      { "token": "vpl_null", "regex": "\\{-(?!#)", "next": "blockComment1" },
+
+      { "token": "vpl_reserved", "regex": "^\\s*#\\s*\\w+\\b" },
+      { "token": "vpl_reserved", "regex": "\\{-#", "next": "pragma" },
+
+      { "token": "vpl_operator", "regex": "(`)([a-zA-Z_']*?)(`)" },
+
+      { "token": "vpl_literal", "regex": "\\(\\)" },
+      { "token": "vpl_literal", "regex": "\\[\\]" },
+
+      { "token": "vpl_literal", "regex": "\\b(?:[0-9]+\\.[0-9]+(?:[eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+)\\b" },
+      { "token": "vpl_literal", "regex": "\\b(?:[0-9]+|0(?:[xX][0-9a-fA-F]+|[oO][0-7]+))\\b" },
+
+      { "token": "vpl_literal", "regex": "\"", "next": "dqstring" },
+
+      {
+        "token": "vpl_literal",
+        "regex": "(')(?:([\\ -\\[\\]-~])|(\\\\(?:NUL|SOH|STX|ETX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|SO|SI|DLE|DC1|DC2|DC3|DC4|NAK|SYN|ETB|CAN|EM|SUB|ESC|FS|GS|RS|US|SP|DEL|[abfnrtv\\\\\\\"'\\&]))|(\\\\o[0-7]+)|(\\\\x[0-9A-Fa-f]+)|(\\^[A-Z@\\[\\]\\\\\\^_]))(')"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:module|signature|where|class|instance|import|qualified|as|hiding|deriving|data|type|case|of|let|in|newtype|default|infix[lr]?|do|if|then|else)\\b"
+      },
+
+      { "token": "vpl_operator", "regex": "::|->|=>" },
+
+      {
+        "token": "vpl_literal",
+        "regex": "\\b(?:Just|Nothing|Left|Right|True|False|LT|EQ|GT)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:Monad|Functor|Eq|Ord|Read|Show|Num|(?:Frac|Ra)tional|Enum|Bounded|Real(?:Frac|Float)?|Integral|Floating)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:Int(?:eger)?|Maybe|Either|Bool|Float|Double|Char|String|Ordering|ShowS|ReadS|FilePath|IO(?:Error)?)\\b"
+      },
+
+      { "token": "vpl_identifier", "regex": "[A-Z][A-Za-z0-9_']*\\b" },
+      { "token": "vpl_identifier", "regex": "[a-z_][a-zA-Z0-9_']*\\b" },
+
+      { "token": "vpl_operator", "regex": "[|!%$?~+:\\-.=</>\\\\]+" },
+      { "token": "vpl_operator", "regex": "[,;\\(\\)\\[\\]\\{\\}]" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "dqstring": [
+      { "token": "vpl_literal", "regex": "\"", "next": "code" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "pragma": [
+      { "token": "vpl_reserved", "regex": "\\b(?:LANGUAGE|UNPACK|INLINE)\\b" },
+      { "token": "vpl_reserved", "regex": "#-\\}", "next": "code" },
+      { "default_token": "vpl_reserved" }
+    ],
+
+    "blockComment1": [
+      { "token": "vpl_null", "regex": "\\{-(?!#)", "next": "blockComment2" },
+      { "token": "vpl_null", "regex": "-\\}", "next": "code" },
+      { "default_token": "vpl_null" }
+    ],
+    "blockComment2": [
+      { "token": "vpl_null", "regex": "\\{-(?!#)", "next": "blockComment3" },
+      { "token": "vpl_null", "regex": "-\\}", "next": "blockComment1" },
+      { "default_token": "vpl_null" }
+    ],
+    "blockComment3": [
+      { "token": "vpl_null", "regex": "-\\}", "next": "blockComment2" },
+      { "default_token": "vpl_null" }
+    ]
+  }
+}

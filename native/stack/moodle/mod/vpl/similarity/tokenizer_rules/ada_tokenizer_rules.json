@@ -1,0 +1,73 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Ada",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/ada_highlight_rules.js",
+  "name": "ada-tokenizer",
+  "extension": [".adb", ".ads", ".ada"],
+  "check_rules": false,
+
+  "override_tokens": {
+    "comment": "vpl_null",
+    "comment.line": "vpl_null",
+
+    "string": "vpl_literal",
+    "string.double": "vpl_literal",
+    "string.char": "vpl_literal",
+    "constant.numeric": "vpl_literal",
+    "constant.language": "vpl_literal",
+
+    "keyword": "vpl_reserved",
+    "keyword.control": "vpl_reserved",
+    "keyword.operator": "vpl_operator",
+
+    "identifier": "vpl_identifier",
+
+    "text": "vpl_null",
+    "paren": "vpl_other",
+    "paren.lparen": "vpl_other",
+    "paren.rparen": "vpl_other",
+    "punctuation": "vpl_other",
+    "punctuation.separator": "vpl_other"
+  },
+
+  "states": {
+    "start": [
+      { "token": "text", "regex": "\\s+" },
+
+      { "token": "comment.line", "regex": "--[^\\r\\n]*" },
+
+      { "token": "string.double", "regex": "\"(?:\"\"|[^\"])*\"" },
+
+      { "token": "string.char", "regex": "'(?:[^'\\r\\n]|'')'" },
+
+      {
+        "token": "constant.numeric",
+        "regex": "(?i)\\b\\d+(?:_?\\d+)*(?:#(?:[0-9a-f]+(?:_?[0-9a-f]+)*)(?:\\.(?:[0-9a-f]+(?:_?[0-9a-f]+)*))?#)?(?:e[+-]?\\d+(?:_?\\d+)*)?\\b"
+      },
+      {
+        "token": "constant.numeric",
+        "regex": "(?i)\\b\\d+(?:_?\\d+)*(?:\\.\\d+(?:_?\\d+)*)?(?:e[+-]?\\d+(?:_?\\d+)*)?\\b"
+      },
+
+      { "token": "constant.language", "regex": "(?i)\\b(True|False)\\b" },
+
+      {
+        "token": "keyword",
+        "regex": "(?i)\\b(abort|abs|abstract|accept|access|aliased|all|and|array|at|begin|body|case|constant|declare|delay|delta|digits|do|else|elsif|end|entry|exception|exit|for|function|generic|goto|if|in|interface|is|limited|loop|mod|new|not|null|of|or|others|out|overriding|package|pragma|private|procedure|protected|raise|range|record|rem|renames|requeue|return|reverse|select|separate|some|subtype|synchronized|tagged|task|terminate|then|type|until|use|when|while|with|xor)\\b"
+      },
+
+      {
+        "token": "keyword.operator",
+        "regex": "\\*\\*|:=|=>|\\.\\.|/=|<=|>=|=|<|>|\\+|\\-|\\*|/|&"
+      },
+
+      { "token": "paren.lparen", "regex": "[\\(\\[]" },
+      { "token": "paren.rparen", "regex": "[\\)\\]]" },
+      { "token": "punctuation.separator", "regex": "[,;:]" },
+      { "token": "punctuation", "regex": "[\\.\\{\\}]" },
+
+      { "token": "identifier", "regex": "\\b[A-Za-z][A-Za-z0-9_]*\\b" },
+
+      { "token": "text", "regex": "." }
+    ]
+  }
+}

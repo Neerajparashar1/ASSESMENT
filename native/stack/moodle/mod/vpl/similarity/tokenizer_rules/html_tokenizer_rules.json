@@ -1,0 +1,269 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for HTML",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/html_highlight_rules.js",
+  "name": "html-tokenizer",
+  "extension": [".html", ".htm", ".xhtml", ".shtml"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "<!--", "next": "comment" },
+      { "token": "vpl_null", "regex": "<\\!\\[CDATA\\[", "next": "cdata" },
+
+      { "token": "vpl_reserved", "regex": "(?i)<!DOCTYPE", "next": "doctype" },
+
+      { "token": "vpl_reserved", "regex": "(?i)<script\\b", "next": "script_tag_open" },
+      { "token": "vpl_reserved", "regex": "(?i)<style\\b", "next": "style_tag_open" },
+
+      { "token": "vpl_null", "regex": "</", "next": "tag_name_close" },
+      { "token": "vpl_null", "regex": "<", "next": "tag_name_open" },
+
+      { "token": "vpl_literal", "regex": "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)" },
+
+      { "token": "vpl_identifier", "regex": "[^<>&\\s]+" },
+      { "token": "vpl_null", "regex": "\\s+" }
+    ],
+
+    "comment": [
+      { "token": "vpl_null", "regex": "-->", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "cdata": [
+      { "token": "vpl_null", "regex": "\\]\\]>", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "doctype": [
+      { "token": "vpl_null", "regex": ">", "next": "start" },
+      { "token": "vpl_null", "regex": "\"", "next": "dq_doctype" },
+      { "token": "vpl_null", "regex": "'", "next": "sq_doctype" },
+      { "token": "vpl_reserved", "regex": "[A-Za-z_:-][A-Za-z0-9_:\\.-]*" },
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "." }
+    ],
+    "dq_doctype": [
+      { "token": "vpl_null", "regex": "\"", "next": "doctype" },
+      { "default_token": "vpl_literal" }
+    ],
+    "sq_doctype": [
+      { "token": "vpl_null", "regex": "'", "next": "doctype" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "tag_name_open": [
+      { "token": "vpl_reserved", "regex": "[-_a-zA-Z0-9:.]+", "next": "tag_stuff_open" },
+      { "token": "vpl_null", "regex": ">", "next": "start" },
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": ".", "next": "tag_stuff_open" }
+    ],
+
+    "tag_name_close": [
+      { "token": "vpl_reserved", "regex": "[-_a-zA-Z0-9:.]+", "next": "tag_stuff_close" },
+      { "token": "vpl_null", "regex": ">", "next": "start" },
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": ".", "next": "tag_stuff_close" }
+    ],
+
+    "tag_stuff_open": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "/?>", "next": "start" },
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z0-9:.]+", "next": "attr_after_name" },
+      { "token": "vpl_null", "regex": ".", "next": "tag_stuff_open" }
+    ],
+
+    "tag_stuff_close": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": ">", "next": "start" },
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z0-9:.]+ " },
+      { "token": "vpl_null", "regex": ".", "next": "tag_stuff_close" }
+    ],
+
+    "attr_after_name": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "=", "next": "attr_value_start" },
+      { "token": "vpl_null", "regex": "/?>", "next": "start" },
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z0-9:.]+", "next": "attr_after_name" },
+      { "token": "vpl_null", "regex": ".", "next": "tag_stuff_open" }
+    ],
+
+    "attr_value_start": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "\"", "next": "attr_value_dq" },
+      { "token": "vpl_null", "regex": "'", "next": "attr_value_sq" },
+      { "token": "vpl_literal", "regex": "[^<>='\"`\\s]+", "next": "tag_stuff_open" },
+      { "token": "vpl_null", "regex": "", "next": "tag_stuff_open" }
+    ],
+
+    "attr_value_dq": [
+      { "token": "vpl_null", "regex": "\"", "next": "tag_stuff_open" },
+      { "token": "vpl_literal", "regex": "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "attr_value_sq": [
+      { "token": "vpl_null", "regex": "'", "next": "tag_stuff_open" },
+      { "token": "vpl_literal", "regex": "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "script_tag_open": [
+      { "token": "vpl_reserved", "regex": "(?i)script" , "next": "script_tag_attrs" },
+      { "token": "vpl_null", "regex": "/?>", "next": "script_content" },
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": ".", "next": "script_tag_attrs" }
+    ],
+
+    "script_tag_attrs": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "/>", "next": "start" },
+      { "token": "vpl_null", "regex": ">", "next": "script_content" },
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z0-9:.]+", "next": "script_attr_after_name" },
+      { "token": "vpl_null", "regex": ".", "next": "script_tag_attrs" }
+    ],
+
+    "script_attr_after_name": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "=", "next": "script_attr_value_start" },
+      { "token": "vpl_null", "regex": "/>", "next": "start" },
+      { "token": "vpl_null", "regex": ">", "next": "script_content" },
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z0-9:.]+", "next": "script_attr_after_name" },
+      { "token": "vpl_null", "regex": ".", "next": "script_tag_attrs" }
+    ],
+
+    "script_attr_value_start": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "\"", "next": "script_attr_value_dq" },
+      { "token": "vpl_null", "regex": "'", "next": "script_attr_value_sq" },
+      { "token": "vpl_literal", "regex": "[^<>='\"`\\s]+", "next": "script_tag_attrs" },
+      { "token": "vpl_null", "regex": "", "next": "script_tag_attrs" }
+    ],
+
+    "script_attr_value_dq": [
+      { "token": "vpl_null", "regex": "\"", "next": "script_tag_attrs" },
+      { "default_token": "vpl_literal" }
+    ],
+    "script_attr_value_sq": [
+      { "token": "vpl_null", "regex": "'", "next": "script_tag_attrs" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "script_content": [
+      { "token": "vpl_null", "regex": "(?i)</script\\s*>", "next": "start" },
+
+      { "token": "vpl_null", "regex": "\\/\\/.*$" },
+      { "token": "vpl_null", "regex": "\\/\\*", "next": "script_block_comment" },
+
+      { "token": "vpl_null", "regex": "\"", "next": "script_dq" },
+      { "token": "vpl_null", "regex": "'", "next": "script_sq" },
+      { "token": "vpl_null", "regex": "`", "next": "script_bq" },
+
+      { "token": "vpl_literal", "regex": "0[xX][0-9a-fA-F]+\\b" },
+      { "token": "vpl_literal", "regex": "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b" },
+
+      { "token": "vpl_identifier", "regex": "[A-Za-z_$][A-Za-z0-9_$]*\\b" },
+
+      { "token": "vpl_operator", "regex": "===|!==|==|!=|<=|>=|=>|\\+\\+|--|\\+=|-=|\\*=|\\/=|%=|&&|\\|\\||<<|>>|>>>|[+\\-*/%&|^~!=<>?:.,;()\\[\\]{}]" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_identifier", "regex": "[^\\s]+" }
+    ],
+
+    "script_block_comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "script_content" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "script_dq": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_null", "regex": "\"|$", "next": "script_content" },
+      { "default_token": "vpl_literal" }
+    ],
+    "script_sq": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_null", "regex": "'|$", "next": "script_content" },
+      { "default_token": "vpl_literal" }
+    ],
+    "script_bq": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_null", "regex": "`|$", "next": "script_content" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "style_tag_open": [
+      { "token": "vpl_reserved", "regex": "(?i)style" , "next": "style_tag_attrs" },
+      { "token": "vpl_null", "regex": "/?>", "next": "style_content" },
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": ".", "next": "style_tag_attrs" }
+    ],
+
+    "style_tag_attrs": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "/>", "next": "start" },
+      { "token": "vpl_null", "regex": ">", "next": "style_content" },
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z0-9:.]+", "next": "style_attr_after_name" },
+      { "token": "vpl_null", "regex": ".", "next": "style_tag_attrs" }
+    ],
+
+    "style_attr_after_name": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "=", "next": "style_attr_value_start" },
+      { "token": "vpl_null", "regex": "/>", "next": "start" },
+      { "token": "vpl_null", "regex": ">", "next": "style_content" },
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z0-9:.]+", "next": "style_attr_after_name" },
+      { "token": "vpl_null", "regex": ".", "next": "style_tag_attrs" }
+    ],
+
+    "style_attr_value_start": [
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_null", "regex": "\"", "next": "style_attr_value_dq" },
+      { "token": "vpl_null", "regex": "'", "next": "style_attr_value_sq" },
+      { "token": "vpl_literal", "regex": "[^<>='\"`\\s]+", "next": "style_tag_attrs" },
+      { "token": "vpl_null", "regex": "", "next": "style_tag_attrs" }
+    ],
+
+    "style_attr_value_dq": [
+      { "token": "vpl_null", "regex": "\"", "next": "style_tag_attrs" },
+      { "default_token": "vpl_literal" }
+    ],
+    "style_attr_value_sq": [
+      { "token": "vpl_null", "regex": "'", "next": "style_tag_attrs" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "style_content": [
+      { "token": "vpl_null", "regex": "(?i)</style\\s*>", "next": "start" },
+
+      { "token": "vpl_null", "regex": "\\/\\*", "next": "style_block_comment" },
+
+      { "token": "vpl_null", "regex": "\"", "next": "style_dq" },
+      { "token": "vpl_null", "regex": "'", "next": "style_sq" },
+
+      { "token": "vpl_literal", "regex": "#[0-9a-fA-F]{3,8}\\b" },
+      { "token": "vpl_literal", "regex": "[+-]?\\d+(?:\\.\\d+)?(?:[a-zA-Z%]+)?\\b" },
+
+      { "token": "vpl_identifier", "regex": "[-_a-zA-Z][-_a-zA-Z0-9]*\\b" },
+
+      { "token": "vpl_operator", "regex": "::|:|;|,|\\.|\\#|\\-|\\+|\\*|\\/|=|\\(|\\)|\\[|\\]|\\{|\\}|>|<|~|\\||\\^|\\$|\\?" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+      { "token": "vpl_identifier", "regex": "[^\\s]+" }
+    ],
+
+    "style_block_comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "style_content" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "style_dq": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_null", "regex": "\"|$", "next": "style_content" },
+      { "default_token": "vpl_literal" }
+    ],
+    "style_sq": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_null", "regex": "'|$", "next": "style_content" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

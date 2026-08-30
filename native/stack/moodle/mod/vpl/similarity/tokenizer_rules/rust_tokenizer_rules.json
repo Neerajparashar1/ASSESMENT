@@ -1,0 +1,84 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Rust",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/rust_highlight_rules.js",
+  "name": "rust-tokenizer-structural",
+  "extension": [".rs"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword.source.rust": "vpl_reserved",
+    "storage.type.source.rust": "vpl_reserved",
+    "constant.language.source.rust": "vpl_literal",
+    "support.constant.source.rust": "vpl_literal",
+    "variable.language.source.rust": "vpl_identifier",
+    "entity.name.function.source.rust": "vpl_identifier",
+    "identifier": "vpl_identifier",
+    "variable.other.source.rust": "vpl_identifier",
+    "constant.numeric.source.rust": "vpl_literal",
+    "string.quoted.double.source.rust": "vpl_literal",
+    "string.quoted.single.source.rust": "vpl_literal",
+    "string.quoted.raw.source.rust": "vpl_literal",
+    "constant.character.escape.source.rust": "vpl_literal",
+    "keyword.operator": "vpl_operator",
+    "punctuation.operator": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "punctuation": "vpl_operator",
+    "comment.line.double-dash.source.rust": "vpl_null",
+    "comment.line.doc.source.rust": "vpl_null",
+    "comment.block.source.rust": "vpl_null",
+    "comment.start.block.source.rust": "vpl_null",
+    "comment.end.block.source.rust": "vpl_null",
+    "comment.doc": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment.line.doc.source.rust", "regex": "///.*$" },
+      { "token": "comment.line.doc.source.rust", "regex": "//!.*$" },
+      { "token": "comment.line.double-dash.source.rust", "regex": "//.*$" },
+      { "token": "comment.start.block.source.rust", "regex": "/\\*", "next": "block_comment" },
+
+      { "token": "string.quoted.raw.source.rust", "regex": "r#*\".*?\"#*" },
+
+      { "token": "string.quoted.double.source.rust", "regex": "\"", "next": "dq_string" },
+      { "token": "string.quoted.single.source.rust", "regex": "'(?:[^'\\\\]|\\\\.)'" },
+
+      { "token": "constant.numeric.source.rust", "regex": "\\b0x[a-fA-F0-9_]+\\b" },
+      { "token": "constant.numeric.source.rust", "regex": "\\b0b[01_]+\\b" },
+      { "token": "constant.numeric.source.rust", "regex": "\\b0o[0-7_]+\\b" },
+      { "token": "constant.numeric.source.rust", "regex": "\\b[0-9][0-9_]*(?:\\.[0-9_]+)?(?:[eE][+-]?[0-9_]+)?(?:f32|f64|u8|u16|u32|u64|u128|usize|i8|i16|i32|i64|i128|isize)?\\b" },
+
+      { "token": "constant.language.source.rust", "regex": "\\b(?:true|false|Some|None|Ok|Err)\\b" },
+
+      { "token": "keyword.source.rust", "regex": "\\b(?:abstract|alignof|as|async|await|become|box|break|catch|continue|const|crate|default|do|dyn|else|enum|extern|for|final|if|impl|in|let|loop|macro|match|mod|move|mut|offsetof|override|priv|proc|pub|pure|ref|return|self|sizeof|static|struct|super|trait|type|typeof|union|unsafe|unsized|use|virtual|where|while|yield|try)\\b" },
+
+      { "token": "storage.type.source.rust", "regex": "\\b(?:Self|isize|usize|char|bool|u8|u16|u32|u64|u128|f32|f64|i8|i16|i32|i64|i128|str)\\b" },
+
+      { "token": "variable.other.source.rust", "regex": "'[a-zA-Z_][a-zA-Z0-9_]*" },
+
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+
+      { "token": "keyword.operator", "regex": "<<=|>>=|=>|->|==|!=|<=|>=|&&|\\|\\||::|\\.\\.=|\\.\\.|<<|>>|[-+*/%&|^!=<>]=?" },
+
+      { "token": "punctuation.operator", "regex": "[?:,;.]" },
+
+      { "token": "paren.lparen", "regex": "[\\[({]" },
+      { "token": "paren.rparen", "regex": "[\\])}]" },
+
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+
+    "block_comment": [
+      { "token": "comment.start.block.source.rust", "regex": "/\\*", "next": "block_comment" },
+      { "token": "comment.end.block.source.rust", "regex": "\\*/", "next": "start" },
+      { "default_token": "comment.block.source.rust" }
+    ],
+
+    "dq_string": [
+      { "token": "constant.character.escape.source.rust", "regex": "\\\\." },
+      { "token": "string.quoted.double.source.rust", "regex": "\"", "next": "start" },
+      { "default_token": "string.quoted.double.source.rust" }
+    ]
+  }
+}

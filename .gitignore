@@ -1,0 +1,9 @@
+.env
+*.log
+seb/generated/
+scripts/__pycache__/
+exports/
+
+# Local native stack: live DB data + re-downloadable installers (too large for GitHub)
+native/stack/mariadb-data/
+native/stack/_downloads/

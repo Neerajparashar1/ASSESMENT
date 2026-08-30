@@ -1,0 +1,47 @@
+// =====================================================================
+//  Sample question bank - GIFT format
+//  Import:  Question bank > Import > GIFT format
+//  or CLI:  docker compose cp scripts/sample_questions.gift moodle:/tmp/q.gift
+//           docker compose exec -T moodle runuser -u www-data -- \
+//             php admin/cli/import_questions.php --category-id=<ID> --file=/tmp/q.gift --format=gift
+// =====================================================================
+
+$CATEGORY: $course$/Programming Fundamentals
+
+::PF-MCQ-01::[html]Which keyword declares a constant in the C language?
+{
+ =const
+ ~static
+ ~final
+ ~let
+}
+
+::PF-MCQ-02::In Python, what is the time complexity of appending one element to a list (amortised)?
+{
+ =O(1)
+ ~O(n)
+ ~O(log n)
+ ~O(n log n)
+}
+
+::PF-TF-01::In Java, a class can implement multiple interfaces.{TRUE}
+
+::PF-TF-02::In C++, `delete` on a null pointer is undefined behaviour.{FALSE #Deleting a null pointer is a well-defined no-op.}
+
+::PF-SA-01::What single word names the process of hiding implementation detail behind an interface?
+{
+ =encapsulation
+ =Encapsulation
+}
+
+::PF-NUM-01::How many bits are in 4 bytes? {=32}
+
+::PF-MISSING-WORD::A function that calls itself is called a {=recursive ~iterative ~static} function.
+
+::PF-MCQ-03::[html]Which of these are <b>compiled</b> languages (choose all that apply)?
+{
+ ~%50%C
+ ~%50%Rust
+ ~%-50%Python
+ ~%-50%JavaScript
+}

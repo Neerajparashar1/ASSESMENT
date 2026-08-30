@@ -1,0 +1,49 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for MIPS Assembly",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/assembly_x86_highlight_rules.js",
+  "name": "mips-tokenizer",
+  "extension": [".s", ".asm"],
+  "check_rules": false,
+  "override_tokens": {
+    "storage.modifier.mips": "vpl_reserved",
+    "entity.name.section.mips": "vpl_reserved",
+    "support.function.source.mips": "vpl_reserved",
+    "support.function.other.mips": "vpl_reserved",
+    "entity.name.function.mips": "vpl_reserved",
+    "variable.parameter.mips": "vpl_identifier",
+    "entity.name.tag.mips": "vpl_identifier",
+    "identifier": "vpl_identifier",
+    "constant.numeric.mips": "vpl_literal",
+    "string": "vpl_literal",
+    "string.start": "vpl_literal",
+    "string.end": "vpl_literal",
+    "constant.language.escape": "vpl_literal",
+    "keyword.operator": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "comment.assembly": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment.assembly", "regex": "#.*$" },
+      { "token": "storage.modifier.mips", "regex": "\\.(?:align|ascii|asciiz|byte|double|extern|float|globl|space|word)\\b" },
+      { "token": "entity.name.section.mips", "regex": "\\.(?:data|text|kdata|ktext)\\b" },
+      { "token": "variable.parameter.mips", "regex": "\\$(?:zero|at|v[01]|a[0-3]|s[0-7]|t[0-9]|k[01]|gp|sp|fp|ra|[0-9]|[12][0-9]|3[01])" },
+      { "token": "variable.parameter.mips", "regex": "\\$f(?:[0-9]|[12][0-9]|3[0-1])" },
+      { "token": "support.function.source.mips", "regex": "\\b(?:add|addu|addi|addiu|sub|subu|and|andi|or|ori|nor|xor|xori|slt|sltu|slti|sltiu|sll|sllv|srl|sra|srlv|rol|ror|j|jr|jal|beq|bne|lw|sw|lb|sb|lui|move|mfhi|mflo|mthi|mtlo|mult|div|neg|c\\.eq|c\\.le|c\\.lt|bc1[tf]|cvt\\.s\\.[dw]|cvt\\.d\\.[sw]|cvt\\.w\\.[ds])\\b" },
+      { "token": "support.function.other.mips", "regex": "\\b(?:abs|b|beqz|bge|bgt|bgtu|ble|bleu|blt|bltu|bnez|divu|la|li|mul|not|rem|remu|seq|sge|sgt|sle|sne)\\b" },
+      { "token": "entity.name.function.mips", "regex": "\\bsyscall\\b" },
+      { "token": "entity.name.tag.mips", "regex": "\\b[a-zA-Z_][a-zA-Z0-9_]*:" },
+      { "token": "constant.numeric.mips", "regex": "\\b(?:0[xX][a-fA-F0-9]+|\\d+)\\b" },
+      { "token": "string", "regex": "\"(?:[^\\\\]|\\\\.)*?\"" },
+      { "token": "string", "regex": "'(?:[^\\\\]|\\\\.)*?'" },
+      { "token": "keyword.operator", "regex": "<=|>=|==|,|\\(|\\)|\\+|\\-|\\*|\\/|<|>|=" },
+      { "token": "paren.lparen", "regex": "[\\[\\(\\{]" },
+      { "token": "paren.rparen", "regex": "[\\]\\)\\}]" },
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*" },
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ]
+  }
+}

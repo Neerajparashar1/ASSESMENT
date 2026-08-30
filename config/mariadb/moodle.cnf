@@ -1,0 +1,35 @@
+# =====================================================================
+#  PHASE 1 - MariaDB tuning for Moodle (UTF8MB4 + InnoDB)
+#  Mounted at /etc/mysql/conf.d/zz-moodle.cnf
+#  NOTE: most InnoDB sizing is also passed on the command line in
+#  docker-compose.yml so it stays visible/overridable via .env.
+# =====================================================================
+[mysqld]
+character-set-server        = utf8mb4
+collation-server            = utf8mb4_unicode_ci
+skip-character-set-client-handshake
+
+innodb_file_per_table       = 1
+innodb_default_row_format   = dynamic
+# innodb_large_prefix: removed in MariaDB 10.6+, behaviour is always ON
+# when using DYNAMIC/COMPRESSED row format (set above) -> long indexes OK.
+
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method            = O_DIRECT
+innodb_log_file_size           = 256M
+innodb_io_capacity            = 400
+
+max_connections              = 300
+wait_timeout                 = 28800
+interactive_timeout          = 28800
+tmp_table_size               = 64M
+max_allowed_packet           = 128M
+
+# Moodle wants READ-COMMITTED + row-based binlog if replication is on
+transaction-isolation        = READ-COMMITTED
+
+[client]
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4

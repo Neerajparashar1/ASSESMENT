@@ -1,0 +1,104 @@
+{
+  "name": "visualbasic-tokenizer",
+  "extension": [".vb", ".bas", ".cls", ".frm"],
+  "check_rules": false,
+
+  "override_tokens": {
+    "comment": "vpl_null",
+    "comment.line": "vpl_null",
+
+    "string": "vpl_literal",
+    "string.double": "vpl_literal",
+    "string.single": "vpl_literal",
+    "constant": "vpl_literal",
+    "constant.numeric": "vpl_literal",
+    "constant.language": "vpl_literal",
+    "constant.other": "vpl_literal",
+
+    "keyword": "vpl_reserved",
+    "keyword.control": "vpl_reserved",
+    "storage.type": "vpl_reserved",
+    "storage.modifier": "vpl_reserved",
+
+    "keyword.operator": "vpl_operator",
+
+    "identifier": "vpl_identifier",
+
+    "text": "vpl_null",
+    "paren": "vpl_other",
+    "paren.lparen": "vpl_other",
+    "paren.rparen": "vpl_other",
+    "punctuation": "vpl_other",
+    "punctuation.separator": "vpl_other"
+  },
+
+  "states": {
+    "start": [
+      { "token": "text", "regex": "\\s+" },
+
+      { "token": "comment.line", "regex": "'[^\\r\\n]*" },
+      { "token": "comment.line", "regex": "(?i)\\bREM\\b[^\\r\\n]*" },
+
+      {
+        "token": "keyword.control",
+        "regex": "(?i)#\\s*(if|elseif|else|end\\s*if|const|region|end\\s*region|externalchecksum|pragma|disable\\s+warning|enable\\s+warning)\\b"
+      },
+
+      { "token": "meta", "regex": "<\\s*Assembly\\s*:" },
+      { "token": "meta", "regex": "<\\s*AttributeUsage\\b" },
+      { "token": "meta", "regex": "<\\s*[^>]+\\s*>" },
+
+      { "token": "string.double", "regex": "\"(?:\"\"|[^\"])*\"" },
+
+      { "token": "constant.other", "regex": "#[^#\\r\\n]*#" },
+
+      {
+        "token": "constant.numeric",
+        "regex": "(?i)(&H[0-9A-F]+|&O[0-7]+|&B[01]+)\\b"
+      },
+      {
+        "token": "constant.numeric",
+        "regex": "([0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)([a-zA-Z%&!#@]*)\\b"
+      },
+
+      { "token": "constant.language", "regex": "(?i)\\b(True|False|Nothing|Null)\\b" },
+
+      {
+        "token": "storage.modifier",
+        "regex": "(?i)\\b(Public|Private|Protected|Friend|Shared|Shadows|Overloads|Overrides|MustOverride|NotOverridable|Overridable|ReadOnly|WriteOnly|Const|Static|Default|Partial|Narrowing|Widening|WithEvents)\\b"
+      },
+      {
+        "token": "storage.type",
+        "regex": "(?i)\\b(Boolean|Byte|SByte|Short|UShort|Integer|UInteger|Long|ULong|Single|Double|Decimal|Char|String|Date|Object|Variant)\\b"
+      },
+
+      {
+        "token": "keyword.control",
+        "regex": "(?i)\\b(If|Then|Else|ElseIf|End|Select|Case|For|Each|To|Step|Next|While|Do|Loop|Until|Try|Catch|Finally|Throw|Exit|Continue|Return|GoTo|On\\s+Error|Resume|With|Using|SyncLock|Yield|Await|Async)\\b"
+      },
+      {
+        "token": "keyword",
+        "regex": "(?i)\\b(Sub|Function|Property|Get|Set|Let|Class|Structure|Module|Interface|Enum|Namespace|Imports|Inherits|Implements|Handles|AddHandler|RemoveHandler|RaiseEvent|Event|Delegate|Operator|New|MyBase|MyClass|Me|ByVal|ByRef|Optional|ParamArray|Of|As|Is|TypeOf|GetType|NameOf|CType|DirectCast|TryCast|AddressOf|From|Where|Join|Group|Into|Order\\s+By|Distinct|Aggregate|Take|Skip|Let)\\b"
+      },
+
+      {
+        "token": "keyword.operator",
+        "regex": "(?i)\\b(AndAlso|OrElse|And|Or|Xor|Not|Mod|Like|IsNot|Is|In)\\b"
+      },
+      {
+        "token": "keyword.operator",
+        "regex": "<<|>>|<>|<=|>=|\\+|\\-|\\*|\\/|\\\\|\\^|<|>|=|&"
+      },
+
+      { "token": "paren.lparen", "regex": "[\\(]" },
+      { "token": "paren.rparen", "regex": "[\\)]" },
+      { "token": "punctuation.separator", "regex": "[,;:]" },
+      { "token": "punctuation", "regex": "[\\.\\{\\}\\[\\]]" },
+
+      { "token": "identifier", "regex": "\\[[^\\]\\r\\n]+\\]" },
+      { "token": "identifier", "regex": "[A-Za-z_][A-Za-z0-9_]*" },
+
+      { "token": "text", "regex": "." }
+    ]
+  }
+}

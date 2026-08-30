@@ -1,0 +1,84 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Theme Boost Union - Footnote layout include.
+ *
+ * @package   theme_boost_union
+ * @copyright 2022 Luca Bösch, BFH Bern University of Applied Sciences luca.boesch@bfh.ch
+ * @copyright based on code from theme_boost by Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+// Require flavours library.
+require_once($CFG->dirroot . '/theme/boost_union/flavours/flavourslib.php');
+
+// Check if the footnote should be shown on this page layout.
+// If no layout is selected, the footnote will not be shown on any layout.
+$footnotelayoutssetting = get_config('theme_boost_union', 'footnotelayouts');
+if (empty($footnotelayoutssetting)) {
+    return;
+}
+// The setting contains a comma separated list of layouts, so we need to split it into an array.
+$footnotelayoutsarray = explode(',', $footnotelayoutssetting);
+// As a fallback, also show the footnote if the active layout file is columns2.php.
+// columns2.php is a legacy layout file which is no longer registered in $THEME->layouts
+// but may still be used by legacy plugins, so $PAGE->pagelayout would never match it
+// in the configured list above.
+$currentlayoutfile = $PAGE->theme->layouts[$PAGE->pagelayout]['file'] ?? '';
+$iscolumns2fallback = ($currentlayoutfile === 'columns2.php');
+// If the current page layout is not in the list of layouts, the footnote will not be shown on this page.
+if (!in_array($PAGE->pagelayout, $footnotelayoutsarray) && !$iscolumns2fallback) {
+    return;
+}
+
+// Get footnote setting.
+$footnotesetting = get_config('theme_boost_union', 'footnote');
+$format = FORMAT_HTML;
+
+// If we are on MWP.
+if (\theme_boost_union\local\mwp::extension_present() == true) {
+    // Call the BU MWP class method only if the class and method exist.
+    if (
+        class_exists('\\local_boost_union_mwp\\local\\branding') &&
+            method_exists('\\local_boost_union_mwp\\local\\branding', 'get_overridden_footertext')
+    ) {
+        // Get the potentially branding-overridden footnote.
+        $footnotesetting = \local_boost_union_mwp\local\branding::get_overridden_footertext($footnotesetting);
+    }
+}
+
+// If any flavour applies to this page and defines a non-empty footnote.
+$flavour = theme_boost_union_get_flavour_which_applies();
+if ($flavour !== null && !html_is_blank($flavour->content_footnote)) {
+    // Override the footnote setting with the flavour specific footnote.
+    $footnotesetting = $flavour->content_footnote;
+    $format = $flavour->content_footnote_format;
+}
+
+// Only proceed if text area does not only contains empty tags.
+if (!html_is_blank($footnotesetting)) {
+    // Use format_text function to enable multilanguage filtering.
+    $footnotesetting = format_text($footnotesetting, $format, ['noclean' => true]);
+
+    // Add marker to show the footnote to templatecontext.
+    $templatecontext['showfootnote'] = true;
+
+    // Add footnote to templatecontext.
+    $templatecontext['footnotesetting'] = $footnotesetting;
+}

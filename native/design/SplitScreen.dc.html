@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: #6d1422; text-decoration: none; }
+    a:hover { color: #8a1b2c; }
+  </style>
+</helmet>
+
+<div style="min-height: 900px; display: flex;">
+
+  <!-- brand panel -->
+  <div style="flex: 1.05; padding: 64px 58px; display: flex; flex-direction: column; justify-content: space-between;
+       border-right: 4px solid #c9a24b; color: #ffffff;
+       background:
+         radial-gradient(760px 460px at 112% 6%, rgba(201, 162, 75, 0.22), transparent 55%),
+         linear-gradient(155deg, #6d1422 0%, #4a0d17 60%, #2b0910 100%);">
+
+    <svg width="88" height="88" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="68" height="68" rx="15" fill="#8a1b2c"></rect>
+      <rect x="3" y="3" width="66" height="66" rx="14" stroke="#c9a24b" stroke-opacity="0.6" stroke-width="1.6"></rect>
+      <rect x="17" y="41" width="20" height="6.5" rx="2" fill="#f3e6c7"></rect>
+      <rect x="17" y="31" width="30" height="6.5" rx="2" fill="#f3e6c7"></rect>
+      <rect x="17" y="21" width="38" height="6.5" rx="2" fill="#f3e6c7"></rect>
+      <text x="36" y="62" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="10" letter-spacing="3" fill="#f3e6c7">ITM</text>
+    </svg>
+
+    <div style="display: flex; flex-direction: column; gap: 18px; max-width: 460px;">
+      <div style="font-family: 'Source Serif 4', Georgia, serif; font-weight: 700; font-size: 44px; line-height: 1.1;">
+        ITM Group of Institutions
+        <span style="display: block; font-size: 22px; font-weight: 600; color: #e7c98f; margin-top: 6px;">Gwalior</span>
+      </div>
+      <div style="width: 80px; height: 3px; background: #c9a24b;"></div>
+      <div style="font-size: 12px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; color: #d9b978;">
+        Online Examination Portal
+      </div>
+      <div style="font-size: 15px; line-height: 1.6; color: rgba(255, 255, 255, 0.82);">
+        Secure, AI-proctored assessments &#8212; Safe Exam Browser lockdown, live webcam
+        proctoring, and shuffled question banks for every programme.
+      </div>
+    </div>
+
+    <div style="font-size: 12px; letter-spacing: 1px; color: rgba(255, 255, 255, 0.55);">
+      Examination Cell &#183; ITM GOI
+    </div>
+  </div>
+
+  <!-- form panel -->
+  <div style="flex: 1; background: #f7f4f2; display: flex; align-items: center; justify-content: center; padding: 48px;">
+    <div style="width: 380px; background: #ffffff; border-radius: 16px; padding: 38px 36px;
+         border: 1px solid #ece5e3; box-shadow: 0 34px 70px -34px rgba(74, 13, 23, 0.35);">
+
+      <div style="font-family: 'Source Serif 4', Georgia, serif; font-weight: 700; font-size: 23px; color: #4a0d17;">
+        Sign in
+      </div>
+      <div style="font-size: 13px; color: #5f575a; margin: 4px 0 24px;">
+        Use your ITM GOI account to continue
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="s-user" style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #21181a;">Username</label>
+          <input id="s-user" type="text" value="s2026001" style="width: 100%; padding: 11px 13px; border: 1px solid #e7dfe0; border-radius: 10px; font-family: inherit; font-size: 14px; color: #21181a;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="s-pass" style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #21181a;">Password</label>
+          <input id="s-pass" type="password" value="password" style="width: 100%; padding: 11px 13px; border: 1px solid #e7dfe0; border-radius: 10px; font-family: inherit; font-size: 14px; color: #21181a;">
+        </div>
+      </div>
+
+      <div style="text-align: right; margin: 8px 0 18px;">
+        <a href="#" style="font-size: 12.5px; font-weight: 500;">Lost password?</a>
+      </div>
+
+      <button type="button" style="width: 100%; padding: 12px 16px; border: 0; border-radius: 10px;
+           background: linear-gradient(135deg, #8a1b2c, #6d1422); color: #ffffff;
+           font-family: inherit; font-size: 15px; font-weight: 600; letter-spacing: 0.3px; cursor: pointer;
+           box-shadow: 0 12px 22px -12px rgba(138, 27, 44, 0.9);">
+        Log in
+      </button>
+
+      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed #e7dfe0;
+           text-align: center; font-size: 11px; letter-spacing: 0.4px; color: #7a6d6f;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a9822f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 6px;">
+          <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"></path>
+          <path d="M9 12l2 2 4-4"></path>
+        </svg>
+        Secure &#183; AI-proctored
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

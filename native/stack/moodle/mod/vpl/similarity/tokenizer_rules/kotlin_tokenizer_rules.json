@@ -1,0 +1,78 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Kotlin",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/kotlin_highlight_rules.js",
+  "name": "kotlin-tokenizer",
+  "extension": [".kt", ".kts"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "keyword.other.kotlin": "vpl_reserved",
+    "storage.modifier.kotlin": "vpl_reserved",
+    "storage.type.buildin.kotlin": "vpl_reserved",
+    "constant.language.kotlin": "vpl_literal",
+    "identifier": "vpl_identifier",
+    "entity.name.function.kotlin": "vpl_identifier",
+    "entity.name.variable.kotlin": "vpl_identifier",
+    "entity.name.package.kotlin": "vpl_identifier",
+    "variable.parameter.function.kotlin": "vpl_identifier",
+    "variable.parameter.template.kotlin": "vpl_identifier",
+    "string": "vpl_literal",
+    "constant.numeric.kotlin": "vpl_literal",
+    "constant.other.kotlin": "vpl_literal",
+    "constant.character.escape.kotlin": "vpl_literal",
+    "keyword.operator.kotlin": "vpl_operator",
+    "keyword.operator.assignment.kotlin": "vpl_operator",
+    "keyword.operator.declaration.kotlin": "vpl_operator",
+    "keyword.operator.dot.kotlin": "vpl_operator",
+    "keyword.operator.increment-decrement.kotlin": "vpl_operator",
+    "keyword.operator.arithmetic.kotlin": "vpl_operator",
+    "keyword.operator.arithmetic.assign.kotlin": "vpl_operator",
+    "keyword.operator.logical.kotlin": "vpl_operator",
+    "keyword.operator.range.kotlin": "vpl_operator",
+    "punctuation.kotlin": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "comment": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment", "regex": "\\/\\*", "next": "block_comment" },
+      { "token": "comment", "regex": "\\/\\/.*$" },
+      { "token": "constant.numeric.kotlin", "regex": "\\b(?:0[xX][0-9a-fA-F]+|(?:[0-9]+\\.?[0-9]*|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?)(?:[LlFfUuDd]|UL|ul)?\\b" },
+      { "token": "constant.language.kotlin", "regex": "\\b(?:true|false|null|this|super)\\b" },
+      { "token": "string", "regex": "\"\"\"", "next": "triple_string" },
+      { "token": "string", "regex": "\"", "next": "dq_string" },
+      { "token": "string", "regex": "'", "next": "sq_string" },
+      { "token": "string", "regex": "`", "next": "bt_string" },
+      { "token": "keyword.operator.kotlin", "regex": "===|!==|==|!=|<=|>=|->|::|\\?\\.|\\.\\.|\\?:|<<=|>>=|\\+=|-=|\\*=|\\/=|%=|&&|\\|\\||\\-\\-|\\+\\+|!!|!|\\.|\\+|\\-|\\*|\\/|%|\\^|=|<|>|:" },
+      { "token": "punctuation.kotlin", "regex": "[;,]" },
+      { "token": "paren.lparen", "regex": "[{(\\[]"},
+      { "token": "paren.rparen", "regex": "[})\\]]"},
+      { "token": "keyword", "regex": "\\b(?:package|import|class|object|interface|fun|constructor|if|else|while|for|do|return|when|where|break|continue|try|catch|finally|throw|in|is|as|assert|var|val|public|private|protected|abstract|final|enum|open|override|inline|vararg|lazy|internal|data|tailrec|operator|infix|const|yield|typealias|typeof|sealed|inner|value|lateinit|external|suspend|noinline|crossinline|reified|expect|actual)\\b" },
+      { "token": "identifier", "regex": "[a-zA-Z_][\\w]*" },
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+    "block_comment": [
+      { "token": "comment", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "comment" }
+    ],
+    "triple_string": [
+      { "token": "string", "regex": "\"\"\"", "next": "start" },
+      { "default_token": "string" }
+    ],
+    "dq_string": [
+      { "token": "string", "regex": "\"", "next": "start" },
+      { "default_token": "string" }
+    ],
+    "sq_string": [
+      { "token": "string", "regex": "'", "next": "start" },
+      { "default_token": "string" }
+    ],
+    "bt_string": [
+      { "token": "string", "regex": "`", "next": "start" },
+      { "default_token": "string" }
+    ]
+  }
+}

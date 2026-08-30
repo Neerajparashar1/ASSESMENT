@@ -1,0 +1,61 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Eiffel",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/eiffel_highlight_rules.js",
+  "name": "eiffel-tokenizer",
+  "extension": [".e", ".eiffel"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_literal", "regex": "\"\\[", "next": "aligned_verbatim_string" },
+      { "token": "vpl_literal", "regex": "\"\\{", "next": "non_aligned_verbatim_string" },
+
+      {
+        "token": "vpl_literal",
+        "regex": "\"(?:[^%\\b\\f\\n\\r\\v]|%[A-DFHLNQR-V%\"'()<>]|%\\/(?:0[xX][\\da-fA-F](?:_*[\\da-fA-F])*|0[cC][0-7](?:_*[0-7])*|0[bB][01](?:_*[01])*|\\d(?:_*\\d)*)\\/)*?\""
+      },
+
+      { "token": "vpl_null", "regex": "--.*$" },
+
+      {
+        "token": "vpl_literal",
+        "regex": "'(?:[^%\\b\\f\\n\\r\\t\\v]|%[A-DFHLNQR-V%\"'()<>]|%\\/(?:0[xX][\\da-fA-F](?:_*[\\da-fA-F])*|0[cC][0-7](?:_*[0-7])*|0[bB][01](?:_*[01])*|\\d(?:_*\\d)*)\\/)'"
+      },
+
+      { "token": "vpl_literal", "regex": "\\b0(?:[xX][\\da-fA-F](?:_*[\\da-fA-F])*|[cC][0-7](?:_*[0-7])*|[bB][01](?:_*[01])*)\\b" },
+      { "token": "vpl_literal", "regex": "(?:\\d(?:_*\\d)*)?\\.(?:(?:\\d(?:_*\\d)*)?[eE][+-]?)?\\d(?:_*\\d)*|\\d(?:_*\\d)*\\.?" },
+
+      { "token": "vpl_operator", "regex": "[\\[({]|<<|\\|\\(" },
+      { "token": "vpl_operator", "regex": "[\\])}]|>>|\\|\\)" },
+
+      { "token": "vpl_operator", "regex": ":=|->|\\.(?=\\w)|[;,:?]" },
+      { "token": "vpl_operator", "regex": "\\\\\\\\|\\|\\.\\.\\.|\\.\\.|\\/[~\\/]?|[><\\/]=?|[-+*^=~]" },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:across|agent|alias|all|attached|as|assign|attribute|check|class|convert|create|debug|deferred|detachable|do|else|elseif|end|ensure|expanded|export|external|feature|from|frozen|if|inherit|inspect|invariant|like|local|loop|not|note|obsolete|old|once|Precursor|redefine|rename|require|rescue|retry|select|separate|some|then|undefine|until|variant|when|and|implies|or|xor)\\b"
+      },
+
+      {
+        "token": "vpl_literal",
+        "regex": "\\b(?:Void|True|False|Current|Result)\\b"
+      },
+
+      { "token": "vpl_reserved", "regex": "\\b[A-Z][A-Z\\d_]*\\b" },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z][a-zA-Z\\d_]*\\b" },
+
+      { "token": "vpl_null", "regex": "\\s+" }
+    ],
+
+    "aligned_verbatim_string": [
+      { "token": "vpl_literal", "regex": "\\]\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "non_aligned_verbatim_string": [
+      { "token": "vpl_literal", "regex": "\\}\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

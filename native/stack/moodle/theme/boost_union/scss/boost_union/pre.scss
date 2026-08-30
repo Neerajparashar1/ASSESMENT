@@ -1,0 +1,22 @@
+/*=======================================
+ * Settings: Smart menus.
+ ======================================*/
+
+/*---------------------------------------
+ * Menu bar.
+ --------------------------------------*/
+
+/* Height of the smart menu menubar.
+   It is used to define the height of the menubar and to move the position of all fixed elements
+   which are on the page further down. */
+$bu-smartmenu-menubar-height: 40px;
+
+
+/*---------------------------------------
+ * Bottom bar.
+ --------------------------------------*/
+
+/* Height of the smart menu bottombar.
+   It is used to define the height of the bottombar and to move the position of all fixed elements
+   which are on the page further up. */
+$bu-smartmenu-bottombar-height: 60px;

@@ -1,0 +1,52 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for VHDL",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/vhdl_highlight_rules.js",
+  "name": "vhdl-tokenizer",
+  "extension": [".vhd", ".vhdl"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "storage.type": "vpl_reserved",
+    "storage.modifier": "vpl_reserved",
+    "constant.language": "vpl_literal",
+    "constant.numeric": "vpl_literal",
+    "string": "vpl_literal",
+    "identifier": "vpl_identifier",
+    "keyword.operator": "vpl_operator",
+    "punctuation.operator": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "comment": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment", "regex": "--.*$" },
+
+      { "token": "string", "regex": "\".*?\"" },
+      { "token": "string", "regex": "'.*?'" },
+
+      { "token": "constant.numeric", "regex": "[+-]?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\b" },
+
+      { "token": "constant.language", "regex": "(?i)\\b(?:true|false|null)\\b" },
+
+      { "token": "keyword", "regex": "(?i)\\b(?:access|after|alias|all|architecture|assert|attribute|begin|block|body|buffer|bus|case|component|configuration|context|disconnect|downto|else|elsif|end|entity|exit|file|for|force|function|generate|generic|group|guarded|if|impure|in|inertial|inout|is|label|library|linkage|literal|loop|map|new|next|of|on|or|open|others|out|package|parameter|port|postponed|procedure|process|protected|pure|range|record|register|reject|release|report|return|select|severity|shared|signal|subtype|then|to|transport|type|unaffected|units|until|use|variable|wait|when|while|with)\\b" },
+
+      { "token": "storage.type", "regex": "(?i)\\b(?:bit|bit_vector|boolean|character|integer|line|natural|positive|real|signed|std_logic|std_logic_vector|string|text|time|unsigned)\\b" },
+
+      { "token": "storage.modifier", "regex": "(?i)\\b(?:array|constant)\\b" },
+
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+
+      { "token": "keyword.operator", "regex": ":=|\\/=|\\*\\*|>=|<=|<>|=>|&|\\*|\\+|\\-|\\/|<|>|=|\\|" },
+
+      { "token": "punctuation.operator", "regex": "[':,;.]" },
+
+      { "token": "paren.lparen", "regex": "[\\[(]" },
+      { "token": "paren.rparen", "regex": "[\\])]" },
+
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ]
+  }
+}

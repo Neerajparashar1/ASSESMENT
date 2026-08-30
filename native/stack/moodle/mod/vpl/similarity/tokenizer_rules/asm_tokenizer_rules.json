@@ -1,0 +1,124 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for NASM",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/assembly_x86_highlight_rules.js",
+  "name": "nasm-tokenizer",
+  "extension": [".asm", ".nasm", ".inc"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": ";.*$" },
+      { "token": "vpl_null", "regex": "#.*$" },
+
+      { "token": "vpl_literal", "regex": "'([^\\\\']|\\\\.)*'" },
+      { "token": "vpl_literal", "regex": "\"([^\\\\\"]|\\\\.)*\"" },
+
+      { "token": "vpl_literal", "regex": "(?i)\\b0x[0-9a-f]+\\b" },
+      { "token": "vpl_literal", "regex": "(?i)\\b\\$[0-9a-f]+\\b" },
+      { "token": "vpl_literal", "regex": "(?i)\\b[0-9a-f]+h\\b" },
+      { "token": "vpl_literal", "regex": "(?i)\\b[01]+b\\b" },
+      { "token": "vpl_literal", "regex": "(?i)\\b[0-7]+[oq]\\b" },
+      { "token": "vpl_literal", "regex": "\\b[0-9]+\\b" },
+
+      { "token": "vpl_operator", "regex": "[\\[\\]\\(\\)\\{\\}]" },
+      { "token": "vpl_operator", "regex": "[,:]" },
+      { "token": "vpl_operator", "regex": "<<|>>|[+\\-*/%&|^~]" },
+
+      {
+        "token": ["vpl_null", "vpl_reserved"],
+        "regex": "^(\\s*)(?i)(bits|use16|use32|use64|default|section|segment|absolute|org|align|alignb|sectalign|cpu|global|extern|common|import|export|group|wrt)\\b"
+      },
+
+      {
+        "token": ["vpl_null", "vpl_reserved", "vpl_null", "vpl_identifier"],
+        "regex": "^(\\s*)(?i)(struc)\\b(\\s+)([_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*)\\b"
+      },
+      { "token": "vpl_reserved", "regex": "^(?i)endstruc\\b" },
+
+      {
+        "token": ["vpl_null", "vpl_reserved", "vpl_null", "vpl_identifier", "vpl_null", "vpl_literal"],
+        "regex": "^(\\s*)(%macro)\\b(\\s+)([_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*)\\b(\\s+)([0-9]+)\\b"
+      },
+      { "token": "vpl_reserved", "regex": "^(?i)%endmacro\\b" },
+
+      {
+        "token": ["vpl_null", "vpl_reserved", "vpl_null", "vpl_identifier"],
+        "regex": "^(\\s*)(?i)(%define|%xdefine|%idefine|%undef|%assign|%defstr|%strcat|%strlen|%substr|%rotate|%rep|%endrep|%include|%if|%elif|%else|%endif|%(?:el)?ifdef|%(?:el)?ifidn|%(?:el)?ifidni|%(?:el)?ifid|%(?:el)?ifnum|%(?:el)?ifstr|%(?:el)?ifempty|%error|%warning|%fatal|%line|%push|%pop|%repl|%arg|%local|%stacksize|%comment|%endcomment)\\b(\\s*)([_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*)?"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:db|dw|dd|dq|dt|do|dy|dz|resb|resw|resd|resq|rest|reso|resy|resz|equ|times|incbin)\\b"
+      },
+
+      {
+        "token": "vpl_operator",
+        "regex": "(?i)\\b(?:byte|word|dword|qword|tword|oword|yword|zword|far|near|short|strict)\\b"
+      },
+
+      { "token": "vpl_identifier", "regex": "^\\s*%%[_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*:" },
+      { "token": "vpl_identifier", "regex": "^\\s*%\\$[_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*:" },
+      { "token": "vpl_identifier", "regex": "^\\s*\\.[_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*:" },
+      { "token": "vpl_identifier", "regex": "^\\s*[_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*:" },
+
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:cs|ds|es|fs|gs|ss)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:rax|rbx|rcx|rdx|rsi|rdi|rbp|rsp|r8|r9|r10|r11|r12|r13|r14|r15)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:eax|ebx|ecx|edx|esi|edi|ebp|esp)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:ax|bx|cx|dx|si|di|bp|sp)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:al|ah|bl|bh|cl|ch|dl|dh|spl|bpl|sil|dil|r8b|r9b|r10b|r11b|r12b|r13b|r14b|r15b)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:r8w|r9w|r10w|r11w|r12w|r13w|r14w|r15w|r8d|r9d|r10d|r11d|r12d|r13d|r14d|r15d)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:rip|eip|ip)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:xmm(?:[0-9]|1[0-5])|ymm(?:[0-9]|1[0-5])|zmm(?:[0-9]|[12][0-9]|3[01]))\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:mm[0-7]|st\\(?[0-7]?\\)?)\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:cr[0-8]|dr[0-7]|tr[3-7])\\b"
+      },
+      {
+        "token": "vpl_identifier",
+        "regex": "(?i)\\b(?:rflags|eflags|flags)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:mov|lea|push|pop|call|ret|jmp|j(?:a|ae|b|be|c|cxz|e|ecxz|g|ge|l|le|na|nae|nb|nbe|nc|ne|ng|nge|nl|nle|no|np|ns|nz|o|p|pe|po|rcxz|s|z)|loop(?:e|ne|nz|z)?|int|syscall|sysenter|sysexit|sysret|nop|hlt|cli|sti)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:add|adc|sub|sbb|mul|imul|div|idiv|and|or|xor|not|neg|cmp|test|inc|dec|shl|shr|sar|sal|rol|ror|rcl|rcr|xchg|xadd|cmpxchg|movzx|movsx|movsxd|set(?:a|ae|b|be|c|e|g|ge|l|le|na|nae|nb|nbe|nc|ne|ng|nge|nl|nle|no|np|ns|nz|o|p|pe|po|s|z)|cmov(?:a|ae|b|be|c|e|g|ge|l|le|na|nae|nb|nbe|nc|ne|ng|nge|nl|nle|no|np|ns|nz|o|p|pe|po|s|z))\\b"
+      },
+
+      { "token": "vpl_identifier", "regex": "\\b[_a-zA-Z.$?@][_a-zA-Z0-9.$?@]*\\b" },
+
+      { "token": "vpl_null", "regex": "\\s+" }
+    ]
+  }
+}

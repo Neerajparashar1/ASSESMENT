@@ -1,0 +1,66 @@
+{
+  "vpl_doc_01": "Tokenizer for Prolog — VPLT rules",
+  "vpl_doc_02": "Rules derived from Ace Editor's highlighter for Prolog",
+  "vpl_doc_03": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/prolog_highlight_rules.js",
+  "name": "prolog-tokenizer",
+  "extension": [".pl", ".plg", ".pro", ".prolog"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null",       "regex": "%.*$" },
+      { "token": "vpl_null",       "regex": "/\\*", "next": "block_comment" },
+
+      { "token": "vpl_literal",    "regex": "0'(?:\\\\.|.)" },
+      { "token": "vpl_literal",    "regex": "0[bB][01]+\\b" },
+      { "token": "vpl_literal",    "regex": "0[oO][0-7]+\\b" },
+      { "token": "vpl_literal",    "regex": "0[xX][0-9a-fA-F]+\\b" },
+      { "token": "vpl_literal",    "regex": "\\b\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\b" },
+
+      { "token": "vpl_literal",    "regex": "'",  "next": "sq_string" },
+      { "token": "vpl_literal",    "regex": "\"", "next": "dq_string" },
+      { "token": "vpl_literal",    "regex": "`",  "next": "bt_string" },
+
+      { "token": "vpl_reserved",   "regex": ":-|-->|\\?-" },
+
+      { "token": "vpl_reserved",   "regex": "\\b(?:abolish|assert|asserta|assertz|atom|atomic|call|catch|char_code|clause|compound|copy_term|current_op|current_prolog_flag|dynamic|findall|format|functor|ground|halt|integer|is_list|length|listing|msort|nl|nonvar|number|number_chars|number_codes|op|print|read|read_term|retract|retractall|see|seen|set_prolog_flag|sort|succ|tab|tell|told|throw|use_module|var|write|write_canonical|write_term|writef|writeln)\\b" },
+
+      { "token": "vpl_literal",    "regex": "\\b(?:true|fail|false)\\b" },
+
+      { "token": "vpl_identifier", "regex": "\\b_\\b" },
+      { "token": "vpl_identifier", "regex": "\\b[A-Z_][a-zA-Z0-9_]*\\b" },
+      { "token": "vpl_identifier", "regex": "\\b[a-z][a-zA-Z0-9_]*\\b" },
+
+      { "token": "vpl_operator",   "regex": "@>=|@=<|=\\.\\.|=:=|=\\\\=|\\\\==|\\\\\\+|@>|@<|>=|=<|==|\\\\=|->|//|/\\\\|\\\\/|\\*\\*|<<|>>|=|<|>|\\+|-|\\*|/|\\\\|\\^|~|!|;" },
+      { "token": "vpl_operator",   "regex": "\\b(?:is|mod|rem|div|xor|rdiv|max|min|not)\\b" },
+      { "token": "vpl_operator",   "regex": "[,|.\\(\\)\\[\\]\\{\\}]" },
+
+      { "token": "vpl_null",       "regex": "\\s+" },
+      { "token": "vpl_identifier", "regex": "." }
+    ],
+
+    "block_comment": [
+      { "token": "vpl_null", "regex": "\\*/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "sq_string": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "''" },
+      { "token": "vpl_literal", "regex": "'", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "dq_string": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "bt_string": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "`", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

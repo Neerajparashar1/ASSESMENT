@@ -1,0 +1,14 @@
+div.vpl_student_picture_in_menu {
+    position: absolute;
+    right: 50px;
+    z-index: 50;
+}
+
+#page-mod-vpl-view span.alert-warning,
+#page-mod-vpl-view span.alert-success,
+#page-mod-vpl-view span.alert-info,
+#page-mod-vpl-view span.alert-danger {
+    display: inline;
+    margin: 0;
+    padding: 0 0.5em 0 0.5em;
+}

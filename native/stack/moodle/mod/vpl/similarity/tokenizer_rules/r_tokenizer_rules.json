@@ -1,0 +1,65 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for R",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/r_highlight_rules.js",
+  "name": "r-tokenizer",
+  "extension": [".r", ".R"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "constant.language": "vpl_literal",
+    "constant.language.boolean": "vpl_literal",
+    "constant.numeric": "vpl_literal",
+    "string": "vpl_literal",
+    "identifier": "vpl_identifier",
+    "variable.language": "vpl_identifier",
+    "keyword.operator": "vpl_operator",
+    "paren.keyword.operator": "vpl_operator",
+    "punctuation": "vpl_operator",
+    "comment": "vpl_null",
+    "comment.sectionhead": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment.sectionhead", "regex": "#+(?!').*(?:----|====|####)\\s*$" },
+      { "token": "comment", "regex": "#.*$" },
+
+      { "token": "string", "regex": "\"", "next": "qqstring" },
+      { "token": "string", "regex": "'", "next": "qstring" },
+
+      { "token": "constant.numeric", "regex": "0[xX][0-9a-fA-F]+[Li]?\\b" },
+      { "token": "constant.numeric", "regex": "\\d+L\\b" },
+      { "token": "constant.numeric", "regex": "\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b" },
+      { "token": "constant.numeric", "regex": "\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b" },
+
+      { "token": "constant.language.boolean", "regex": "\\b(?:TRUE|FALSE|T|F)\\b" },
+
+      { "token": "constant.language", "regex": "\\b(?:NULL|NA|Inf|NaN|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b" },
+
+      { "token": "identifier", "regex": "`.*?`" },
+
+      { "token": "keyword", "regex": "\\b(?:function|if|in|break|next|repeat|else|for|return|switch|while|try|tryCatch|stop|warning|require|library|attach|detach|source|setMethod|setGeneric|setGroupGeneric|setClass)\\b" },
+
+      { "token": "identifier", "regex": "[a-zA-Z.][a-zA-Z0-9._]*\\b" },
+
+      { "token": "keyword.operator", "regex": "%%|>=|<=|==|!=|\\->|<\\-|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||~|\\$|:" },
+      { "token": "keyword.operator", "regex": "%.*?%" },
+
+      { "token": "paren.keyword.operator", "regex": "[\\[\\(\\{]" },
+      { "token": "paren.keyword.operator", "regex": "[\\]\\)\\}]" },
+
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+
+    "qqstring": [
+      { "token": "string", "regex": "\"", "next": "start" },
+      { "default_token": "string" }
+    ],
+
+    "qstring": [
+      { "token": "string", "regex": "'", "next": "start" },
+      { "default_token": "string" }
+    ]
+  }
+}

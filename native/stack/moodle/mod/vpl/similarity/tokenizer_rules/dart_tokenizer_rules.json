@@ -1,0 +1,115 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Dart",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/dart_highlight_rules.js",
+  "name": "dart-tokenizer",
+  "extension": [".dart"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "\\/\\/.*$" },
+      { "token": "vpl_null", "regex": "^\\s*#!.*$" },
+
+      { "token": "vpl_null", "regex": "\\/\\*\\*(?!\\/)", "next": "doc-comment" },
+      { "token": "vpl_null", "regex": "\\/\\*", "next": "comment" },
+
+      { "token": "vpl_reserved", "regex": "\\b(?:library|import|export|part|of|show|hide)\\b" },
+      { "token": ["vpl_reserved", "vpl_null"], "regex": "\\b(prefix)(\\s*:)" },
+      { "token": "vpl_reserved", "regex": "\\bas\\b" },
+
+      { "token": "vpl_literal", "regex": "\\b(?:true|false|null)\\b" },
+      { "token": "vpl_reserved", "regex": "\\b(?:this|super)\\b" },
+
+      { "token": "vpl_reserved", "regex": "\\b(?:try|catch|finally|throw|rethrow|assert|break|case|continue|default|do|else|for|if|in|return|switch|while|new|deferred|async|await|yield)\\b" },
+      { "token": "vpl_reserved", "regex": "\\b(?:abstract|class|extends|external|factory|implements|get|native|operator|set|typedef|with|enum|mixin|extension|on|late|required|covariant)\\b" },
+      { "token": "vpl_reserved", "regex": "\\b(?:static|final|const)\\b" },
+      { "token": "vpl_reserved", "regex": "\\b(?:void|bool|num|int|double|dynamic|var|String)\\b" },
+
+      { "token": "vpl_operator", "regex": "\\?\\?=|\\?\\.|\\.\\.|\\?\\?|=>|\\?|:" },
+      { "token": "vpl_operator", "regex": "\\b(?:is\\!?)\\b" },
+
+      { "token": "vpl_operator", "regex": "((?:&|\\^|\\||<<|>>>?)=)" },
+      { "token": "vpl_operator", "regex": "((?:[+*/%-]|\\~\\/|\\~)=)" },
+      { "token": "vpl_operator", "regex": "(==|!=|<=?|>=?)" },
+      { "token": "vpl_operator", "regex": "(<<|>>>?|~|\\^|\\||&)" },
+      { "token": "vpl_operator", "regex": "=" },
+
+      { "token": "vpl_operator", "regex": "(\\-\\-|\\+\\+)" },
+      { "token": "vpl_operator", "regex": "(!|&&|\\|\\|)" },
+      { "token": "vpl_operator", "regex": "(\\-|\\+|\\*|\\/|\\~\\/|%)" },
+
+      { "token": "vpl_literal", "regex": "0[xX][0-9a-fA-F]+\\b" },
+      { "token": "vpl_literal", "regex": "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b" },
+
+      { "token": "vpl_literal", "regex": "r'''", "next": "raw_qdoc" },
+      { "token": "vpl_literal", "regex": "r\"\"\"", "next": "raw_qqdoc" },
+      { "token": "vpl_literal", "regex": "r'", "next": "raw_qstring" },
+      { "token": "vpl_literal", "regex": "r\"", "next": "raw_qqstring" },
+
+      { "token": "vpl_literal", "regex": "'''", "next": "qdoc" },
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "qqdoc" },
+      { "token": "vpl_literal", "regex": "'", "next": "qstring" },
+      { "token": "vpl_literal", "regex": "\"", "next": "qqstring" },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z_$][a-zA-Z0-9_$]*\\b" },
+
+      { "token": "vpl_operator", "regex": "[\\[\\]\\(\\)\\{\\}]" },
+      { "token": "vpl_operator", "regex": "[,;\\.]" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+    "doc-comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "qdoc": [
+      { "token": "vpl_literal", "regex": "'''", "next": "start" },
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "\\$(?:\\w+|\\{[^\"'}]+\\})?" },
+      { "default_token": "vpl_literal" }
+    ],
+    "qqdoc": [
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "start" },
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "\\$(?:\\w+|\\{[^\"'}]+\\})?" },
+      { "default_token": "vpl_literal" }
+    ],
+    "qstring": [
+      { "token": "vpl_literal", "regex": "'|$", "next": "start" },
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "\\$(?:\\w+|\\{[^\"'}]+\\})?" },
+      { "default_token": "vpl_literal" }
+    ],
+    "qqstring": [
+      { "token": "vpl_literal", "regex": "\"|$", "next": "start" },
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "\\$(?:\\w+|\\{[^\"'}]+\\})?" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "raw_qdoc": [
+      { "token": "vpl_literal", "regex": "'''", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+    "raw_qqdoc": [
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+    "raw_qstring": [
+      { "token": "vpl_literal", "regex": "'|$", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+    "raw_qqstring": [
+      { "token": "vpl_literal", "regex": "\"|$", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

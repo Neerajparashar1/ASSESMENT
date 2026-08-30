@@ -1,0 +1,7 @@
+.git
+.env
+*.log
+seb/generated
+exports
+scripts/__pycache__
+README.md

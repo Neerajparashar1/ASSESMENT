@@ -1,0 +1,139 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Julia",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/julia_highlight_rules.js",
+  "name": "julia-tokenizer",
+  "extension": [".jl"],
+  "check_rules": false,
+
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "keyword.control": "vpl_reserved",
+    "keyword.control.type": "vpl_reserved",
+    "keyword.other": "vpl_reserved",
+    "storage.modifier.variable": "vpl_reserved",
+
+    "identifier": "vpl_identifier",
+    "entity.name.function": "vpl_identifier",
+    "entity.name.type": "vpl_identifier",
+    "variable": "vpl_identifier",
+    "variable.macro": "vpl_identifier",
+
+    "string": "vpl_literal",
+    "string.quoted.single": "vpl_literal",
+    "string.quoted.double": "vpl_literal",
+    "string.quoted.custom-double": "vpl_literal",
+    "string.quoted.backtick": "vpl_literal",
+
+    "constant.numeric": "vpl_literal",
+    "constant.language": "vpl_literal",
+    "constant.character.escape": "vpl_literal",
+
+    "keyword.operator": "vpl_operator",
+    "keyword.operator.arithmetic": "vpl_operator",
+    "keyword.operator.boolean": "vpl_operator",
+    "keyword.operator.range": "vpl_operator",
+    "keyword.operator.relation": "vpl_operator",
+    "keyword.operator.shift": "vpl_operator",
+    "keyword.operator.bitwise": "vpl_operator",
+    "keyword.operator.update": "vpl_operator",
+    "keyword.operator.ternary": "vpl_operator",
+    "keyword.operator.arrow": "vpl_operator",
+    "keyword.operator.isa": "vpl_operator",
+
+    "keyword.bracket": "vpl_operator",
+
+    "comment": "vpl_null",
+    "comment.line": "vpl_null",
+
+    "text": "vpl_null"
+  },
+
+  "states": {
+    "start": [
+
+      { "token": "comment.line", "regex": "#.*$" },
+
+     {
+        "token": ["keyword.other", "text", "entity.name.function", "text"],
+        "regex": "(function|macro)(\\s+)([a-zA-Z0-9_\\{]+!?)([\\w]*)"
+      },
+
+      {
+        "token": ["keyword.control.type", "text", "entity.name.type"],
+        "regex": "(type|immutable)(\\s+)([a-zA-Z0-9_]+)"
+      },
+
+      {
+        "token": "keyword.control",
+        "regex": "\\b(?:if|else|elseif|while|for|in|begin|let|end|do|try|catch|finally|return|break|continue)\\b"
+      },
+      {
+        "token": "keyword.other",
+        "regex": "\\b(?:abstract|bitstype|typealias|module|baremodule|new|quote)\\b"
+      },
+      {
+        "token": "storage.modifier.variable",
+        "regex": "\\b(?:global|local|const|export|import|importall|using)\\b"
+      },
+
+      {
+        "token": "variable.macro",
+        "regex": "@[\\w\\x{00ff}-\\x{218e}\\x{2455}-\\x{ffff}]+\\b"
+      },
+
+      {
+        "token": "constant.numeric",
+        "regex": "\\b0[xX][0-9a-fA-F]+\\b"
+      },
+      {
+        "token": "constant.numeric",
+        "regex": "(?:\\b[0-9]+\\.?[0-9]*|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?(?:im)?"
+      },
+      {
+        "token": "constant.language",
+        "regex": "\\b(?:Inf|Inf32|NaN|NaN32|true|false)\\b"
+      },
+
+      { "token": "string.quoted.single", "regex": "'", "next": "sq_string" },
+      { "token": "string.quoted.double", "regex": "\"", "next": "dq_string" },
+      { "token": "string.quoted.backtick", "regex": "`", "next": "bt_string" },
+
+      {
+        "token": "keyword.operator",
+        "regex": "::|->|<-|//|<<|>>|&&|\\|\\||\\.\\.\\.|==|!=|>=|<=|=>|\\+|-|\\*|/|%|\\^|=|>|<|!|\\||&|~|:"
+      },
+
+      {
+        "token": "keyword.bracket",
+        "regex": "[\\(\\)\\[\\]\\{\\},]"
+      },
+
+      {
+        "token": "identifier",
+        "regex": "[a-zA-Z_\\x{00ff}-\\x{218e}\\x{2455}-\\x{ffff}][a-zA-Z0-9_\\x{00ff}-\\x{218e}\\x{2455}-\\x{ffff}]*"
+      },
+
+      { "token": "text", "regex": "\\s+" },
+
+      { "token": "identifier", "regex": "." }
+    ],
+
+    "sq_string": [
+      { "token": "constant.character.escape", "regex": "\\\\." },
+      { "token": "string.quoted.single", "regex": "'", "next": "start" },
+      { "default_token": "string.quoted.single" }
+    ],
+
+    "dq_string": [
+      { "token": "constant.character.escape", "regex": "\\\\." },
+      { "token": "string.quoted.double", "regex": "\"", "next": "start" },
+      { "default_token": "string.quoted.double" }
+    ],
+
+    "bt_string": [
+      { "token": "constant.character.escape", "regex": "\\\\." },
+      { "token": "string.quoted.backtick", "regex": "`", "next": "start" },
+      { "default_token": "string.quoted.backtick" }
+    ]
+  }
+}

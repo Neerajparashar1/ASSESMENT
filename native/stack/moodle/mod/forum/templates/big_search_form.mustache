@@ -1,0 +1,184 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/big_search_form
+
+    Big search form.
+
+    Example context (json):
+    {
+        "actionurl": "https://example.com/mod/forum/search.php",
+        "courseid": "2",
+        "words": "apples",
+        "phrase": "Lorem ipsum dolor",
+        "notwords": "Not these words",
+        "showfullwords": [
+            {
+                "fullwords": "Exactly"
+            }
+        ],
+        "datefromchecked": 1,
+        "datetochecked": "",
+        "forumoptions": [
+            {
+                "name": "Forum One",
+                "value": "23"
+            },
+            {
+                "name": "Forum Two",
+                "value": "34"
+            }
+        ],
+        "subject": "Help me please",
+        "user": "Helpy McUser"
+    }
+}}
+<div id="intro" class="mb-3 box searchbox boxaligncenter">
+    {{#str}}searchforumintro, forum{{/str}}
+</div>
+<div class="box generalbox boxaligncenter">
+    <form id="searchform" class="mform" action="{{actionurl}}" method="get">
+        <div class="form-group row">
+            <label for="words" class="col-sm-4 col-form-label">{{#str}}searchwords, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="hidden" value="{{courseid}}" name="id">
+                <input type="text" class="form-control" name="words" id="words" value="{{words}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="phrase" class="col-sm-4 col-form-label">{{#str}}searchphrase, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="phrase" id="phrase" value="{{phrase}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="notwords" class="col-sm-4 col-form-label">{{#str}}searchnotwords, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="notwords" id="notwords" value="{{notwords}}">
+            </div>
+        </div>
+        {{#showfullwords}}
+        <div class="form-group row">
+            <label for="fullwords" class="col-sm-4 col-form-label">{{#str}}searchfullwords, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="fullwords" id="fullwords" value="{{fullwords}}">
+            </div>
+        </div>
+        {{/showfullwords}}
+        <div class="form-group row" role="group" aria-labelledby="searchdatefromlabel">
+            <div class="col-sm-4 col-form-label" id="searchdatefromlabel">{{#str}}searchdatefrom, forum{{/str}}</div>
+            <div class="col-sm-8 fdate_time_selector d-flex flex-wrap align-items-center">
+                <div class="form-check">
+                    <label class="form-check-label me-1">
+                        <input type="checkbox" name="timefromrestrict" value="1" {{#datefromchecked}}checked{{/datefromchecked}} class="form-check-input"> {{#str}}enable{{/str}}
+                    </label>
+                </div>
+                {{{datefromfields}}}
+                <input type="hidden" name="hfromday" value="0">
+                <input type="hidden" name="hfrommonth" value="0">
+                <input type="hidden" name="hfromyear" value="0">
+                <input type="hidden" name="hfromhour" value="0">
+                <input type="hidden" name="hfromminute" value="0">
+            </div>
+        </div>
+        <div class="form-group row" role="group" aria-labelledby="searchdatetolabel">
+            <div class="col-sm-4 col-form-label" id="searchdatetolabel">{{#str}}searchdateto, forum{{/str}}</div>
+            <div class="col-sm-8 fdate_time_selector d-flex flex-wrap align-items-center">
+                <div class="form-check">
+                    <label class="form-check-label me-1">
+                        <input type="checkbox" name="timetorestrict" value="1" {{#datetochecked}}checked{{/datetochecked}} class="form-check-input"> {{#str}}enable{{/str}}
+                    </label>
+                </div>
+                {{{datetofields}}}
+                <input type="hidden" name="htoday" value="0">
+                <input type="hidden" name="htomonth" value="0">
+                <input type="hidden" name="htoyear" value="0">
+                <input type="hidden" name="htohour" value="0">
+                <input type="hidden" name="htominute" value="0">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="menuforumid" class="col-sm-4 col-form-label">{{#str}}searchwhichforums, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <select name="forumid" id="menuforumid" class="custom-select">
+                    {{#forumoptions}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/forumoptions}}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="subject" class="col-sm-4 col-form-label">{{#str}}searchsubject, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="subject" id="subject" value="{{subject}}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="user" class="col-sm-4 col-form-label">{{#str}}searchuser, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="user" id="user" value="{{user}}">
+            </div>
+        </div>
+        {{^guestuser}}
+        <div class="form-group row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="starredonly" id="starredonly" value="1" {{#starredonly}}checked{{/starredonly}} />
+                    <label for="starredonly" class="form-check-label">{{#str}}starredonly, forum{{/str}}</label>
+                </div>
+            </div>
+        </div>
+        {{/guestuser}}
+        {{#tagsenabled}}
+        <div class="form-group row">
+            <label for="tags" class="col-sm-4 col-form-label">{{#str}}searchtags, forum{{/str}}</label>
+            <div class="col-sm-8">
+                <select class="form-select" name="tags[]" id="tags" multiple>
+                    {{#tagoptions}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+                    {{/tagoptions}}
+                </select>
+            </div>
+        </div>
+        {{/tagsenabled}}
+        <div class="form-group row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <button type="submit" class="btn btn-primary">{{#str}}searchforums, forum{{/str}}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{#js}}
+require(['jquery'], function($) {
+    var toggleDateFields = function(prefix, disabled) {
+        $('#searchform select[name^=' + prefix + ']').prop('disabled', disabled);
+        $('#searchform input[name^=h' + prefix + ']').val(disabled ? 1 : 0);
+    };
+
+    toggleDateFields('from', !$("#searchform input[name='timefromrestrict']").prop('checked'));
+    $("#searchform input[name='timefromrestrict']").click(function() {
+        toggleDateFields('from', !this.checked);
+    });
+
+    toggleDateFields('to', !$("#searchform input[name='timetorestrict']").prop('checked'));
+    $("#searchform input[name='timetorestrict']").click(function() {
+        toggleDateFields('to', !this.checked);
+    });
+});
+{{/js}}

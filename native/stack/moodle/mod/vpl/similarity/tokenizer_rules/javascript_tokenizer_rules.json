@@ -1,0 +1,102 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for JavaScript",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/javascript_highlight_rules.js",
+  "name": "javascript-tokenizer",
+  "extension": [".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx"],
+  "check_rules": false,
+
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "keyword.control": "vpl_reserved",
+    "storage.type": "vpl_reserved",
+
+    "identifier": "vpl_identifier",
+    "variable": "vpl_identifier",
+    "variable.parameter": "vpl_identifier",
+    "variable.language": "vpl_identifier",
+
+    "string": "vpl_literal",
+    "string.single": "vpl_literal",
+    "string.double": "vpl_literal",
+    "string.quasi": "vpl_literal",
+    "string.regexp": "vpl_literal",
+
+    "constant.numeric": "vpl_literal",
+    "constant.language": "vpl_literal",
+    "constant.language.boolean": "vpl_literal",
+
+    "keyword.operator": "vpl_operator",
+    "punctuation.operator": "vpl_operator",
+
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+
+    "comment": "vpl_null",
+    "comment.line": "vpl_null",
+    "comment.block": "vpl_null",
+
+    "text": "vpl_null"
+  },
+
+  "states": {
+    "start": [
+      { "token": "comment.line", "regex": "\\/\\/.*$" },
+      { "token": "comment.block", "regex": "\\/\\*", "next": "block_comment" },
+
+      { "token": "string.single", "regex": "'", "next": "sq_string" },
+      { "token": "string.double", "regex": "\"", "next": "dq_string" },
+      { "token": "string.quasi", "regex": "`", "next": "bt_string" },
+
+      { "token": "constant.numeric", "regex": "0(?:[xX][0-9a-fA-F]+|[oO][0-7]+|[bB][01]+)\\b" },
+      { "token": "constant.numeric", "regex": "(?:\\d\\d*(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+\\b)?" },
+
+      { "token": "constant.language", "regex": "\\b(?:null|Infinity|NaN|undefined)\\b" },
+      { "token": "constant.language.boolean", "regex": "\\b(?:true|false)\\b" },
+      {
+        "token": "storage.type",
+        "regex": "\\b(?:const|let|var|function|class)\\b"
+      },
+      {
+        "token": "keyword.control",
+        "regex": "\\b(?:break|case|catch|continue|default|delete|do|else|finally|for|if|in|of|instanceof|new|return|switch|throw|try|typeof|while|with|debugger|yield|async|await|import|export|extends|super)\\b"
+      },
+
+      { "token": "identifier", "regex": "[a-zA-Z\\$_\\x{00a1}-\\x{ffff}][a-zA-Z\\d\\$_\\x{00a1}-\\x{ffff}]*" },
+
+      {
+        "token": "keyword.operator",
+        "regex": "--|\\+\\+|\\.{3}|===|!==|==|!=|<+=?|>+=?|\\?\\?=|\\?\\.|\\.\\.|\\?\\?|\\*\\*|!|&&|\\|\\||\\?:|[!%&*+\\-~\\/^]=?"
+      },
+      { "token": "punctuation.operator", "regex": "[?:,;.]" },
+      { "token": "paren.lparen", "regex": "[\\[({]" },
+      { "token": "paren.rparen", "regex": "[\\])}]" },
+
+      { "token": "text", "regex": "\\s+" },
+
+      { "token": "identifier", "regex": "." }
+    ],
+
+    "block_comment": [
+      { "token": "comment.block", "regex": ".*?\\*\\/", "next": "start" },
+      { "default_token": "comment.block" }
+    ],
+
+    "sq_string": [
+      { "token": "string.single", "regex": "\\\\.", "next": "sq_string" },
+      { "token": "string.single", "regex": "'", "next": "start" },
+      { "default_token": "string.single" }
+    ],
+
+    "dq_string": [
+      { "token": "string.double", "regex": "\\\\.", "next": "dq_string" },
+      { "token": "string.double", "regex": "\"", "next": "start" },
+      { "default_token": "string.double" }
+    ],
+
+    "bt_string": [
+      { "token": "string.quasi", "regex": "\\\\.", "next": "bt_string" },
+      { "token": "string.quasi", "regex": "`", "next": "start" },
+      { "default_token": "string.quasi" }
+    ]
+  }
+}

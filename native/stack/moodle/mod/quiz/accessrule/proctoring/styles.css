@@ -1,0 +1,458 @@
+body.proctoring-lb-disable-scrolling {
+    overflow: hidden;
+}
+
+.proctoring-lightboxOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    background-color: black;
+    /* stylelint-disable */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+    /* stylelint-enable */
+    opacity: 0.8;
+    display: none;
+}
+
+.proctoring-lightbox {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 10000;
+    text-align: center;
+    line-height: 0;
+    font-weight: normal;
+    outline: none;
+}
+
+.proctoring-lightbox .proctoring-lb-image {
+    display: block;
+    height: auto;
+    max-width: inherit;
+    max-height: none;
+    border-radius: 3px;
+
+    /* Image border */
+    border: 4px solid white;
+}
+
+.proctoring-lightbox a img {
+    border: none;
+}
+
+.proctoring-lb-outerContainer {
+    position: relative;
+    *zoom: 1;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+    border-radius: 4px;
+
+    /* Background color behind image.
+       This is visible during transitions. */
+    background-color: white;
+}
+
+.proctoring-lb-outerContainer:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.proctoring-lb-loader {
+    position: absolute;
+    top: 43%;
+    left: 0;
+    height: 25%;
+    width: 100%;
+    text-align: center;
+    line-height: 0;
+}
+
+.proctoring-lb-cancel {
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+    background: url('../../../../mod/quiz/accessrule/proctoring/pix/loading.gif') no-repeat;
+}
+
+.proctoring-lb-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+}
+
+.proctoring-lb-container > .nav {
+    left: 0;
+}
+
+.proctoring-lb-nav a {
+    outline: none;
+    /* stylelint-disable */
+    background-image: url('data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
+    /* stylelint-enable */
+}
+
+.proctoring-lb-prev ,
+.proctoring-lb-next {
+    height: 100%;
+    cursor: pointer;
+    display: block;
+}
+
+.proctoring-lb-nav a.proctoring-lb-prev  {
+    width: 34%;
+    left: 0;
+    float: left;
+    background: url('../../../../mod/quiz/accessrule/proctoring/pix/prev.png') left 48% no-repeat;
+    /* stylelint-disable */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    /* stylelint-enable */
+    opacity: 0;
+    -webkit-transition: opacity 0.6s;
+    -moz-transition: opacity 0.6s;
+    -o-transition: opacity 0.6s;
+    transition: opacity 0.6s;
+}
+
+.proctoring-lb-nav a.proctoring-lb-prev:hover {
+    /* stylelint-disable */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    /* stylelint-enable */
+    opacity: 1;
+}
+
+.proctoring-lb-nav a.proctoring-lb-next {
+    width: 64%;
+    right: 0;
+    float: right;
+    background: url('../../../../mod/quiz/accessrule/proctoring/pix/next.png') right 48% no-repeat;
+    /* stylelint-disable */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    /* stylelint-enable */
+    opacity: 0;
+    -webkit-transition: opacity 0.6s;
+    -moz-transition: opacity 0.6s;
+    -o-transition: opacity 0.6s;
+    transition: opacity 0.6s;
+}
+
+.proctoring-lb-nav a.proctoring-lb-next:hover {
+    /* stylelint-disable */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    /* stylelint-enable */
+    opacity: 1;
+}
+
+.proctoring-lb-dataContainer {
+    margin: 0 auto;
+    padding-top: 5px;
+    *zoom: 1;
+    width: 100%;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.proctoring-lb-dataContainer:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.proctoring-lb-data {
+    padding: 0 4px;
+    color: #ccc;
+}
+
+.proctoring-lb-data .lb-details {
+    width: 85%;
+    float: left;
+    text-align: left;
+    line-height: 1.1em;
+}
+
+.proctoring-lb-data .lb-caption {
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1em;
+}
+
+.proctoring-lb-data .lb-caption a {
+    color: #4ae;
+}
+
+.proctoring-lb-data .lb-number {
+    display: block;
+    clear: left;
+    padding-bottom: 1em;
+    font-size: 12px;
+    color: #999;
+}
+
+.proctoring-lb-data .lb-close {
+    display: block;
+    float: right;
+    width: 30px;
+    height: 30px;
+    background: url('../../../../mod/quiz/accessrule/proctoring/pix/close.png') top right no-repeat;
+    text-align: right;
+    outline: none;
+    /* stylelint-disable */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+    /* stylelint-enable */
+    opacity: 0.7;
+    -webkit-transition: opacity 0.2s;
+    -moz-transition: opacity 0.2s;
+    -o-transition: opacity 0.2s;
+    transition: opacity 0.2s;
+}
+
+.proctoring-lb-data .lb-close:hover {
+    cursor: pointer;
+    /* stylelint-disable */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    /* stylelint-enable */
+    opacity: 1;
+}
+ .proctoring-loadingspinner {
+    pointer-events: none;
+    width: 1.5em;
+    height: 1.5em;
+    border: 0.4em solid transparent;
+    border-color: #eee;
+    border-top-color: #3E67EC;
+    border-radius: 50%;
+    animation: proctoring-loadingspinner 1s linear 	infinite;
+    display: none;
+}
+
+@keyframes proctoring-loadingspinner  {
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+.proctoring_report_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+}
+
+.proctoring_report_overlay_container {
+    position: relative;
+    display: inline-block;
+}
+
+@media (max-width: 430px) {
+    .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
+        width: 90vw;  /* Responsive width */
+        max-height: 80vh; /* Restrict max height to ensure visibility */
+    }
+}
+/* user image is not uploaded warning  */
+.proctoring-custom-warning-message {
+    font-size: 1.1em;
+    color: #a94442; /* Adjust the color as needed */
+    font-weight: bold;
+}
+
+.proctoring-custom-upload-link {
+    color: #337ab7; /* Adjust to your theme color */
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.proctoring-custom-upload-link:hover {
+    color: #23527c; /* Slightly darker shade for hover effect */
+}
+
+#proctoring-contact{
+    color:#1e476b;
+}
+.card.h-100.proctoring-custom-card {
+    color:aliceblue;
+    transition: transform 0.3s ease; 
+}
+
+.card.h-100.proctoring-custom-card:hover {
+    transform: scale(1.05); 
+   
+}
+#proctoring-bulkupload{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+    url('https://elearning23.com/wp-content/uploads/2024/10/bulk-photo-upload-webp.webp');
+    background-size: cover; /* Ensure the image covers the card */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent repeating */
+}
+#proctoring-filtering{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+    url('https://elearning23.com/wp-content/uploads/2024/10/photo-filter.webp');
+    background-size: cover; /* Ensure the image covers the card */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent repeating */
+}
+#proctoring-pdfreport{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+    url('https://elearning23.com/wp-content/uploads/2024/10/generate-pdf.webp');
+    background-size: cover; /* Ensure the image covers the card */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent repeating */
+}
+#proctoring-headingOne{
+    background-color:rgba(2, 3, 129, 0.05);
+}
+#proctoring-headingTwo{
+    background-color: rgba(2, 3, 129, 0.05);
+}
+#proctoring-headingThree{
+    background-color:rgba(2, 3, 129, 0.05);
+}
+#proctoring-headingFour{
+    background-color:rgba(2, 3, 129, 0.05);
+}
+#proctoring-headingFive{
+    background-color: rgba(2, 3, 129, 0.05);
+}
+#proctoring-headingSix{
+    background-color: rgba(2, 3, 129, 0.05);
+}
+#proctoring-headingSeven{
+    background-color:rgba(2, 3, 129, 0.05);
+}
+
+/* proctoring promo page  style */
+#proctoring-promobanner {
+    background-image: url(pix/proctoring_pro_logo.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    padding: 10rem;
+}
+
+.proctoring-promo-featureList {
+    display: inline-block; 
+    text-align: left; 
+}
+.proctoring-videoFeature {
+    display: inline-block; 
+    text-align: left;
+    list-style-position: inside;
+}
+
+.proctoringPro-feature {
+    background-color:#194266;
+    color:#FFFF; 
+    border-radius: 15px;
+}
+.prcotoringFree-feature {
+    background-color:#5b94d6;
+    color:#FFFF;
+    border-radius: 15px;
+}
+.proctoring-sign {
+    width: 3rem; 
+    height: 1.8em;
+}
+
+/* Report page style  */
+#proctoring-check {
+    color: green;
+}
+#proctoring-exclamation {
+    color: red;
+}
+
+
+/* student report mustache style  */
+
+#proctoring-table-style {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#proctoring-table-body {
+    display:flex;
+    flex-wrap:wrap
+}
+.proctoring-course-row {
+    background-color: #dddddd;
+}
+.proctoring-quiz-row {
+    background-color: #ffffff;
+}
+
+#proctoring-profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+   
+}
+
+.proctoring-border-color-green {
+    border: 5px solid;
+    width: 100px;
+    border-color: green;
+}
+
+.proctoring-border-color-red {
+    border: 5px solid;
+   
+    border-color: red;
+}
+
+.proctoring-border-color-yellow {
+    border: 5px solid;
+    
+    border-color: #f0ad4e
+}
+
+.proctoring-video-modal {
+    max-width: 100%;
+    height: auto;
+}
+
+.proctoring-fixed-webcam-box #video {
+    position: fixed;
+    z-index: 9999;
+    bottom: 20px;
+    right: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    cursor: move;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .proctoring-fixed-webcam-box #video {
+        width: 130px;
+        height: 130px;
+        bottom: 10px;
+        right: 10px;
+    }
+}
+
+#quizaccess_proctoring_user_table > thead > tr > th:first-child {
+    display: flex;
+    align-items: center;
+    gap:5px;
+}
+
+#quizaccess_proctoring_user_table {
+    margin-bottom: 5rem;
+}

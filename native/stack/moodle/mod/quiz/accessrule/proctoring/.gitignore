@@ -1,0 +1,10 @@
+/cscope.*
+/.patches/
+.idea/
+/nbproject/
+
+composer.phar
+.scannerwork
+sonar-project.properties
+.vscode/
+test.json

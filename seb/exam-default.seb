@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  ==================================================================
+   Safe Exam Browser configuration  -  "Exam Default (Kiosk Lockdown)"
+   Platform : cross-platform (Windows / macOS)
+   Pairs with: Moodle quiz access rule "Require Safe Exam Browser"
+              mode = "Upload my own config"  (upload THIS file)
+   Quit password : the value of SEB_QUIT_PASSWORD in .env
+                   (hashedQuitPassword below = SHA256 of that value)
+   Regenerate with: scripts/make-seb.sh
+  ==================================================================
+-->
+<plist version="1.0">
+<dict>
+    <!-- ===== Start / quit ===== -->
+    <key>startURL</key>
+    <string>http://localhost:8080/login/index.php</string>
+    <key>sebServerURL</key>
+    <string></string>
+    <key>quitURL</key>
+    <string>http://localhost:8080/mod/quiz/accessrule/seb/config.php</string>
+    <key>hashedQuitPassword</key>
+    <string>da833dc36caf876a515fe4c574612c2988a87799e478e3335ed63d05e25d43a2</string>
+    <key>allowQuit</key>
+    <true/>
+    <key>quitURLConfirm</key>
+    <true/>
+
+    <!-- ===== Browser exam key / integrity ===== -->
+    <key>sendBrowserExamKey</key>
+    <true/>
+    <key>examSessionClearCookiesOnStart</key>
+    <true/>
+    <key>examSessionClearCookiesOnEnd</key>
+    <true/>
+
+    <!-- ===== Kiosk / OS lockdown ===== -->
+    <key>browserViewMode</key>
+    <integer>1</integer>            <!-- 1 = full screen -->
+    <key>allowSwitchToApplications</key>
+    <false/>                        <!-- blocks Alt+Tab -->
+    <key>allowFlashFullscreen</key>
+    <false/>
+    <key>enableAppSwitcherCheck</key>
+    <true/>
+    <key>forceAppFolderInstall</key>
+    <true/>
+    <key>allowUserSwitching</key>
+    <false/>
+    <key>enableLogging</key>
+    <true/>
+
+    <!-- Windows-specific process / kiosk restrictions -->
+    <key>createNewDesktop</key>
+    <true/>                         <!-- isolated Windows desktop: kills Task Manager / Explorer -->
+    <key>killExplorerShell</key>
+    <true/>
+    <key>allowWlan</key>
+    <false/>
+    <key>enableAltTab</key>
+    <false/>
+    <key>enableAltEsc</key>
+    <false/>
+    <key>enableCtrlEsc</key>
+    <false/>
+    <key>enableAltF4</key>
+    <false/>
+    <key>enableRightMouse</key>
+    <false/>
+    <key>enablePrintScreen</key>
+    <false/>
+    <key>enableEsc</key>
+    <false/>
+    <key>enableF1</key><false/>
+    <key>enableF3</key><false/>
+    <key>enableF4</key><false/>
+    <key>enableF12</key><false/>
+    <key>allowDictionaryLookup</key>
+    <false/>
+    <key>allowSpellCheck</key>
+    <false/>
+
+    <!-- ===== Dual-monitor restriction ===== -->
+    <key>allowedDisplaysMaxNumber</key>
+    <integer>1</integer>
+    <key>allowedDisplayBuiltin</key>
+    <true/>
+    <key>allowDisplayMirroring</key>
+    <false/>
+    <key>forceUnfocusedAppFolderCheck</key>
+    <true/>
+
+    <!-- ===== URL filter (whitelist the portal only) ===== -->
+    <key>URLFilterEnable</key>
+    <true/>
+    <key>URLFilterEnableContentFilter</key>
+    <true/>
+    <key>blacklistURLFilter</key>
+    <string></string>
+    <key>whitelistURLFilter</key>
+    <string>localhost:8080/*;127.0.0.1:8080/*</string>
+    <key>URLFilterRules</key>
+    <array>
+        <dict>
+            <key>action</key><integer>1</integer>   <!-- 1 = allow -->
+            <key>active</key><true/>
+            <key>expression</key><string>localhost:8080/*</string>
+            <key>regex</key><false/>
+        </dict>
+        <dict>
+            <key>action</key><integer>0</integer>   <!-- 0 = block everything else -->
+            <key>active</key><true/>
+            <key>expression</key><string>*</string>
+            <key>regex</key><false/>
+        </dict>
+    </array>
+
+    <!-- ===== Browser chrome ===== -->
+    <key>showTaskBar</key><true/>
+    <key>showReloadButton</key><false/>
+    <key>browserWindowAllowReload</key><false/>
+    <key>showMenuBar</key><false/>
+    <key>enableBrowserWindowToolbar</key><false/>
+    <key>allowDownUploads</key><false/>
+    <key>allowPDFPlugIn</key><false/>
+    <key>newBrowserWindowByLinkPolicy</key><integer>0</integer>
+    <key>newBrowserWindowByScriptPolicy</key><integer>0</integer>
+
+    <!-- ===== Misc ===== -->
+    <key>audioControlEnabled</key><false/>
+    <key>allowVirtualMachine</key><false/>
+    <key>allowScreenSharing</key><false/>
+    <key>enablePrivateClipboard</key><true/>
+    <key>allowApplicationLog</key><true/>
+    <key>minMacOSVersion</key><integer>3</integer>
+    <key>originatorVersion</key><string>EAP-1.0</string>
+</dict>
+</plist>

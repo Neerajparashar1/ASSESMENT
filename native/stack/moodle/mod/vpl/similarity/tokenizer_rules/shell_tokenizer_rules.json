@@ -1,0 +1,66 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Shell",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/sh_highlight_rules.js",
+  "name": "sh-tokenizer",
+  "extension": [".sh", ".bash"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "support.function": "vpl_reserved",
+    "support.function.builtin": "vpl_reserved",
+    "variable": "vpl_identifier",
+    "variable.language": "vpl_identifier",
+    "identifier": "vpl_identifier",
+    "constant.numeric": "vpl_literal",
+    "string": "vpl_literal",
+    "string.start": "vpl_literal",
+    "string.end": "vpl_literal",
+    "constant.language.escape": "vpl_literal",
+    "keyword.operator": "vpl_operator",
+    "punctuation.operator": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "comment": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment", "regex": "#.*$" },
+
+      { "token": "string", "regex": "\"", "next": "dqstring" },
+      { "token": "string", "regex": "'", "next": "sqstring" },
+
+      { "token": "constant.numeric", "regex": "\\b\\d+(?:\\.\\d+)?\\b" },
+
+      { "token": "keyword", "regex": "\\b(?:if|then|else|elif|fi|for|while|until|do|done|case|esac|select|function|in|return|break|continue|export|local|readonly|declare|unset)\\b" },
+
+      { "token": "support.function.builtin", "regex": "\\b(?:echo|printf|read|cd|pwd|exit|exec|shift|test|trap|wait|kill|history|alias|unalias|type|ulimit|umask|source|set)\\b" },
+
+      { "token": "variable", "regex": "\\$[a-zA-Z_][a-zA-Z0-9_]*" },
+      { "token": "variable", "regex": "\\$\\{[^}]+\\}" },
+
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+
+      { "token": "keyword.operator", "regex": "&&|\\|\\||<<|>>|<=|>=|==|!=|[+\\-*/%=&|<>!~]" },
+
+      { "token": "punctuation.operator", "regex": "[;:]" },
+
+      { "token": "paren.lparen", "regex": "[\\[({]" },
+      { "token": "paren.rparen", "regex": "[\\])}]" },
+
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+
+    "dqstring": [
+      { "token": "constant.language.escape", "regex": "\\\\." },
+      { "token": "string.end", "regex": "\"", "next": "start" },
+      { "default_token": "string" }
+    ],
+
+    "sqstring": [
+      { "token": "string.end", "regex": "'", "next": "start" },
+      { "default_token": "string" }
+    ]
+  }
+}

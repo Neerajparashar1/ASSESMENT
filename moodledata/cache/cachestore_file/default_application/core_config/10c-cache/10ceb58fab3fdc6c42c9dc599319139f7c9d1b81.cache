@@ -1,0 +1,1080 @@
+a:537:{s:7:"version";s:10:"2024100796";s:7:"scsspre";s:0:"";s:4:"scss";s:36075:"// =====================================================================
+//  ITM GROUP OF INSTITUTIONS, GWALIOR  --  Online Examination Portal
+//  Boost Union "Raw SCSS".  Deep maroon (#8a1b2c) + academic gold (#c9a24b).
+//  Applied by native\apply_itm_theme.php.
+//
+//  Design intent: keep Boost Union's solid defaults; add brand identity
+//  (navbar, login, headings-that-matter) + the exam-taking enhancements.
+//  Nothing here fights Moodle's type scale or spacing.
+// =====================================================================
+
+// Fonts are loaded via <head> (apply_itm_theme.php) - a remote @import breaks
+// Moodle's SCSS compiler.
+
+:root {
+  --itm-serif:  "Source Serif 4", Georgia, "Times New Roman", serif;
+  --itm-sans:   "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --itm-maroon:      #8a1b2c;
+  --itm-maroon-700:  #6d1422;
+  --itm-maroon-900:  #4a0d17;
+  --itm-maroon-050:  #fbf3f4;
+
+  --itm-gold:        #c9a24b;
+  --itm-gold-600:    #a9822f;
+
+  --itm-ink:         #21181a;
+  --itm-slate:       #5f575a;
+  --itm-line:        #e7dfe0;
+
+  --itm-radius:      12px;
+  --itm-radius-lg:   20px;
+}
+
+// ---------- Selection (was rendering text invisible) ------------------
+::selection      { background: var(--itm-gold); color: #1a0c10; }
+::-moz-selection { background: var(--itm-gold); color: #1a0c10; }
+
+// ---------- Base type -----------------------------------------------
+body {
+  font-family: var(--itm-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+// Serif only for real display headings - NOT every h3/h4/h5 in the admin UI.
+.navbar-brand,
+#page-header h1, #page-header .h1,
+.page-context-header .page-header-headings h1,
+h1.h1, .pagelayout-login h1, .pagelayout-login h2,
+.loginform h1 {
+  font-family: var(--itm-serif);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+// ---------- Brand accents (Boost's brandcolor handles most of it) -----
+a { color: var(--itm-maroon-700); }
+a:hover { color: var(--itm-maroon); }
+.btn-primary,
+.btn-primary:not(:disabled):not(.disabled) {
+  background-color: var(--itm-maroon);
+  border-color: var(--itm-maroon-700);
+}
+.btn-primary:hover, .btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled):active {
+  background-color: var(--itm-maroon-700);
+  border-color: var(--itm-maroon-900);
+}
+.btn-outline-primary { color: var(--itm-maroon-700); border-color: var(--itm-maroon-700); }
+.btn-outline-primary:hover { background-color: var(--itm-maroon); border-color: var(--itm-maroon); }
+.badge-primary, .badge.bg-primary { background-color: var(--itm-maroon) !important; }
+.text-primary { color: var(--itm-maroon) !important; }
+a.dimmed, .dimmed_text { color: var(--itm-slate); }
+
+// ---------- Top navbar --------------------------------------------
+.navbar.fixed-top {
+  background: linear-gradient(100deg, var(--itm-maroon-900), var(--itm-maroon-700) 70%, var(--itm-maroon)) !important;
+  border-bottom: 3px solid var(--itm-gold);
+}
+// cream text ONLY for links sitting directly on the maroon bar
+.navbar.fixed-top .navbar-nav .nav-link,
+.navbar.fixed-top .navbar-brand,
+.navbar.fixed-top .nav-link > i,
+.navbar.fixed-top #usernavigation .nav-link,
+.navbar.fixed-top .editmode-switch-form,
+.navbar.fixed-top .editmode-switch-form label {
+  color: #f6ebdd !important;
+}
+// hover / focus / open: subtle translucent highlight, text stays light & readable
+.navbar.fixed-top .navbar-nav .nav-link:hover,
+.navbar.fixed-top .navbar-nav .nav-link:focus,
+.navbar.fixed-top .navbar-nav .nav-link.show,
+.navbar.fixed-top .navbar-nav .nav-item:hover > .nav-link,
+.navbar.fixed-top .navbar-nav .nav-item.show > .nav-link {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.14) !important;
+  border-radius: 8px;
+}
+// The ITM mark is maroon ink -> sit it on a white "plate" so it reads on
+// the maroon navbar (this is how itmgoi.in shows the logo: on a light bar).
+// Markup is  a.navbar-brand > img.logo  (the "ITM" bars crop, ~2.8:1).
+.navbar.fixed-top .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 0;
+}
+.navbar.fixed-top .navbar-brand img.logo {
+  height: 34px;
+  max-height: none;
+  width: auto;
+  background: #fff;
+  border-radius: 9px;
+  padding: 6px 12px;
+  box-shadow: 0 4px 14px -5px rgba(0, 0, 0, .55);
+}
+.navbar.fixed-top .btn { border-radius: 8px; }
+
+// current-page nav item gets a light "pill" from Boost -> keep its text dark
+.navbar.fixed-top .navbar-nav .nav-link.active,
+.navbar.fixed-top .navbar-nav .nav-link[aria-current],
+.navbar.fixed-top .navbar-nav .active > .nav-link {
+  color: var(--itm-maroon-900) !important;
+  background-color: #ffffff !important;
+  border-radius: 8px;
+}
+.navbar.fixed-top .navbar-nav .nav-link.active:hover,
+.navbar.fixed-top .navbar-nav .nav-link[aria-current]:hover {
+  color: var(--itm-maroon-900) !important;
+  background-color: #f4e2e5 !important;
+}
+
+// dropdowns opened FROM the navbar are white panels -> dark text, not cream
+.navbar .dropdown-menu {
+  border: 1px solid var(--itm-line);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px -14px rgba(74, 13, 23, .28);
+}
+.navbar .dropdown-menu .dropdown-item,
+.navbar .dropdown-menu .nav-link,
+.navbar .dropdown-menu a,
+.navbar .dropdown-menu .menu-action-text,
+.navbar-nav .dropdown-menu .dropdown-item {
+  color: var(--itm-ink) !important;
+}
+.navbar .dropdown-menu .dropdown-item:hover,
+.navbar .dropdown-menu .dropdown-item:focus {
+  background-color: var(--itm-maroon-050);
+  color: var(--itm-maroon-900) !important;
+}
+.navbar .dropdown-menu .dropdown-item i,
+.navbar .dropdown-menu .dropdown-item .icon { color: var(--itm-maroon-700) !important; }
+
+// ---------- Page header ------------------------------------------
+#page-header .page-context-header,
+.secondary-navigation .navigation {
+  border-bottom: 2px solid var(--itm-line);
+}
+#page-header h1 { color: var(--itm-maroon-900); }
+
+// ---------- Cards (gentle) --------------------------------------
+.card { border-radius: var(--itm-radius); }
+.block .card-title { color: var(--itm-maroon-900); }
+
+// =================================================================
+//  LOGIN PAGE  --  "centered card" (ported from the approved mockup)
+//  DOM: #page > #page-content.row > #region-main.col-12
+//         > .login-wrapper.login-wrapper-center > .login-container (white card)
+//           > [role=main] > .loginform
+//               > h1.login-heading
+//               > #theme_boost_union-loginform > #login-method-local > form#login
+//                   > .login-form-username / -password / -submit / -forgotpassword
+// =================================================================
+$itm-crest: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2072%2072'%3E%3Crect%20x='2'%20y='2'%20width='68'%20height='68'%20rx='15'%20fill='%238a1b2c'/%3E%3Crect%20x='3'%20y='3'%20width='66'%20height='66'%20rx='14'%20fill='none'%20stroke='%23c9a24b'%20stroke-opacity='0.55'%20stroke-width='1.6'/%3E%3Crect%20x='17'%20y='41'%20width='20'%20height='6.5'%20rx='2'%20fill='%23f3e6c7'/%3E%3Crect%20x='17'%20y='31'%20width='30'%20height='6.5'%20rx='2'%20fill='%23f3e6c7'/%3E%3Crect%20x='17'%20y='21'%20width='38'%20height='6.5'%20rx='2'%20fill='%23f3e6c7'/%3E%3Ctext%20x='36'%20y='62'%20text-anchor='middle'%20font-family='Georgia,serif'%20font-weight='700'%20font-size='10'%20letter-spacing='3'%20fill='%23f3e6c7'%3EITM%3C/text%3E%3C/svg%3E";
+$itm-lock:  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='15'%20height='15'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23ffffff'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='4'%20y='11'%20width='16'%20height='10'%20rx='2'/%3E%3Cpath%20d='M8%2011V8a4%204%200%200%201%208%200v3'/%3E%3C/svg%3E";
+$itm-shield: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='13'%20height='13'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23a9822f'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M12%203l7%203v5c0%204.5-3%208-7%2010-4-2-7-5.5-7-10V6l7-3z'/%3E%3Cpath%20d='M9%2012l2%202%204-4'/%3E%3C/svg%3E";
+
+body.pagelayout-login {
+  overflow-x: hidden;
+
+  #page-header, #page-footer { display: none !important; }
+
+  // ===== SPLIT VIEW : campus photo + college info (left) | login (right) =====
+  // .itm-loginhero is injected as #page's first child by exam-ui.js
+  #page {
+    min-height: 100vh;
+    display: flex !important;
+    flex-direction: row !important;   // Boost makes #page a column - force a row
+    flex-wrap: nowrap;
+    align-items: stretch;
+    padding: 0 !important;
+    background: #f3edee !important;   // neutral ground for the right column
+  }
+
+  // LEFT panel : auto-advancing itmgoi.in campus slideshow + college info
+  .itm-loginhero {
+    flex: 0 0 60%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3.5rem 3rem;
+    color: #f6ecd8;
+    border-right: 5px solid var(--itm-gold);
+    overflow: hidden;
+    background: var(--itm-maroon-900);
+  }
+  .itm-loginhero .itm-hero-slides,
+  .itm-loginhero .itm-hero-shade { position: absolute; inset: 0; }
+  .itm-loginhero .itm-hero-slide {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: scale(1.04);
+    transition: opacity 1.4s ease, transform 7s ease;
+  }
+  .itm-loginhero .itm-hero-slide.is-active { opacity: 1; transform: scale(1); }
+  .itm-loginhero .itm-hero-shade {
+    background: linear-gradient(0deg, rgba(31, 7, 13, .93) 0%, rgba(58, 10, 20, .50) 46%, rgba(74, 13, 23, .12) 100%);
+    z-index: 1;
+  }
+  .itm-loginhero .itm-hero-body { position: relative; z-index: 2; }
+  .itm-loginhero .itm-hero-kicker {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--itm-gold);
+  }
+  .itm-loginhero h2 {
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.22;
+    margin: .55rem 0 0;
+    color: #ffffff;
+  }
+  .itm-loginhero .itm-hero-rule {
+    width: 54px;
+    height: 3px;
+    background: var(--itm-gold);
+    margin: 1rem 0;
+  }
+  .itm-loginhero p { margin: 0; font-size: 13.5px; line-height: 1.7; color: #eaddc8; }
+  .itm-loginhero .itm-hero-assure { margin-top: 1.15rem; font-size: 12px; color: #cdbfa8; }
+
+  // RIGHT column : holds the card, vertically centred, with a soft
+  // branded ground + a faint crest watermark + a support bar (injected)
+  #page-content,
+  #page-content.row {
+    flex: 1 1 40%;
+    min-width: 0;
+    margin: 0 !important;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem 5.5rem;
+    background:
+      radial-gradient(680px 420px at 82% 8%, rgba(201, 162, 75, .10), transparent 60%),
+      linear-gradient(158deg, #fdfaf9 0%, #f4eaec 60%, #efe2e5 100%);
+    overflow: hidden;
+  }
+  // big faint crest watermark, bottom-right
+  #page-content::before {
+    content: "";
+    position: absolute;
+    right: -70px;
+    bottom: -70px;
+    width: 380px;
+    height: 380px;
+    background: url("#{$itm-crest}") center / contain no-repeat;
+    opacity: .06;
+    pointer-events: none;
+  }
+  #region-main, #region-main-box, [role="main"] { width: auto; z-index: 1; }
+  .login-wrapper { width: auto; padding: 0 !important; z-index: 1; }
+
+  // ---- injected support block under the card --------------------
+  .itm-loginaside {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1rem 1.5rem 1.25rem;
+    text-align: center;
+  }
+  .itm-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    justify-content: center;
+    margin-bottom: .85rem;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--itm-maroon-900);
+      background: #fff;
+      border: 1px solid var(--itm-line);
+      border-radius: 999px;
+      padding: .32rem .7rem;
+      box-shadow: 0 4px 12px -8px rgba(74, 13, 23, .3);
+    }
+    svg {
+      width: 13px;
+      height: 13px;
+      fill: none;
+      stroke: var(--itm-gold-600);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+  .itm-support {
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--itm-slate);
+
+    .itm-copy { display: block; margin-top: 2px; color: #8a7f81; font-size: 11px; }
+  }
+
+  // stack on narrow screens
+  @media (max-width: 900px) {
+    #page { flex-direction: column !important; }
+    .itm-loginhero {
+      flex: 0 0 auto;
+      min-height: 210px;
+      padding: 2rem 1.5rem;
+      border-right: 0;
+      border-bottom: 5px solid var(--itm-gold);
+    }
+    .itm-loginhero h2 { font-size: 1.5rem; }
+    #page-content, #page-content.row { flex: 1 1 auto; padding-bottom: 8.5rem; }
+    #page-content::before { width: 240px; height: 240px; right: -50px; bottom: -50px; }
+  }
+
+  // ---- the white card --------------------------------------------
+  .login-container {
+    width: 100%;
+    max-width: 404px;
+    padding: 0 2.125rem 0 !important;
+    border: 1px solid rgba(255, 255, 255, .06);
+    border-radius: var(--itm-radius-lg);
+    box-shadow: 0 44px 96px -36px rgba(0, 0, 0, .6);
+    overflow: hidden;
+  }
+
+  // maroon ribbon (spans full width over the card's side padding)
+  .login-container::before {
+    content: "Online Examination Portal";
+    display: block;
+    margin: 0 -2.125rem;
+    padding: 15px 16px;
+    text-align: center;
+    color: #f3e6c7;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: linear-gradient(120deg, var(--itm-maroon-900), var(--itm-maroon-700));
+    border-bottom: 3px solid var(--itm-gold);
+  }
+
+  // official ITM GOI logo (itmgoi.in) - it already carries the name + tagline
+  .loginform::before {
+    content: "";
+    display: block;
+    width: 232px;
+    height: 122px;
+    margin: 1.9rem auto .4rem;
+    background: url("http://localhost:8080/local/sebkiosk/itm-logo.png") center / contain no-repeat;
+  }
+
+  // heading text is redundant with the logo -> keep only a slim gold rule
+  h1.login-heading {
+    font-size: 0;
+    height: 2px;
+    width: 44px;
+    margin: .35rem auto 1rem;
+    background: var(--itm-gold);
+  }
+  h1.login-heading::after { content: none; }
+
+  // sub-line sits directly above the first field
+  #login-method-local::before {
+    content: "Sign in with your ITM GOI account";
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: var(--itm-slate);
+    margin: .75rem 0 1.4rem;
+  }
+
+  // ---- form fields (reveal the sr-only labels) -------------------
+  .login-form-username, .login-form-password { margin-bottom: 14px !important; }
+  .login-form-username label, .login-form-password label {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 6px;
+    padding: 0;
+    clip: auto;
+    overflow: visible;
+    white-space: normal;
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--itm-ink);
+  }
+  #login .form-control, #login .form-control-lg {
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--itm-line);
+    padding: 11px 13px;
+    font-size: 14px;
+  }
+  #login .form-control:focus {
+    border-color: var(--itm-maroon);
+    box-shadow: 0 0 0 3px rgba(138, 27, 44, .15);
+  }
+
+  .login-form-forgotpassword { text-align: right; margin: 8px 0 18px !important; }
+  .login-form-forgotpassword a { font-size: 12.5px; font-weight: 500; color: var(--itm-maroon-700); }
+
+  // ---- primary button (with lock icon) -------------------------
+  .login-form-submit { margin-bottom: 0 !important; }
+  .login-form-submit .btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--itm-maroon), var(--itm-maroon-700));
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 12px 22px -12px rgba(138, 27, 44, .9);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .login-form-submit .btn:hover {
+    background: linear-gradient(135deg, var(--itm-maroon-700), var(--itm-maroon-900));
+  }
+  .login-form-submit .btn::before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background: url("#{$itm-lock}") center / contain no-repeat;
+  }
+
+  // ---- hide guest login, dividers, footer ----------------------
+  #login-method-guest, .login-divider, .logininfo, #page-footer, .footer { display: none; }
+  .loginform > .d-flex { justify-content: center; margin-top: .35rem; }
+  .loginform > .d-flex .btn {
+    background: transparent;
+    border: 0;
+    color: var(--itm-slate);
+    font-size: 11px;
+    text-decoration: underline;
+    padding: 2px 6px;
+  }
+
+  // ---- assurance strip ---------------------------------------
+  .login-container::after {
+    content: url("#{$itm-shield}") " Secure \00b7 AI-proctored \00b7 Examination Cell";
+    display: block;
+    margin: 1.5rem -2.125rem 0;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: .4px;
+    color: #7a6d6f;
+    background: var(--itm-maroon-050);
+    border-top: 1px dashed var(--itm-line);
+  }
+}
+
+// =================================================================
+//  EXAM TAKING  --  candidate experience (mod/quiz, tightly scoped)
+//  Extra state classes (itm-progress bar, #mod_quiz_navblock legend,
+//  timer .itm-low/.itm-critical) are injected by the footer JS in
+//  config.php $CFG->additionalhtmlfooter.
+// =================================================================
+$ok-green:   #2f9e63;
+$ok-green-d: #14512f;
+$ok-green-bg:#e7f3ec;
+
+// ---- distraction-free shell on the attempt page ------------------
+body#page-mod-quiz-attempt {
+  #region-blocks, [data-region="blocks-column"] { display: none; }
+
+  // collapse the left course-index drawer - the exam is the only thing that matters
+  .drawer.drawer-left,
+  [data-region="fixed-drawer"].drawer-left,
+  .drawer-toggler.drawer-toggler-start { display: none !important; }
+  #page.drawers { margin-left: 0 !important; }
+  #page.drawers .main-inner { max-width: 1180px; margin-inline: auto; }
+
+  // give every interactive control an obvious keyboard focus ring
+  a:focus-visible, button:focus-visible,
+  input:focus-visible, label:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--itm-gold);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+// ---- top progress bar (JS builds .itm-progress) -----------------
+#page-mod-quiz-attempt .itm-progress {
+  position: sticky;
+  top: 60px;
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: 0 0 1.1rem;
+  padding: .55rem .9rem;
+  background: #fff;
+  border: 1px solid var(--itm-line);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px -8px rgba(74, 13, 23, .25);
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--itm-slate);
+
+  .itm-progress-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--itm-line);
+    overflow: hidden;
+  }
+  .itm-progress-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--itm-maroon), var(--itm-gold));
+    transition: width .35s ease;
+  }
+  .itm-progress-count { color: var(--itm-maroon-900); font-weight: 700; }
+}
+
+// ---- question card --------------------------------------------
+.path-mod-quiz .que {
+  display: block;          // Moodle 4.5 makes .que a flex row - stack it
+  border: 1px solid var(--itm-line);
+  border-radius: var(--itm-radius);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(74, 13, 23, .06);
+  padding: 0;
+  margin-bottom: 1.35rem;
+  overflow: hidden;
+
+  .info {
+    margin: 0;
+    padding: .8rem 1.25rem;
+    background: var(--itm-maroon-050);
+    border-bottom: 1px solid var(--itm-line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem .9rem;
+    min-height: 0;
+    width: 100%;
+    max-width: none;
+    flex: none;
+    float: none;
+  }
+  .content { width: 100%; flex: none; margin-left: 0; }
+  .info h3.no, .info .no {
+    margin: 0;
+    font: 700 1rem/1 var(--itm-serif);
+    color: var(--itm-maroon-900);
+  }
+  .info h3.no .qno { font-weight: 700; }
+  .info .state {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--itm-slate);
+  }
+  .info .grade { font-size: .72rem; color: var(--itm-slate); }
+
+  // flag question -> a clearly-tappable gold pill on the right
+  // (Moodle 4.5 renders the toggle as  .questionflag > a.aabtn )
+  .questionflag {
+    margin: 0 0 0 auto;
+    order: 9;
+  }
+  .questionflag a.aabtn,
+  .questionflag [role="button"],
+  .questionflag button,
+  .questionflag label {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    color: var(--itm-gold-600);
+    border: 1.5px solid var(--itm-gold-600);
+    padding: .22rem .65rem;
+    border-radius: 999px;
+    background: #fff;
+    text-decoration: none;
+  }
+  .questionflag a.aabtn:hover,
+  .questionflag [role="button"]:hover { background: var(--itm-maroon-050); }
+  // flagged: Moodle sets aria-pressed="true" on the toggle (no .flagged class
+  // on .que), and exam-ui.js also mirrors it as .itm-flagged - match either.
+  &.itm-flagged .questionflag a.aabtn,
+  &.itm-flagged .questionflag [role="button"],
+  &.itm-flagged .questionflag button,
+  &.itm-flagged .questionflag label,
+  .questionflag a.aabtn[aria-pressed="true"],
+  .questionflag [role="button"][aria-pressed="true"],
+  .questionflag button[aria-pressed="true"] {
+    background: var(--itm-gold) !important;
+    color: #43290a !important;
+    border-color: var(--itm-gold-600) !important;
+  }
+
+  .content { margin: 0; padding: 1.2rem 1.35rem 1.4rem; }
+  .formulation, .formulation.clearfix {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+  .qtext {
+    font-size: 1.03rem;
+    line-height: 1.6;
+    color: var(--itm-ink);
+    margin-bottom: 1.15rem;
+    -webkit-user-select: none;
+    user-select: none;      // JS layer enforces the hard block
+  }
+  .ablock .prompt { font-weight: 600; color: var(--itm-slate); margin-bottom: .6rem; }
+}
+
+// ---- answer options as click-cards --------------------------
+.path-mod-quiz .que .answer > div {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .7rem .9rem;
+  margin-bottom: .55rem;
+  border: 1.5px solid var(--itm-line);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .12s ease, background-color .12s ease, box-shadow .12s ease;
+
+  &:hover { border-color: var(--itm-maroon); background: var(--itm-maroon-050); }
+  &:has(input:checked) {
+    border-color: var(--itm-maroon);
+    background: var(--itm-maroon-050);
+    box-shadow: inset 0 0 0 1.5px var(--itm-maroon);
+  }
+  input[type="radio"], input[type="checkbox"] {
+    margin-top: .15rem;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--itm-maroon);
+    flex: 0 0 auto;
+  }
+  label { cursor: pointer; margin: 0; line-height: 1.5; }
+  .answernumber { font-weight: 700; color: var(--itm-slate); }
+}
+// text / numerical answer fields
+.path-mod-quiz .que .ablock input[type="text"],
+.path-mod-quiz .que .ablock textarea {
+  border: 1.5px solid var(--itm-line);
+  border-radius: 9px;
+  padding: .55rem .7rem;
+  &:focus { border-color: var(--itm-maroon); box-shadow: 0 0 0 3px rgba(138, 27, 44, .15); }
+}
+
+// ---- page navigation buttons (Prev / Next / Finish) ---------
+#page-mod-quiz-attempt {
+  .submitbtns, .mod_quiz-next-nav, .mod_quiz-prev-nav { margin-top: .25rem; }
+  input.mod_quiz-next-nav,
+  input.mod_quiz-prev-nav,
+  .mod_quiz-next-nav.btn, .mod_quiz-prev-nav.btn {
+    border-radius: 10px;
+    padding: .62rem 1.5rem;
+    font-weight: 600;
+    font-size: .95rem;
+  }
+  input.mod_quiz-next-nav, .mod_quiz-next-nav.btn {
+    background: var(--itm-maroon);
+    border: 1px solid var(--itm-maroon-700);
+    color: #fff;
+    box-shadow: 0 10px 20px -12px rgba(138, 27, 44, .85);
+    &:hover { background: var(--itm-maroon-700); }
+  }
+  input.mod_quiz-prev-nav, .mod_quiz-prev-nav.btn {
+    background: #fff;
+    border: 1.5px solid var(--itm-maroon-700);
+    color: var(--itm-maroon-700);
+    &:hover { background: var(--itm-maroon-050); }
+  }
+}
+
+// ---- question navigation panel + JS legend ------------------
+#page-mod-quiz-attempt #mod_quiz_navblock {
+  position: sticky;
+  top: 84px;
+  align-self: flex-start;
+
+  .card-body, .content { padding: 1rem; }
+  .qn_buttons { display: flex; flex-wrap: wrap; gap: .45rem; }
+
+  .qnbutton {
+    width: 44px;
+    height: 44px;
+    min-width: 0;
+    border-radius: 10px;
+    border: 1.5px solid var(--itm-line);
+    background: #fff;
+    color: var(--itm-ink);
+    font-weight: 700;
+    position: relative;
+    overflow: visible;
+
+    .trafficlight { display: none; }        // colour the whole button instead
+
+    &.thispage {
+      border-color: var(--itm-maroon);
+      box-shadow: 0 0 0 3px rgba(138, 27, 44, .2);
+      color: var(--itm-maroon-900);
+    }
+    &.answersaved, &.answered, &.complete {
+      background: $ok-green-bg;
+      border-color: $ok-green;
+      color: $ok-green-d;
+    }
+    &.invalidanswer { border-color: #d98a8a; background: #fcecec; }
+    &.flagged::after {
+      content: "";
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--itm-gold);
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px var(--itm-gold-600);
+    }
+  }
+
+  // legend injected by JS
+  .itm-navlegend {
+    margin-top: .9rem;
+    padding-top: .8rem;
+    border-top: 1px dashed var(--itm-line);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .4rem .6rem;
+    font-size: .72rem;
+    color: var(--itm-slate);
+
+    span { display: inline-flex; align-items: center; gap: .4rem; }
+    i {
+      width: 14px; height: 14px; border-radius: 4px;
+      border: 1.5px solid var(--itm-line); background: #fff;
+      flex: 0 0 auto;
+    }
+    i.is-answered { background: $ok-green-bg; border-color: $ok-green; }
+    i.is-current  { border-color: var(--itm-maroon); box-shadow: 0 0 0 2px rgba(138,27,44,.2); }
+    i.is-flagged  { background: var(--itm-gold); border-color: var(--itm-gold-600); border-radius: 50%; }
+  }
+
+  // "Finish attempt ..." -> a real gold call-to-action
+  .othernav {
+    margin-top: .9rem;
+    a, a.endtestlink {
+      display: block;
+      text-align: center;
+      padding: .6rem .9rem;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--itm-gold), var(--itm-gold-600));
+      color: #3a2506;
+      font-weight: 700;
+      text-decoration: none;
+      &:hover { background: var(--itm-gold-600); color: #2a1a03; }
+    }
+  }
+}
+
+// ---- floating countdown timer ------------------------------
+#page-mod-quiz-attempt #quiz-timer {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1080;
+  background: var(--itm-maroon-900);
+  color: #fff;
+  padding: .6rem 1.15rem;
+  border-radius: 999px;
+  border: 2px solid var(--itm-gold);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  box-shadow: 0 12px 26px -10px rgba(0, 0, 0, .55);
+
+  #quiz-time-left { font-size: 1.05rem; letter-spacing: .5px; }
+}
+#page-mod-quiz-attempt #quiz-timer.itm-low {
+  background: #9a1020;
+  border-color: #ffd27a;
+}
+#page-mod-quiz-attempt #quiz-timer.itm-critical {
+  background: #7c0c1a;
+  border-color: #ffd27a;
+  animation: itm-timer-pulse 1s ease-in-out infinite;
+}
+@keyframes itm-timer-pulse {
+  0%, 100% { box-shadow: 0 12px 26px -10px rgba(0, 0, 0, .55), 0 0 0 0 rgba(154, 16, 32, .55); }
+  50%      { box-shadow: 0 12px 26px -10px rgba(0, 0, 0, .55), 0 0 0 12px rgba(154, 16, 32, 0); }
+}
+
+// ---- connection status ------------------------------------
+#page-mod-quiz-attempt .connectionok,
+#page-mod-quiz-attempt .connectionerror {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1080;
+  padding: .45rem .85rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+#page-mod-quiz-attempt .connectionok    { background: rgba(47, 158, 99, .16); color: $ok-green-d; }
+#page-mod-quiz-attempt .connectionerror { background: rgba(161, 18, 38, .14); color: var(--itm-maroon-700); }
+
+// ---- summary ("Finish attempt") page ---------------------
+body#page-mod-quiz-summary {
+  .generaltable {
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    overflow: hidden;
+  }
+  .generaltable th { background: var(--itm-maroon-050); color: var(--itm-maroon-900); }
+  .generaltable td.c0 { font-weight: 600; }
+  .quizsummaryofattempt + .submitbtns .btn,
+  .path-mod-quiz .submitbtns .btn-primary,
+  #responseform .btn-primary {
+    padding: .7rem 1.8rem;
+    font-weight: 700;
+    border-radius: 10px;
+  }
+}
+
+// ---- review page (shown to the student after submit) -----
+body#page-mod-quiz-review {
+  .que.correct          { border-left: 5px solid $ok-green; }
+  .que.incorrect        { border-left: 5px solid var(--itm-maroon); }
+  .que.partiallycorrect { border-left: 5px solid var(--itm-gold-600); }
+  .que .grade           { font-weight: 600; }
+}
+
+// =================================================================
+//  STUDENT DASHBOARD  ( /my/ )  --  modern, exam-portal focused
+//  .itm-dashhero is injected above the blocks by exam-ui.js
+// =================================================================
+body#page-my-index,
+body.pagelayout-mydashboard {
+  background: #efe6e8 !important;
+
+  // ITM GOI campus, full-bleed, fixed. A viewport-locked pseudo-element
+  // (not background-attachment:fixed) so it always covers edge-to-edge -
+  // no dark strips at the sides.
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgba(31, 7, 13, .12) 0%, rgba(31, 7, 13, .22) 100%),
+      url("http://localhost:8080/local/sebkiosk/campus.jpg") center center / cover no-repeat;
+  }
+
+  // the plain "Dashboard" title is replaced by the welcome banner
+  #page-header .page-context-header .page-header-headings,
+  #page-header h1 { display: none; }
+  #page-header { margin-bottom: .25rem; }
+
+  // ---- welcome banner (campus slideshow behind a maroon wash) ----
+  .itm-dashhero {
+    position: relative;
+    margin: 0 0 1.6rem;
+    border-radius: var(--itm-radius-lg);
+    border: 1px solid var(--itm-maroon-900);
+    box-shadow: 0 22px 50px -28px rgba(74, 13, 23, .6);
+    overflow: hidden;
+    background: var(--itm-maroon-900);
+  }
+  .itm-dashhero .itm-hero-slides,
+  .itm-dashhero .itm-hero-shade { position: absolute; inset: 0; }
+  .itm-dashhero .itm-hero-slide {
+    position: absolute;
+    inset: 0;
+    background-position: center 38%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: scale(1.05);
+    transition: opacity 1.4s ease, transform 8s ease;
+  }
+  .itm-dashhero .itm-hero-slide.is-active { opacity: 1; transform: scale(1); }
+  .itm-dashhero .itm-hero-shade {
+    background:
+      radial-gradient(520px 260px at 92% -40%, rgba(201, 162, 75, .30), transparent 70%),
+      linear-gradient(110deg, rgba(74, 13, 23, .94) 0%, rgba(109, 20, 34, .86) 55%, rgba(138, 27, 44, .72) 100%);
+    z-index: 1;
+  }
+  .itm-dashhero-in {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    padding: 1.5rem 1.8rem;
+    border-left: 5px solid var(--itm-gold);
+  }
+  // white logo plate holding the official ITM GOI logo
+  .itm-dashhero-logo {
+    flex: 0 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    padding: .75rem 1rem;
+    box-shadow: 0 12px 26px -14px rgba(0, 0, 0, .55);
+
+    img { display: block; height: 58px; width: auto; }
+  }
+  .itm-dashhero-text { flex: 1 1 auto; min-width: 0; }
+  .itm-dashhero-badge { margin-left: auto; }
+  .itm-dashhero-kicker {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--itm-gold);
+  }
+  .itm-dashhero h2 {
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 1.7rem;
+    line-height: 1.2;
+    margin: .3rem 0 .35rem;
+    color: #fff;
+  }
+  .itm-dashhero p { margin: 0; font-size: 13px; color: #efe0c9; }
+  .itm-dashhero-badge {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .9rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .22);
+    color: #f6ecd8;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    svg {
+      width: 15px; height: 15px; fill: none;
+      stroke: var(--itm-gold); stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+  }
+
+  // ---- blocks as clean cards ----
+  .block {
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    background: #fff;
+    box-shadow: 0 10px 30px -22px rgba(74, 13, 23, .35);
+  }
+  .block .card-body { padding: 1.15rem 1.25rem; }
+  .block .card-title,
+  .block h5.card-title,
+  .block [data-region="header-container"] h5 {
+    color: var(--itm-maroon-900);
+    font-weight: 700;
+    font-size: 1rem;
+    padding-bottom: .55rem;
+    margin-bottom: .9rem;
+    border-bottom: 2px solid var(--itm-line);
+    position: relative;
+  }
+  .block .card-title::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -2px;
+    width: 42px; height: 2px;
+    background: var(--itm-gold);
+  }
+
+  // course-overview cards
+  .block_myoverview {
+    .card.dashboard-card, .course-card, [data-region="course-content"] .card {
+      border: 1px solid var(--itm-line);
+      border-radius: var(--itm-radius);
+      transition: transform .14s ease, box-shadow .14s ease;
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 34px -20px rgba(74, 13, 23, .4);
+      }
+    }
+    .course-name .multiline,
+    .coursename a { color: var(--itm-maroon-900); font-weight: 600; }
+    .progress .progress-bar { background-color: var(--itm-maroon); }
+  }
+
+  // timeline / calendar tidy
+  .block_timeline .event-name-container a,
+  .block_calendar_month .calendarmonth td a { color: var(--itm-maroon-700); }
+  .block_calendar_month .calendarmonth td.today { background: var(--itm-maroon-050); }
+  .block_calendar_month .calendarmonth td.today .day-number-circle { background: var(--itm-maroon); }
+
+  // calendar now lives in the narrow right column -> compact month widget
+  [data-region="blocks-column"] .block_calendar_month,
+  .region_side-post .block_calendar_month,
+  #block-region-side-post .block_calendar_month {
+    .calendarmonth {
+      table-layout: fixed;
+      width: 100%;
+      font-size: .74rem;
+    }
+    .calendarmonth th { padding: .25rem 0; font-size: .68rem; }
+    .calendarmonth td {
+      height: 34px;
+      padding: 1px;
+      vertical-align: top;
+      overflow: hidden;
+    }
+    .calendarmonth td .day-number-circle,
+    .calendarmonth td [data-region="day-content"] { font-size: .74rem; }
+    .calendarmonth td .events-underway,
+    .calendarmonth td .calendar-event-panel { display: none; }
+    // hide the bulky footer links, keep it tidy
+    .content > .footer,
+    [data-region="event-list-content"] { font-size: .72rem; }
+    h5.card-title { font-size: .92rem; }
+  }
+
+  // dropdowns / "Add" buttons on the dashboard -> brand
+  .btn-primary { background: var(--itm-maroon); border-color: var(--itm-maroon-700); }
+}
+
+// =================================================================
+//  DARK MODE  (light touch)
+// =================================================================
+@media (prefers-color-scheme: dark) {
+  ::selection      { background: var(--itm-gold); color: #1a0c10; }
+  ::-moz-selection { background: var(--itm-gold); color: #1a0c10; }
+  body:not(.pagelayout-login) a { color: #e3b872; }
+}
+";s:13:"extscsssource";s:1:"0";s:13:"extscssurlpre";s:0:"";s:14:"extscssurlpost";s:0:"";s:18:"extscssgithubtoken";s:0:"";s:17:"extscssgithubuser";s:0:"";s:17:"extscssgithubrepo";s:0:"";s:24:"extscssgithubprefilepath";s:0:"";s:25:"extscssgithubpostfilepath";s:0:"";s:17:"extscssvalidation";s:3:"yes";s:21:"coursecontentmaxwidth";s:5:"830px";s:21:"mediumcontentmaxwidth";s:6:"1120px";s:22:"courseindexdrawerwidth";s:5:"285px";s:16:"blockdrawerwidth";s:5:"315px";s:4:"logo";s:13:"/itm-logo.png";s:11:"logocompact";s:18:"/itm-logo-mark.png";s:7:"favicon";s:0:"";s:15:"backgroundimage";s:0:"";s:23:"backgroundimageposition";s:8:"left top";s:10:"brandcolor";s:7:"#8a1b2c";s:16:"brandedgraytones";s:2:"no";s:9:"linkcolor";s:0:"";s:16:"buttonbrandcolor";s:0:"";s:21:"bootstrapcolorsuccess";s:7:"#1f7a4d";s:18:"bootstrapcolorinfo";s:0:"";s:21:"bootstrapcolorwarning";s:0:"";s:20:"bootstrapcolordanger";s:0:"";s:12:"maxlogowidth";s:3:"260";s:16:"maxsitenamewidth";s:0:"";s:11:"navbarcolor";s:5:"light";s:10:"navbartint";s:0:"";s:31:"activityiconcoloradministration";s:0:"";s:27:"activityiconcolorassessment";s:0:"";s:30:"activityiconcolorcollaboration";s:0:"";s:30:"activityiconcolorcommunication";s:0:"";s:24:"activityiconcolorcontent";s:0:"";s:35:"activityiconcolorinteractivecontent";s:0:"";s:25:"activityiconcolorfidelity";s:1:"1";s:21:"activitypurposeassign";s:10:"assessment";s:19:"activitypurposebook";s:7:"content";s:21:"activitypurposechoice";s:13:"communication";s:19:"activitypurposedata";s:13:"collaboration";s:23:"activitypurposefeedback";s:13:"communication";s:21:"activitypurposefolder";s:7:"content";s:20:"activitypurposeforum";s:13:"collaboration";s:23:"activitypurposeglossary";s:13:"collaboration";s:26:"activitypurposeh5pactivity";s:18:"interactivecontent";s:20:"activitypurposeimscp";s:18:"interactivecontent";s:20:"activitypurposelabel";s:7:"content";s:21:"activitypurposelesson";s:18:"interactivecontent";s:18:"activitypurposelti";s:5:"other";s:19:"activitypurposepage";s:7:"content";s:19:"activitypurposequiz";s:10:"assessment";s:23:"activitypurposeresource";s:7:"content";s:20:"activitypurposescorm";s:18:"interactivecontent";s:18:"activitypurposeurl";s:7:"content";s:19:"activitypurposewiki";s:13:"collaboration";s:23:"activitypurposeworkshop";s:10:"assessment";s:18:"activitypurposevpl";s:10:"assessment";s:14:"modiconsenable";s:2:"no";s:13:"modiconsfiles";s:0:"";s:30:"calendareventcolormaincategory";s:0:"";s:32:"calendareventcolorbordercategory";s:0:"";s:28:"calendareventcolormaincourse";s:0:"";s:30:"calendareventcolorbordercourse";s:0:"";s:27:"calendareventcolormaingroup";s:0:"";s:29:"calendareventcolorbordergroup";s:0:"";s:26:"calendareventcolormainuser";s:0:"";s:28:"calendareventcolorborderuser";s:0:"";s:26:"calendareventcolormainsite";s:0:"";s:28:"calendareventcolorbordersite";s:0:"";s:27:"calendareventcolormainother";s:0:"";s:29:"calendareventcolorborderother";s:0:"";s:18:"calendariconscolor";s:0:"";s:17:"loginformposition";s:6:"center";s:21:"loginformtransparency";s:2:"no";s:19:"logincontainerwidth";s:5:"500px";s:20:"loginbackgroundimage";s:0:"";s:28:"loginbackgroundimageposition";s:8:"left top";s:24:"loginbackgroundimagetext";s:0:"";s:14:"loginpagebrand";s:7:"heading";s:16:"loginpageheading";s:15:"logintofullname";s:16:"loginpagetagline";s:7:"welcome";s:17:"loginlogomaxwidth";s:0:"";s:18:"loginlogomaxheight";s:0:"";s:18:"loginlogoalignment";s:6:"center";s:21:"loginlogomarginbottom";s:1:"3";s:11:"loginlayout";s:8:"vertical";s:23:"loginenhancedtabslayout";s:2:"no";s:22:"logininstructionsabove";s:0:"";s:22:"logininstructionsbelow";s:0:"";s:15:"loginorderlocal";s:1:"1";s:13:"loginorderidp";s:1:"2";s:25:"loginorderfirsttimesignup";s:1:"3";s:15:"loginorderguest";s:1:"4";s:12:"primarylogin";s:4:"none";s:21:"loginlocalloginenable";s:3:"yes";s:19:"loginlocalshowintro";s:2:"no";s:19:"loginlocalintrotext";s:0:"";s:20:"loginlocalloginlabel";s:14:"Moodle account";s:25:"loginlocalshowinstruction";s:2:"no";s:28:"loginlocalinstructioncontent";s:0:"";s:29:"loginlocalinstructionposition";s:7:"between";s:21:"loginlocalbuttoncolor";s:7:"primary";s:20:"loginlocalbuttonsize";s:2:"lg";s:19:"loginidploginenable";s:3:"yes";s:17:"loginidpshowintro";s:3:"yes";s:17:"loginidpintrotext";s:0:"";s:18:"loginidploginlabel";s:9:"IDP login";s:23:"loginidpshowinstruction";s:2:"no";s:26:"loginidpinstructioncontent";s:0:"";s:27:"loginidpinstructionposition";s:7:"between";s:19:"loginidpbuttoncolor";s:19:"outline-lightmoodle";s:18:"loginidpbuttonsize";s:2:"md";s:13:"loginidpsplit";s:2:"no";s:27:"loginshibbolethinternalwayf";s:2:"no";s:26:"internalshibbolethwayfcode";s:0:"";s:27:"loginselfregistrationenable";s:3:"yes";s:30:"loginselfregistrationshowintro";s:3:"yes";s:30:"loginselfregistrationintrotext";s:0:"";s:31:"loginselfregistrationloginlabel";s:17:"Self registration";s:36:"loginselfregistrationshowinstruction";s:2:"no";s:39:"loginselfregistrationinstructioncontent";s:0:"";s:40:"loginselfregistrationinstructionposition";s:7:"between";s:32:"loginselfregistrationbuttoncolor";s:9:"secondary";s:31:"loginselfregistrationbuttonsize";s:2:"md";s:21:"loginguestloginenable";s:3:"yes";s:19:"loginguestshowintro";s:3:"yes";s:19:"loginguestintrotext";s:0:"";s:20:"loginguestloginlabel";s:11:"Guest login";s:25:"loginguestshowinstruction";s:2:"no";s:28:"loginguestinstructioncontent";s:0:"";s:29:"loginguestinstructionposition";s:7:"between";s:21:"loginguestbuttoncolor";s:9:"secondary";s:20:"loginguestbuttonsize";s:2:"md";s:23:"sideentranceloginenable";s:4:"auto";s:30:"courseoverviewshowcourseimages";s:17:"card,list,summary";s:32:"courseoverviewshowcourseprogress";s:3:"yes";s:25:"courseoverviewimagesource";s:17:"coursepluspattern";s:27:"courseoverviewimagefallback";s:0:"";s:25:"courselistingpresentation";s:8:"nochange";s:22:"coursecardscolumncount";s:1:"3";s:21:"courselistinghowimage";s:3:"yes";s:25:"courselistingshowcontacts";s:2:"no";s:25:"courselistinghowshortname";s:2:"no";s:24:"courselistinghowcategory";s:2:"no";s:24:"courselistinghowprogress";s:2:"no";s:26:"courselistingprogressstyle";s:10:"percentage";s:26:"courselistinghowenrolicons";s:3:"yes";s:23:"courselistingshowfields";s:2:"no";s:25:"courselistingselectfields";s:0:"";s:24:"courselistingstylefields";s:4:"text";s:20:"courselistinghowgoto";s:3:"yes";s:21:"courselistinghowpopup";s:3:"yes";s:27:"categorylistingpresentation";s:8:"nochange";s:19:"timelinetintenabled";s:2:"no";s:25:"upcomingeventstintenabled";s:2:"no";s:32:"recentlyaccesseditemstintenabled";s:2:"no";s:21:"activitiestintenabled";s:2:"no";s:24:"courseheaderimageenabled";s:2:"no";s:25:"courseheaderimagefallback";s:0:"";s:23:"courseheaderimagelayout";s:12:"headingabove";s:23:"courseheaderimageheight";s:5:"150px";s:25:"courseheaderimageposition";s:13:"center center";s:25:"courseindexmodiconenabled";s:2:"no";s:33:"courseindexcompletioninfoposition";s:9:"endofline";s:19:"additionalresources";s:0:"";s:11:"customfonts";s:0:"";s:6:"cssh5p";s:0:"";s:18:"h5pcontentmaxwidth";s:5:"960px";s:10:"mobilescss";s:0:"";s:17:"touchiconfilesios";s:0:"";s:26:"hidenodesprimarynavigation";s:0:"";s:22:"alternativelogolinkurl";s:0:"";s:22:"showfullnameinusermenu";s:2:"no";s:16:"addpreferredlang";s:2:"no";s:22:"loginlinkbuttonenabled";s:2:"no";s:24:"shownavbarstarredcourses";s:2:"no";s:24:"starredcourseslinktarget";s:9:"mycourses";s:19:"categorybreadcrumbs";s:2:"no";s:15:"backtotopbutton";s:2:"no";s:9:"scrollspy";s:2:"no";s:18:"activitynavigation";s:2:"no";s:15:"unaddableblocks";s:0:"";s:23:"blockregionsforstandard";s:0:"";s:20:"blockregionsforadmin";s:0:"";s:29:"blockregionsforcoursecategory";s:0:"";s:23:"blockregionsforincourse";s:0:"";s:23:"blockregionsformypublic";s:0:"";s:21:"blockregionsforreport";s:0:"";s:21:"blockregionsforcourse";s:0:"";s:24:"blockregionsforfrontpage";s:0:"";s:26:"blockregionsformydashboard";s:0:"";s:24:"blockregionsformycourses";s:0:"";s:27:"blockregionoutsideleftwidth";s:5:"300px";s:28:"blockregionoutsiderightwidth";s:5:"300px";s:26:"blockregionoutsidetopwidth";s:9:"fullwidth";s:29:"blockregionoutsidebottomwidth";s:9:"fullwidth";s:23:"outsideregionsplacement";s:15:"nextmaincontent";s:22:"blockregionfooterwidth";s:9:"fullwidth";s:39:"showsitehomerighthandblockdraweronvisit";s:2:"no";s:44:"showsitehomerighthandblockdraweronfirstlogin";s:2:"no";s:44:"showsitehomerighthandblockdraweronguestlogin";s:2:"no";s:24:"policyoverviewnavigation";s:2:"no";s:17:"markexternallinks";s:2:"no";s:22:"markexternallinksscope";s:9:"wholepage";s:15:"markmailtolinks";s:2:"no";s:20:"markmailtolinksscope";s:9:"wholepage";s:15:"markbrokenlinks";s:2:"no";s:22:"javascriptdisabledhint";s:2:"no";s:8:"footnote";s:0:"";s:15:"footnotelayouts";s:104:"base,standard,course,coursecategory,incourse,frontpage,admin,mycourses,mydashboard,mypublic,login,report";s:18:"enablefooterbutton";s:25:"enablefooterbuttondesktop";s:19:"footersuppressicons";s:2:"no";s:18:"footersuppresschat";s:2:"no";s:18:"footersuppresshelp";s:2:"no";s:22:"footersuppressservices";s:2:"no";s:21:"footersuppresscontact";s:2:"no";s:23:"footersuppresslogininfo";s:2:"no";s:22:"footersuppressusertour";s:2:"no";s:25:"footersuppressthemeswitch";s:2:"no";s:21:"footersuppresspowered";s:2:"no";s:45:"footersuppressstandardfooter_tool_dataprivacy";s:2:"no";s:46:"footersuppressstandardfooter_core_userfeedback";s:2:"no";s:40:"footersuppressstandardfooter_tool_policy";s:2:"no";s:40:"footersuppressstandardfooter_tool_mobile";s:2:"no";s:13:"enableaboutus";s:2:"no";s:14:"aboutuscontent";s:0:"";s:16:"aboutuspagetitle";s:8:"About us";s:19:"aboutuslinkposition";s:4:"none";s:12:"enableoffers";s:2:"no";s:13:"offerscontent";s:0:"";s:15:"offerspagetitle";s:6:"Offers";s:18:"offerslinkposition";s:4:"none";s:13:"enableimprint";s:2:"no";s:14:"imprintcontent";s:0:"";s:16:"imprintpagetitle";s:7:"Imprint";s:19:"imprintlinkposition";s:4:"none";s:13:"enablecontact";s:2:"no";s:14:"contactcontent";s:0:"";s:16:"contactpagetitle";s:7:"Contact";s:19:"contactlinkposition";s:4:"none";s:10:"enablehelp";s:2:"no";s:11:"helpcontent";s:0:"";s:13:"helppagetitle";s:4:"Help";s:16:"helplinkposition";s:4:"none";s:17:"enablemaintenance";s:2:"no";s:18:"maintenancecontent";s:0:"";s:20:"maintenancepagetitle";s:11:"Maintenance";s:23:"maintenancelinkposition";s:4:"none";s:11:"enablepage1";s:2:"no";s:12:"page1content";s:0:"";s:14:"page1pagetitle";s:14:"Generic page 1";s:17:"page1linkposition";s:4:"none";s:11:"enablepage2";s:2:"no";s:12:"page2content";s:0:"";s:14:"page2pagetitle";s:14:"Generic page 2";s:17:"page2linkposition";s:4:"none";s:11:"enablepage3";s:2:"no";s:12:"page3content";s:0:"";s:14:"page3pagetitle";s:14:"Generic page 3";s:17:"page3linkposition";s:4:"none";s:18:"infobanner1enabled";s:2:"no";s:18:"infobanner1content";s:0:"";s:16:"infobanner1pages";s:0:"";s:18:"infobanner1bsclass";s:7:"primary";s:16:"infobanner1order";s:1:"1";s:15:"infobanner1mode";s:4:"perp";s:22:"infobanner1dismissible";s:2:"no";s:18:"infobanner2enabled";s:2:"no";s:18:"infobanner2content";s:0:"";s:16:"infobanner2pages";s:0:"";s:18:"infobanner2bsclass";s:7:"primary";s:16:"infobanner2order";s:1:"2";s:15:"infobanner2mode";s:4:"perp";s:22:"infobanner2dismissible";s:2:"no";s:18:"infobanner3enabled";s:2:"no";s:18:"infobanner3content";s:0:"";s:16:"infobanner3pages";s:0:"";s:18:"infobanner3bsclass";s:7:"primary";s:16:"infobanner3order";s:1:"3";s:15:"infobanner3mode";s:4:"perp";s:22:"infobanner3dismissible";s:2:"no";s:18:"infobanner4enabled";s:2:"no";s:18:"infobanner4content";s:0:"";s:16:"infobanner4pages";s:0:"";s:18:"infobanner4bsclass";s:7:"primary";s:16:"infobanner4order";s:1:"4";s:15:"infobanner4mode";s:4:"perp";s:22:"infobanner4dismissible";s:2:"no";s:18:"infobanner5enabled";s:2:"no";s:18:"infobanner5content";s:0:"";s:16:"infobanner5pages";s:0:"";s:18:"infobanner5bsclass";s:7:"primary";s:16:"infobanner5order";s:1:"5";s:15:"infobanner5mode";s:4:"perp";s:22:"infobanner5dismissible";s:2:"no";s:21:"tilefrontpageposition";s:1:"1";s:11:"tilecolumns";s:1:"2";s:10:"tileheight";s:5:"150px";s:12:"tile1enabled";s:2:"no";s:10:"tile1title";s:0:"";s:12:"tile1content";s:0:"";s:20:"tile1backgroundimage";s:0:"";s:28:"tile1backgroundimageposition";s:13:"center center";s:24:"tile1backgroundimagesize";s:4:"auto";s:17:"tile1contentstyle";s:8:"nochange";s:9:"tile1link";s:0:"";s:14:"tile1linktitle";s:0:"";s:15:"tile1linktarget";s:4:"same";s:10:"tile1order";s:1:"1";s:12:"tile2enabled";s:2:"no";s:10:"tile2title";s:0:"";s:12:"tile2content";s:0:"";s:20:"tile2backgroundimage";s:0:"";s:28:"tile2backgroundimageposition";s:13:"center center";s:24:"tile2backgroundimagesize";s:4:"auto";s:17:"tile2contentstyle";s:8:"nochange";s:9:"tile2link";s:0:"";s:14:"tile2linktitle";s:0:"";s:15:"tile2linktarget";s:4:"same";s:10:"tile2order";s:1:"2";s:12:"tile3enabled";s:2:"no";s:10:"tile3title";s:0:"";s:12:"tile3content";s:0:"";s:20:"tile3backgroundimage";s:0:"";s:28:"tile3backgroundimageposition";s:13:"center center";s:24:"tile3backgroundimagesize";s:4:"auto";s:17:"tile3contentstyle";s:8:"nochange";s:9:"tile3link";s:0:"";s:14:"tile3linktitle";s:0:"";s:15:"tile3linktarget";s:4:"same";s:10:"tile3order";s:1:"3";s:12:"tile4enabled";s:2:"no";s:10:"tile4title";s:0:"";s:12:"tile4content";s:0:"";s:20:"tile4backgroundimage";s:0:"";s:28:"tile4backgroundimageposition";s:13:"center center";s:24:"tile4backgroundimagesize";s:4:"auto";s:17:"tile4contentstyle";s:8:"nochange";s:9:"tile4link";s:0:"";s:14:"tile4linktitle";s:0:"";s:15:"tile4linktarget";s:4:"same";s:10:"tile4order";s:1:"4";s:12:"tile5enabled";s:2:"no";s:10:"tile5title";s:0:"";s:12:"tile5content";s:0:"";s:20:"tile5backgroundimage";s:0:"";s:28:"tile5backgroundimageposition";s:13:"center center";s:24:"tile5backgroundimagesize";s:4:"auto";s:17:"tile5contentstyle";s:8:"nochange";s:9:"tile5link";s:0:"";s:14:"tile5linktitle";s:0:"";s:15:"tile5linktarget";s:4:"same";s:10:"tile5order";s:1:"5";s:12:"tile6enabled";s:2:"no";s:10:"tile6title";s:0:"";s:12:"tile6content";s:0:"";s:20:"tile6backgroundimage";s:0:"";s:28:"tile6backgroundimageposition";s:13:"center center";s:24:"tile6backgroundimagesize";s:4:"auto";s:17:"tile6contentstyle";s:8:"nochange";s:9:"tile6link";s:0:"";s:14:"tile6linktitle";s:0:"";s:15:"tile6linktarget";s:4:"same";s:10:"tile6order";s:1:"6";s:12:"tile7enabled";s:2:"no";s:10:"tile7title";s:0:"";s:12:"tile7content";s:0:"";s:20:"tile7backgroundimage";s:0:"";s:28:"tile7backgroundimageposition";s:13:"center center";s:24:"tile7backgroundimagesize";s:4:"auto";s:17:"tile7contentstyle";s:8:"nochange";s:9:"tile7link";s:0:"";s:14:"tile7linktitle";s:0:"";s:15:"tile7linktarget";s:4:"same";s:10:"tile7order";s:1:"7";s:12:"tile8enabled";s:2:"no";s:10:"tile8title";s:0:"";s:12:"tile8content";s:0:"";s:20:"tile8backgroundimage";s:0:"";s:28:"tile8backgroundimageposition";s:13:"center center";s:24:"tile8backgroundimagesize";s:4:"auto";s:17:"tile8contentstyle";s:8:"nochange";s:9:"tile8link";s:0:"";s:14:"tile8linktitle";s:0:"";s:15:"tile8linktarget";s:4:"same";s:10:"tile8order";s:1:"8";s:12:"tile9enabled";s:2:"no";s:10:"tile9title";s:0:"";s:12:"tile9content";s:0:"";s:20:"tile9backgroundimage";s:0:"";s:28:"tile9backgroundimageposition";s:13:"center center";s:24:"tile9backgroundimagesize";s:4:"auto";s:17:"tile9contentstyle";s:8:"nochange";s:9:"tile9link";s:0:"";s:14:"tile9linktitle";s:0:"";s:15:"tile9linktarget";s:4:"same";s:10:"tile9order";s:1:"9";s:13:"tile10enabled";s:2:"no";s:11:"tile10title";s:0:"";s:13:"tile10content";s:0:"";s:21:"tile10backgroundimage";s:0:"";s:29:"tile10backgroundimageposition";s:13:"center center";s:25:"tile10backgroundimagesize";s:4:"auto";s:18:"tile10contentstyle";s:8:"nochange";s:10:"tile10link";s:0:"";s:15:"tile10linktitle";s:0:"";s:16:"tile10linktarget";s:4:"same";s:11:"tile10order";s:2:"10";s:13:"tile11enabled";s:2:"no";s:11:"tile11title";s:0:"";s:13:"tile11content";s:0:"";s:21:"tile11backgroundimage";s:0:"";s:29:"tile11backgroundimageposition";s:13:"center center";s:25:"tile11backgroundimagesize";s:4:"auto";s:18:"tile11contentstyle";s:8:"nochange";s:10:"tile11link";s:0:"";s:15:"tile11linktitle";s:0:"";s:16:"tile11linktarget";s:4:"same";s:11:"tile11order";s:2:"11";s:13:"tile12enabled";s:2:"no";s:11:"tile12title";s:0:"";s:13:"tile12content";s:0:"";s:21:"tile12backgroundimage";s:0:"";s:29:"tile12backgroundimageposition";s:13:"center center";s:25:"tile12backgroundimagesize";s:4:"auto";s:18:"tile12contentstyle";s:8:"nochange";s:10:"tile12link";s:0:"";s:15:"tile12linktitle";s:0:"";s:16:"tile12linktarget";s:4:"same";s:11:"tile12order";s:2:"12";s:23:"sliderfrontpageposition";s:1:"1";s:14:"sliderarrownav";s:2:"no";s:18:"sliderindicatornav";s:2:"no";s:15:"slideranimation";s:1:"1";s:14:"sliderinterval";s:4:"5000";s:14:"sliderkeyboard";s:3:"yes";s:11:"sliderpause";s:3:"yes";s:10:"sliderride";s:1:"0";s:10:"sliderwrap";s:3:"yes";s:13:"slide1enabled";s:2:"no";s:21:"slide1backgroundimage";s:0:"";s:24:"slide1backgroundimagealt";s:0:"";s:13:"slide1caption";s:0:"";s:13:"slide1content";s:0:"";s:18:"slide1contentstyle";s:5:"light";s:10:"slide1link";s:0:"";s:15:"slide1linktitle";s:0:"";s:16:"slide1linksource";s:1:"0";s:16:"slide1linktarget";s:4:"same";s:11:"slide1order";s:1:"1";s:13:"slide2enabled";s:2:"no";s:21:"slide2backgroundimage";s:0:"";s:24:"slide2backgroundimagealt";s:0:"";s:13:"slide2caption";s:0:"";s:13:"slide2content";s:0:"";s:18:"slide2contentstyle";s:5:"light";s:10:"slide2link";s:0:"";s:15:"slide2linktitle";s:0:"";s:16:"slide2linksource";s:1:"0";s:16:"slide2linktarget";s:4:"same";s:11:"slide2order";s:1:"2";s:13:"slide3enabled";s:2:"no";s:21:"slide3backgroundimage";s:0:"";s:24:"slide3backgroundimagealt";s:0:"";s:13:"slide3caption";s:0:"";s:13:"slide3content";s:0:"";s:18:"slide3contentstyle";s:5:"light";s:10:"slide3link";s:0:"";s:15:"slide3linktitle";s:0:"";s:16:"slide3linksource";s:1:"0";s:16:"slide3linktarget";s:4:"same";s:11:"slide3order";s:1:"3";s:13:"slide4enabled";s:2:"no";s:21:"slide4backgroundimage";s:0:"";s:24:"slide4backgroundimagealt";s:0:"";s:13:"slide4caption";s:0:"";s:13:"slide4content";s:0:"";s:18:"slide4contentstyle";s:5:"light";s:10:"slide4link";s:0:"";s:15:"slide4linktitle";s:0:"";s:16:"slide4linksource";s:1:"0";s:16:"slide4linktarget";s:4:"same";s:11:"slide4order";s:1:"4";s:13:"slide5enabled";s:2:"no";s:21:"slide5backgroundimage";s:0:"";s:24:"slide5backgroundimagealt";s:0:"";s:13:"slide5caption";s:0:"";s:13:"slide5content";s:0:"";s:18:"slide5contentstyle";s:5:"light";s:10:"slide5link";s:0:"";s:15:"slide5linktitle";s:0:"";s:16:"slide5linksource";s:1:"0";s:16:"slide5linktarget";s:4:"same";s:11:"slide5order";s:1:"5";s:13:"slide6enabled";s:2:"no";s:21:"slide6backgroundimage";s:0:"";s:24:"slide6backgroundimagealt";s:0:"";s:13:"slide6caption";s:0:"";s:13:"slide6content";s:0:"";s:18:"slide6contentstyle";s:5:"light";s:10:"slide6link";s:0:"";s:15:"slide6linktitle";s:0:"";s:16:"slide6linksource";s:1:"0";s:16:"slide6linktarget";s:4:"same";s:11:"slide6order";s:1:"6";s:24:"showswitchedroleincourse";s:2:"no";s:20:"showhintcoursehidden";s:2:"no";s:26:"showhintforumnotifications";s:2:"no";s:23:"showhintcourseselfenrol";s:2:"no";s:24:"showhintcourseguestenrol";s:2:"no";s:25:"showhintcourseguestaccess";s:2:"no";s:30:"showviewcourseiconincoursemgnt";s:2:"no";s:30:"enableaccessibilitydeclaration";s:2:"no";s:31:"accessibilitydeclarationcontent";s:0:"";s:33:"accessibilitydeclarationpagetitle";s:28:"Declaration of accessibility";s:36:"accessibilitydeclarationlinkposition";s:4:"none";s:26:"enableaccessibilitysupport";s:2:"no";s:27:"accessibilitysupportcontent";s:523:"<p>If you have any accessibility feedback or want to report a barrier, please use the form below.</p><p>Do you work with assistive technology such as screen readers, magnifiers, voice control or speech recognition software? If yes, please specify which ones. To help us to process your request, you can allow the form to automatically send the following information along with your message: The URL on which you were when you opened this support form (this is called 'referrer') and some information about your browser.</p>";s:29:"accessibilitysupportpagetitle";s:21:"Accessibility support";s:32:"accessibilitysupportlinkposition";s:4:"none";s:37:"allowaccessibilitysupportwithoutlogin";s:2:"no";s:38:"enableaccessibilitysupportfooterbutton";s:2:"no";s:21:"allowanonymoussubmits";s:2:"no";s:22:"allowsendtechinfoalong";s:3:"yes";s:28:"accessibilitysupportusermail";s:0:"";s:35:"accessibilitysupportpagesrlinktitle";s:25:"Get accessibility support";s:29:"accessibilitysupportrecaptcha";s:5:"never";s:21:"enablebuiltinsnippets";s:2:"no";s:22:"enableuploadedsnippets";s:2:"no";s:16:"uploadedsnippets";s:0:"";s:8:"themerev";s:10:"1788078447";s:21:"bootstrapcolorprimary";s:7:"#8a1b2c";s:19:"maxcompactlogowidth";s:3:"190";}

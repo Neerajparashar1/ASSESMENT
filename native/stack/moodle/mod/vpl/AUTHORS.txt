@@ -1,0 +1,20 @@
+Main developer: Juan Carlos Rodriguez-del-Pino, jc.rodriguezdelpino@ulpgc.es
+
+VPL Tokenizer: David Parreño Barbuzano, losedavidpb@gmail.com
+
+Translations:
+    Catalan: Antonio Piedras Morente
+    Japanese: Imaizumi Takashi
+    Polish: Marcin Kolodziej, Michal Kedzia
+    German: Lang Michael: michael.lang.ima10@fh-joanneum.at,
+            Lückl Bernd: bernd.lueckl.ima10@fh-joanneum.at and
+            Lang Johannes: johannes.lang.ima10@fh-joanneum.at
+    Estonian: Aivar Annamaa
+    Brazilian: Gabriel P. Silva Universidade Federal do Rio de Janeiro
+    Italian: Andrea Pruccoli
+    Chinese: Computer Science Education group of Beijing Technology and Business University
+
+vpl_evaluate.cpp: Regular Expressions in test cases developed by:
+    Daniel José Ojeda Loisel
+    Juan David Vega Rodríguez
+    Miguel Ángel Viera González

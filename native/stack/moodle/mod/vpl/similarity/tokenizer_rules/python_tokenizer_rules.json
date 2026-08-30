@@ -1,0 +1,72 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Python",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/python_highlight_rules.js",
+  "name": "python-tokenizer",
+  "extension": [".py"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "entity.name.function": "vpl_identifier",
+    "support.function": "vpl_identifier",
+    "variable.language": "vpl_identifier",
+    "identifier": "vpl_identifier",
+    "constant.language": "vpl_literal",
+    "constant.numeric": "vpl_literal",
+    "string": "vpl_literal",
+    "constant.language.escape": "vpl_literal",
+    "keyword.operator": "vpl_operator",
+    "punctuation": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "comment": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment", "regex": "#.*$" },
+
+      { "token": "string", "regex": "(?:[rRuUfF]{0,2})\"\"\"", "next": "qqstring3" },
+      { "token": "string", "regex": "(?:[rRuUfF]{0,2})'''", "next": "qstring3" },
+      { "token": "string", "regex": "(?:[rRuUfF]{0,2})\"(?=.)", "next": "qqstring" },
+      { "token": "string", "regex": "(?:[rRuUfF]{0,2})'(?=.)", "next": "qstring" },
+
+      { "token": "keyword", "regex": "\\b(?:and|as|assert|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|not|or|pass|raise|return|try|while|with|yield|async|await|nonlocal)\\b" },
+
+      { "token": "constant.language", "regex": "\\b(?:True|False|None|NotImplemented|Ellipsis|__debug__)\\b" },
+
+      { "token": "constant.numeric", "regex": "\\b(?:0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)\\b" },
+
+      { "token": "keyword.operator", "regex": "\\*\\*|//|==|!=|<=|>=|<<|>>|\\+|\\-|\\*|\\/|%|@|&|\\||\\^|~|<|>|=" },
+
+      { "token": "punctuation", "regex": "[,;:.]" },
+
+      { "token": "paren.lparen", "regex": "[\\[\\(\\{]" },
+      { "token": "paren.rparen", "regex": "[\\]\\)\\}]" },
+
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+
+    "qqstring3": [
+      { "token": "string", "regex": "\"\"\"", "next": "start" },
+      { "default_token": "string" }
+    ],
+
+    "qstring3": [
+      { "token": "string", "regex": "'''", "next": "start" },
+      { "default_token": "string" }
+    ],
+
+    "qqstring": [
+      { "token": "string", "regex": "\"|$", "next": "start" },
+      { "default_token": "string" }
+    ],
+
+    "qstring": [
+      { "token": "string", "regex": "'|$", "next": "start" },
+      { "default_token": "string" }
+    ]
+  }
+}

@@ -1,0 +1,682 @@
+<?php
+// This file is part of VPL for Moodle - http://vpl.dis.ulpgc.es/
+//
+// VPL for Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// VPL for Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with VPL for Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Spanish language strings for the VPL module.
+ *
+ * @author Juan Carlos Rodríguez-del-Pino <jc.rodriguezdelpino@ulpgc.es>
+ * @copyright 2010-2025 Juan Carlos Rodríguez-del-Pino
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @var array $string
+ * @package mod_vpl
+ */
+
+$string['VPL_COMPILATIONFAILED'] = 'La compilación o preparación de la ejecución ha fallado';
+$string['about'] = 'Acerca de';
+$string['acceptcertificates'] = 'Ignorar errores de certificado del servidor de ejecución';
+$string['acceptcertificates_description'] = 'Marcar esta opción permitirá conexiones cifradas con servidores de ejecución incluso si
+su certificado no es de confianza.
+Por razones de seguridad, esto no se recomienda en entornos de producción,
+pero puede ser útil para pruebas y desarrollo.';
+$string['activity_mode'] = 'Modo de actividad';
+$string['activity_mode_basedon'] = 'Basado en';
+$string['activity_mode_basedon_help'] = 'Este modo indica que la actividad se usará como plantilla para que otras actividades hereden de ella.<br>También impide que los estudiantes accedan a la actividad.';
+$string['activity_mode_help'] = 'Cambia las reglas de acceso y el comportamiento de la actividad. Los modos son:
+<ul>
+<li><b>Normal</b>: Sin cambios en el comportamiento predeterminado.</li>
+<li><b>Sin estudiantes</b>: Este modo impide que los estudiantes accedan a la actividad.</li>
+<li><b>Estudiantes solo lectura</b>: Este modo <b>concede</b> acceso a los estudiantes en modo de solo lectura.</li>
+<li><b>Basado en</b>: La actividad es una plantilla para que otras actividades la hereden, más el modo "Sin estudiantes".</li>
+<li><b>Pregunta VPL</b>: La actividad se adapta para ser usada en el tipo de pregunta VPL e impide que los estudiantes accedan a ella.</li>
+<li><b>Ejemplo</b>: Los estudiantes pueden ejecutar y depurar los ficheros suministrados pero en modo de solo lectura.</li></ul>';
+$string['activity_mode_no_students'] = 'Sin estudiantes';
+$string['activity_mode_no_students_help'] = 'Este modo impide que los estudiantes accedan a la actividad.<br>Independientemente de otros ajustes, los estudiantes no podrán acceder a ella.';
+$string['activity_mode_normal'] = 'Normal';
+$string['activity_mode_normal_help'] = 'Este es el modo predeterminado, sin cambios en el comportamiento por defecto.<br>';
+$string['activity_mode_students_readonly'] = 'Estudiantes solo lectura';
+$string['activity_mode_students_readonly_help'] = 'Este modo concede acceso a los estudiantes a la actividad en modo de solo lectura.<br>Independientemente de otros ajustes, los estudiantes pueden ver la actividad y su contenido, pero no pueden editar ni entregar código.';
+$string['activity_mode_vplquestion'] = 'Pregunta VPL';
+$string['activity_mode_vplquestion_help'] = 'Este modo se usa para adaptar la actividad al tipo de pregunta VPL.<br>Impide que los estudiantes accedan a la actividad.<br>';
+$string['addfile'] = 'Añadir fichero';
+$string['addoverride'] = 'Añadir una excepción';
+$string['advanced'] = 'Avanzado';
+$string['allfiles'] = 'Todos los ficheros';
+$string['allsubmissions'] = 'Todas las entregas';
+$string['always_use_ws'] = 'Siempre usar protocolo websocket sin cifrado (ws)';
+$string['always_use_wss'] = 'Siempre usar protocolo websocket cifrado (wss)';
+$string['anyfile'] = 'Cualquier fichero';
+$string['archive'] = 'Archivo ZIP';
+$string['archivereplace'] = 'Reemplazar solo los ficheros presentes en el archivo ZIP';
+$string['archivereplacedelete'] = 'Reemplazar todos los ficheros y eliminar los que no estén en el archivo ZIP';
+$string['attemptnumber'] = 'Intento número {$a}';
+$string['autodetect'] = 'Autodetectar';
+$string['automaticevaluation'] = 'Evaluación automática';
+$string['automaticgrading'] = 'Calificación automática';
+$string['automaticgrading_help'] = 'Si se establece como Sí, la nota propuesta por la evaluación automática se establecerá como la nota de esta actividad.<br>
+Si se establece como No, no se establecerá ninguna nota por esta actividad; los profesores tendrán que revisar las notas propuestas para establecerlas una manualmente.';
+$string['averageperiods'] = 'Periodos promedio {$a}';
+$string['averagetime'] = 'Tiempo promedio {$a}';
+$string['basedon'] = 'Basado en';
+$string['basedon_chain_broken'] = 'Error: La cadena de actividades "basado en" está rota. Revise dichas actividades.';
+$string['basedon_deleted'] = 'Error: Se perdió la actividad "basado en". Puede que se borrara. Establezca una actividad "basado en';
+$string['basedon_help'] = 'Esta opción selecciona la herencia, Se heredan descripción, configuración y límites de ejecución, y los scripts de ejecución.<br>
+Los scripts de ejecución se concatenarán, primero el padre (la base), luego el hijo (este VPL). Se pueden encadenar varias bases, resultando en múltiples concatenaciones.';
+$string['basedon_missed'] = 'Error: Se perdió la actividad "basado en" al restaurar o importar. Por favor, incluya "{$a}"';
+$string['basic'] = 'Básico';
+$string['binaryfile'] = 'Fichero binario';
+$string['breakpoint'] = 'Punto de parada';
+$string['browserupdate'] = 'Actualice su navegador a la última versión<br />o use otro que soporte Websocket';
+$string['calculate'] = 'Calcular';
+$string['calculate_help'] = 'Calcular calificación a partir de las reducciones en los comentarios.<br>
+La sintaxis para la reducción es <pre>-&nbsp;Texto&nbsp;(-puntos)</pre> (una línea por reducción).';
+$string['calendardue'] = 'Vence entrega VPL';
+$string['calendarexpectedon'] = 'Entrega VPL esperada';
+$string['changesNotSaved'] = 'Cambios no almacenados';
+$string['check_jail_servers'] = 'Comprobación de servidores de ejecución';
+$string['check_jail_servers_help'] = '<p>Esta página comprueba y muestra el estado de los servidores de ejecución usados por esta actividad.</p>';
+$string['checkforcourse'] = 'Comprobar para el curso {$a}';
+$string['checkgroups'] = 'Comprobar consistencia de grupos';
+$string['checksitewide'] = 'Comprobar en todo el sitio';
+$string['clicktoshow'] = 'Haga clic para mostrar';
+$string['clipboard'] = 'Portapapeles';
+$string['closed'] = 'Cerrado';
+$string['comments'] = 'Comentarios';
+$string['compilation'] = 'Compilación';
+$string['concatenatedscripts'] = 'Scripts de ejecución concatenados';
+$string['concatenatedscripts_help'] = 'Esta página muestra el contenido real de los scripts de ejecución. Si este VPL está basado en otro, los scripts se concatenan. Si algún script está vacío, se usa el script predeterminado.';
+$string['confirmoverridedeletion'] = '¿Está seguro de que desea eliminar este conjunto de excepciones?';
+$string['connected'] = "conectado";
+$string['connecting'] = "conectando";
+$string['connection_closed'] = "conexión cerrada";
+$string['connection_fail'] = "conexión fallida";
+$string['console'] = 'Consola';
+$string['control'] = 'Control';
+$string['copy'] = 'Copiar';
+$string['copy_help'] = 'Copia esta entrega en el editor propio (abre una nueva ventana)';
+$string['copytoclipboard'] = 'Copiar al portapapeles';
+$string['copytoclipboarderror'] = 'Error al copiar al portapapeles.';
+$string['copytoclipboardsuccess'] = '¡Copiado!';
+$string['create_new_file'] = 'Crea un nuevo fichero para editar';
+$string['crontask'] = 'Procesamiento en segundo plano de VPL';
+$string['crontask_check_vpljs'] = 'Informe de servidores VPL Jail';
+$string['currentstatus'] = 'Estado actual';
+$string['customizedscript'] = 'Script personalizado';
+$string['cut'] = 'Cortar';
+$string['datesubmitted'] = 'Entregado el';
+$string['debug'] = 'Depurar';
+$string['debug_help'] = 'Permite a los estudiantes depurar su código en el editor. Los profesores siempre pueden depurar cualquier entrega.';
+$string['debugging'] = "Depurando";
+$string['debugscript'] = 'Script de depuración';
+$string['debugscript_help'] = 'Seleccione el script de depuración a usar en esta actividad.<br>Personalizado indica que el script de depuración se ha establecido con un script personalizado.';
+$string['defaultevaluatescript'] = 'Script de evaluación predeterminado';
+$string['defaultexefilesize'] = 'Máximo tamaño por defecto de un fichero en ejecución';
+$string['defaultexememory'] = 'Máxima memoria usada por defecto';
+$string['defaultexeprocesses'] = 'Máximo número de procesos por defecto';
+$string['defaultexetime'] = 'Máximo tiempo de ejecución por defecto';
+$string['defaultfilesize'] = 'Tamaño máximo por defecto de cada fichero de subida';
+$string['defaultresourcelimits'] = 'Límites por defecto de recursos de ejecución';
+$string['defaultscriptforlang'] = 'Script predeterminado para el lenguaje {$a->pln} ({$a->origin})';
+$string['defaultvalue'] = 'Por defecto ({$a})';
+$string['delete'] = 'Borrar';
+$string['delete_file_fq'] = '¿Confirma el borrado del fichero \'{$a}\'?';
+$string['delete_file_q'] = '¿Borrar el fichero?';
+$string['deleteallsubmissions'] = 'Elimina todas las entregas';
+$string['deletefile'] = 'Eliminar fichero';
+$string['depends_on_https'] = 'Usar wss o ws dependiendo de si se usa http o https';
+$string['description'] = 'Descripción';
+$string['determinedfromrequiredfiles'] = 'Determinado a partir de los ficheros requeridos';
+$string['diff'] = 'diff';
+$string['directory_not_renamed'] = 'El directorio \'{$a}\' no se ha renombrado';
+$string['disabled'] = 'Desactivado';
+$string['discard_submission_period'] = 'Periodo de descarte de entregas';
+$string['discard_submission_period_description'] = 'Para cada estudiante y tarea, se intenta descartar entregas manteniendo la última y al menos una por cada periodo';
+$string['dograde'] = 'Guardar calificación';
+$string['donotshowagain'] = 'Desactivar estos mensajes para la página actual';
+$string['download'] = 'Descargar';
+$string['downloadallsubmissions'] = 'Descargar todas las entregas';
+$string['downloadsubmissions'] = 'Descargar entregas';
+$string['duedate'] = 'Límite de entrega';
+$string['dueevent'] = 'Vence la entrega de {$a}';
+$string['dueeventaction'] = 'Desarrollar/Entregar';
+$string['edit'] = 'Editar';
+$string['editing'] = 'Editando';
+$string['editor'] = 'Editor';
+$string['editortheme'] = 'Tema de editor';
+$string['error:inconsistency'] = "Se encontró inconsistencia '{\$a}'";
+$string['error:invalidevaluator'] = 'Plugin vplevaluator inválido ({$a}): desactivado o ausente';
+$string['error:recordnotdeleted'] = "Registro no eliminado '{\$a}'";
+$string['error:recordnotinserted'] = "Registro no insertado '{\$a}'";
+$string['error:recordnotupdated'] = "Registro no actualizado '{\$a}'";
+$string['error:recursivedefinition'] = "Definición recursiva de VPL basado en";
+$string['error:uninstalling'] = 'Error al desinstalar VPL. Es posible que no se hayan eliminado todos los datos';
+$string['error:zipnotfound'] = 'Archivo ZIP no encontrado';
+$string['evaluate'] = 'Evaluar';
+$string['evaluate_help'] = 'Permite a los estudiantes evaluar automáticamente su entrega. Los profesores siempre pueden evaluar cualquier entrega.';
+$string['evaluateonsubmission'] = 'Evaluar al entregar';
+$string['evaluateonsubmission_help'] = 'Si se establece como Sí, se realiza una evaluación al enviar los ficheros a través de la pestaña "Entrega". Esto no afecta a las entregas realizadas a través de la pestaña "Editar".';
+$string['evaluating'] = "evaluando";
+$string['evaluation'] = 'Evaluación';
+$string['evaluation_mode'] = 'Modo de evaluación';
+$string['evaluation_mode:default'] = 'Evaluar en modo terminal (predeterminado)';
+$string['evaluation_mode:textingui'] = 'Evaluar aplicación de texto en modo GUI';
+$string['evaluation_mode_help'] = 'Selecciona el modo de ejecución del evaluador para esta actividad.<br>
+<b>Predeterminado</b>: Evaluar en modo terminal (comportamiento original).<br>
+<b>Texto en GUI</b>: Evaluar en entorno gráfico (GUI).<br>
+<b>Nota</b>: Si se usa un script de evaluación personalizado, este puede ignorar el modo seleccionado.<br>';
+$string['evaluator'] = 'Evaluador';
+$string['evaluator_help'] = 'Seleccione aquí el evaluador a utilizar en esta actividad.<br>Use el predeterminado para el evaluador BIOTES original.<br>Use GIOTES para el nuevo evaluador compatible con el predeterminado.<br>Script personalizado indica que el script predeterminado ha sido personalizado.<br>';
+$string['examples'] = 'Ejemplos';
+$string['execution'] = 'Ejecución';
+$string['execution_connection_failed'] = 'Error de conexión con el servidor de ejecución';
+$string['execution_connection_failed_help'] = '<p><strong>Advertencia:</strong> Su navegador no pudo conectarse directamente al servidor de ejecución.</p>
+<p>Haga clic en el/los enlace(s) del servidor a continuación para diagnosticar el problema:</p>
+<ul>
+<li>Si ve una advertencia de certificado, el certificado del servidor de ejecución no es de confianza para su navegador. Bajo su propia responsabilidad, puede aceptar el certificado y reintentar la acción.</li>
+<li>Si la página no carga, la conexión desde su navegador al servidor de ejecución puede estar bloqueada por un cortafuegos o configuración de red.</li>
+</ul>
+<p>Contacte con el administrador de su servidor o red para asegurarse de que el servidor de ejecución tiene un certificado de confianza y es accesible vía red.</p>';
+$string['executionfiles'] = 'Ficheros para la ejecución';
+$string['executionfiles_help'] = '<p>Aquí se establecen los ficheros necesarios para la ejecución, depurado o evaluación de una entrega.
+Esto incluye ficheros script, programas de prueba y ficheros de datos.</p>
+<p>Si no se establecen los script de ejecución o depuración,
+el sistema deduce el lenguaje empleado atendiendo a la extensión de los ficheros entregados
+para usar un script predefinidos. La siguiente tabla muestra los lenguajes soportados, las extensiones de ficheros usadas, los script disponibles, el compilador/intérprete y depurador usado
+por este y finalmente un comentario sobre uso del lenguaje.</p>';
+$string['executionoptions'] = 'Opciones de ejecución';
+$string['executionoptions_help'] = '<p>En esta página se establecen diferentes opciones de ejecución</p>
+<ul>
+<li><b>Basado en</b>: permite establecer otra instancia VPL de la que se toman diversas características:
+<ul><li>Ficheros de ejecución (los scripts predefinidos se concatenan)</li>
+<li>Límites de los recursos de ejecución.</li>
+<li>Variaciones, que se concatenan generando variaciones múltiples.</li>
+<li>Tamaño máximo de cada fichero a subir</li>
+</ul>
+</li>
+<li><b>Ejecutar, Depurar y Evaluar</b>: establecen si se puede usar la opción correspondiente durante la edición de la entrega. Esto sólo afecta a los estudiantes, los usuarios con capacidad de calificación pueden usar estas opciones en cualquier caso.</li>
+<li><b>Evaluar al entregar</b>: al subir los ficheros se produce el proceso de evaluación automáticamente.</li>
+<li><b>Calificación automática</b>: si el resultado de la evaluación contiene códigos de nota automática estos se toman como nota definitiva.</li>
+</ul>';
+$string['file'] = 'Fichero';
+$string['fileNotChanged'] = 'Fichero no modificado';
+$string['file_name'] = 'Nombre del fichero';
+$string['fileadded'] = "El fichero '{\$a}' ha sido añadido";
+$string['filedeleted'] = "El fichero '{\$a}' ha sido borrado";
+$string['filelist'] = "Lista de ficheros";
+$string['filenotadded'] = 'Fichero no añadido';
+$string['filenotdeleted'] = 'El fichero \'{$a}\' NO ha sido borrado';
+$string['filenotrenamed'] = 'El fichero \'{$a}\' NO ha sido renombrado';
+$string['filerenamed'] = "El fichero '{\$a->from}' ha sido renombrado a '{\$a->to}'";
+$string['filesChangedNotSaved'] = "Ficheros modificados pero no guardados";
+$string['filesNotChanged'] = 'Ficheros no modificados';
+$string['filestoscan'] = 'Ficheros a procesar';
+$string['fileupdated'] = "El fichero '{\$a}' ha sido actualizado";
+$string['finalreduction'] = "Reducción final";
+$string['finalreduction_help'] = '<b>RF [NE/ER R]</b><br>
+<b>RF</b> Reducción final de la calificación.<br>
+<b>NE</b> Número de evaluaciones automáticas solicitadas por el estudiante.<br>
+<b>ER</b> Evaluaciones sin coste de reducción.<br>
+<b>R</b> Reducción por cada evaluación. Si es un porcentaje, se aplicará sucesivamente.<br>';
+$string['find'] = "Buscar";
+$string['find_replace'] = 'Buscar/Reemplazar';
+$string['fontsize'] = 'Tamaño de fuente';
+$string['freeevaluations'] = 'Evaluaciones sin reducción';
+$string['freeevaluations_help'] = 'Número de evaluaciones automáticas que se pueden solicitar sin coste de reducción';
+$string['fromthisvpl'] = 'De este VPL ({$a})';
+$string['fromvpl'] = 'De VPL {$a}';
+$string['fulldescription'] = 'Descripción completa';
+$string['fulldescription_help'] = '<p>Escriba aquí la descripción completa de la tarea a realizar en el laboratorio de programación.</p>
+<p>En caso de que no escriba nada se mostrará en su lugar la descripción corta.</p>
+<p>Si desea realizar una evaluación automática, es aconsejable que la especificación de las interfaces sea lo más detallada posible y que no tenga ambigüedad.</p>';
+$string['fullscreen'] = 'Pantalla completa';
+$string['functions'] = 'Funciones';
+$string['generatedshebang'] = 'Generado porque no se especificó ningún intérprete';
+$string['getjails'] = 'Obteniendo servidores de ejecución';
+$string['gradeandnext'] = 'Calificar & Sig';
+$string['graded'] = 'Evaluadas';
+$string['gradedbyuser'] = 'Evaluadas por el usuario';
+$string['gradedon'] = "Evaluada el";
+$string['gradedonby'] = 'Evaluada el {$a->date} por {$a->gradername}';
+$string['gradeitem:submissions'] = 'Entregas';
+$string['gradenotremoved'] = 'La calificación NO ha sido eliminada. Comprueba la configuración de la actividad en calificaciones.';
+$string['gradenotsaved'] = 'Calificación NO almacenada. Comprueba la configuración de la actividad en calificaciones.';
+$string['gradeoptions'] = 'Evaluación';
+$string['grader'] = "Evaluada por";
+$string['gradercomments'] = "Comentarios del revisor";
+$string['graderemoved'] = 'La calificación ha sido eliminada';
+$string['gradesaved'] = 'Calificación guardada';
+$string['gradesaved_redirect'] = 'Calificación guardada. Esta página debería redirigirse automáticamente.';
+$string['groupwork'] = 'En grupo';
+$string['importfromlastgradedsub'] = 'Importar desde la última entrega calificada';
+$string['importfromlastmgradedsub'] = 'Importar desde la última entrega calificada manualmente';
+$string['importgrade'] = 'Importar calificación y comentarios';
+$string['importgrade_help'] = 'Importar calificación, comentarios y (si corresponde) calificación avanzada de una entrega previamente calificada.<br>
+Esta acción solo llenará el formulario, no se enviarán datos.';
+$string['inconsistentgroup'] = 'Usted no es miembro de un único grupo (0 o >1)';
+$string['incorrect_directory_name'] = 'Nombre de directorio incorrecto';
+$string['incorrect_file_name'] = 'Nombre de fichero incorrecto';
+$string['indicator:cognitivedepth'] = 'VPL cognitivo';
+$string['indicator:cognitivedepth_help'] = 'Este indicador se basa en la profundidad cognitiva alcanzada por el estudiante en una actividad VPL.';
+$string['indicator:socialbreadth'] = 'VPL social';
+$string['indicator:socialbreadth_help'] = 'Este indicador se basa en la amplitud social alcanzada por el estudiante en una actividad VPL.';
+$string['individualwork'] = 'Individual';
+$string['inheritancechain'] = 'Cadena de herencia:';
+$string['inheritvalue'] = 'Heredado ({$a})';
+$string['inputoutput'] = 'Entrada/salida';
+$string['instanceselection'] = 'Selección de VPL';
+$string['intermediate'] = 'Intermedio';
+$string['isexample'] = 'Esta actividad actúa como ejemplo';
+$string['isexample_help'] = 'Esta actividad actúa como ejemplo, permitiendo a los estudiantes ejecutar y depurar los ficheros de ejemplo, pero no entregarlos.';
+$string['jail_servers'] = "Lista de servidores de ejecución";
+$string['jail_servers_config'] = "Configuración de servidores de ejecución";
+$string['jail_servers_description'] = "Escriba un servidor en cada línea";
+$string['joinedfiles'] = 'Ficheros seleccionados unidos';
+$string['keepcurrentfile'] = 'Mantener fichero actual';
+$string['keepfiles'] = "Ficheros a mantener mientras se ejecuta";
+$string['keepfiles_help'] = '<p>Por razones de seguridad, los ficheros añadidos en "Ficheros de ejecución", se borran  antes de ejecutar el fichero vpl_execution.</p>
+<p>Si es necesario que alguno de estos ficheros permanezca en la fase de ejecución,
+por ejemplo, para usarlo como datos de entrada de las pruebas, márquelos en esta página</p>';
+$string['keybinding'] = 'Asignación de teclas';
+$string['keyboard'] = 'Teclado';
+$string['lasterror'] = 'Información último error';
+$string['lasterrordate'] = 'Fecha último error';
+$string['listofcomments'] = 'Lista de comentarios';
+$string['lists'] = 'Listas';
+$string['listsimilarity'] = 'Lista de similitud encontrada';
+$string['listwatermarks'] = 'Listado marcas de agua';
+$string['liveautocompletion'] = 'Autocompletado en tiempo real';
+$string['load'] = 'Carga';
+$string['loading'] = 'Cargando';
+$string['local_jail_servers'] = 'Servidores de ejecución locales';
+$string['local_jail_servers_help'] = '<p>Aquí se establecen los servidores de ejecución locales para esta actividad y las que se basen en ella.</p>
+<p>Escriba una la URL completa de servidor en cada línea. Se pueden introducir líneas en blanco y comentarios comenzando la línea por "#".</p>
+<p>Si se quiere impedir que esta actividad y las que se basen en ella no use los servidores especificados en las actividades derivadas ni
+los especificados globalmente, añada al final una línea que contenga "end_of_jails".
+</p>';
+$string['manualgrading'] = 'Calificación manual';
+$string['math'] = 'Matemáticas';
+$string['maxexefilesize'] = 'Máximo tamaño de un fichero en ejecución';
+$string['maxexememory'] = 'Máxima memoria usada';
+$string['maxexeprocesses'] = 'Máximo número de procesos';
+$string['maxexetime'] = 'Máximo tiempo de ejecución';
+$string['maxfiles'] = 'Número máximo de ficheros';
+$string['maxfilesexceeded'] = 'Superado el número máximo de ficheros';
+$string['maxfilesize'] = 'Tamaño máximo de cada fichero de subida';
+$string['maxfilesizeexceeded'] = 'Superado el tamaño máximo de los ficheros';
+$string['maximumperiod'] = 'Periodo máximo {$a}';
+$string['maxpostsizeexceeded'] = 'Tamaño máximo de envío del servidor excedido. Por favor, elimine ficheros o reduzca el tamaño de los ficheros';
+$string['maxresourcelimits'] = 'Límites máximos de recursos de ejecución';
+$string['maxsimilarityoutput'] = 'Máxima salida por similitud';
+$string['menucheck_jail_servers'] = 'Comprobación servidores ejecución';
+$string['menuexecutionfiles'] = 'Ficheros ejecución';
+$string['menuexecutionoptions'] = 'Opciones';
+$string['menukeepfiles'] = "Ficheros a mantener";
+$string['menulocal_jail_servers'] = 'Servidores ejecución locales';
+$string['menuresourcelimits'] = 'Límites de recursos';
+$string['merge'] = 'Fusionar calificación';
+$string['merge_help'] = 'Fusionar la calificación propuesta actual (de la ejecución) y la calificación de la rúbrica avanzada.
+<p>
+Esto establecerá la calificación en
+&lt;calificación&nbsp;propuesta&gt; - &lt;puntos&nbsp;máx&nbsp;rúbrica&gt; * (&lt;calificación&nbsp;propuesta&gt;/&lt;calificación&nbsp;máx&nbsp;vpl&gt;) + &lt;puntos&nbsp;rúbrica&gt;.<br>
+Más simplemente, pondera los puntos de la rúbrica según la calificación propuesta actual: un estudiante con 100% de puntos necesitará todos los puntos de la rúbrica para mantener el 100%;
+un estudiante con 0 puntos terminará con todos los puntos de la rúbrica obtenidos como su calificación.
+</p>
+<p>
+La calificación de la rúbrica avanzada se calcula como el total de puntos de la rúbrica, reducido por comentarios. La sintaxis para la reducción es <pre>-&nbsp;Texto&nbsp;(-puntos)</pre> (una línea por reducción).
+</p>';
+$string['message::bad_jailserver'] = 'No usado debido a que se requiere actualización del software del servidor. Contacte con el administrador del sistema';
+$string['message::body_footer_bad_jailservers'] = '
+Para descargar la última versión de VPL-Jail-System,
+visite la página principal de VPL para Moodle y navegue a la sección "Descargas".
+Recuerde usar los parámetros URLPATH y/o TASK_ONLY_FROM
+para mejorar su configuración de seguridad según lo recomendado.
+
+Para localizar actividades que usen servidores VPL Jail locales,
+busque en el campo jailservers de la tabla {prefix}vpl.
+';
+$string['message::body_header_bad_jailservers'] = '
+Los servidores VPL Jail en la siguiente lista
+necesitan **urgentemente** actualizar el software VPL-Jail-System:';
+$string['message::subject_bad_jailservers'] = 'Informe importante del plugin VPL en Moodle en el servidor \'{$a}\'';
+$string['messageprovider:bad_jailservers'] = 'Informe de servidores VPL Jail';
+$string['minsimlevel'] = 'Nivel de similitud mínima a mostrar';
+$string['moduleconfigtitle'] = 'Configuración del módulo VPL';
+$string['modulename'] = 'Laboratorio virtual de programación';
+$string['modulename_help'] = '<p>VPL permite la gestión de prácticas de programación teniendo como características más destacadas:</p>
+<ul>
+<li>Posibilidad de editar el código fuente en el navegador.</li>
+<li>Posibilidad de ejecutar las prácticas de forma interactiva desde el navegador.</li>
+<li>Posibilidad de ejecutar pruebas que revisen las prácticas.</li>
+<li>Búsqueda de similitud entre prácticas para el control del plagio.</li>
+<li>Restricciones de entrega de prácticas que limitan el corta y pega de código externo.</li>
+</ul>
+<p><a href="http://vpl.dis.ulpgc.es">Página oficial de Virtual Programming lab</a></p>';
+$string['modulename_link'] = 'mod/vpl/view';
+$string['modulenameplural'] = 'Laboratorios virtuales de programación';
+$string['multidelete'] = 'Borrado múltiple';
+$string['nevaluations'] = '{$a} evaluaciones automáticas realizadas';
+$string['new'] = 'Nuevo';
+$string['new_file_name'] = 'Nombre del fichero nuevo';
+$string['next'] = 'Siguiente';
+$string['nojailavailable'] = "No hay servidor de ejecución disponible";
+$string['noright'] = 'No tiene permiso de acceso';
+$string['nosubmission'] = 'No hay entrega';
+$string['nosuchsubmission'] = 'No existe tal entrega';
+$string['notexecuted'] = 'No ejecutado';
+$string['notgraded'] = 'No evaluadas';
+$string['notsaved'] = 'No guardado';
+$string['novpls'] = 'No existe laboratorio de programación definido';
+$string['nowatermark'] = 'Marcas de agua propias {$a}';
+$string['nsubmissions'] = '{$a} entregas';
+$string['numcluster'] = 'Grupo {$a}';
+$string['open'] = 'Abierto';
+$string['open_browser'] = 'Abrir en navegador';
+$string['open_private_browser'] = 'Abrir en navegador privado';
+$string['operatorsvalues'] = 'Operadores/valores';
+$string['opnotallowfromclient'] = 'Acción no permitida desde esta máquina';
+$string['options'] = 'Opciones';
+$string['optionsnotsaved'] = "Opciones no guardadas";
+$string['optionssaved'] = "Opciones guardadas";
+$string['origin'] = 'Origen';
+$string['othersources'] = 'Otras fuentes a usar';
+$string['outofmemory'] = 'Memoria agotada';
+$string['override'] = 'Excepción';
+$string['override_help'] = 'Si se marca "Excepción", esta configuración se reemplazará con el valor seleccionado para los usuarios afectados.';
+$string['override_options'] = 'Opciones de excepción';
+$string['override_users'] = 'Usuarios afectados';
+$string['override_users_help'] = 'Un usuario/grupo solo puede estar afectado por un conjunto de excepciones.<br>
+Si un usuario está afectado por un conjunto y un grupo del que es miembro está afectado por otro, entonces la asignación por usuario prevalece.<br>
+Si un usuario es miembro de varios grupos afectados por varios conjuntos, el primero en la tabla prevalece.';
+$string['overridefor'] = '{$a->base} - Vence la entrega VPL para {$a->for}';
+$string['overrideforgroup'] = '{$a->base} - Vence la entrega VPL para los miembros de {$a->for}';
+$string['overriden'] = 'Establecido en excepción';
+$string['overrides'] = 'Excepciones';
+$string['overrides_help'] = 'Se puede establecer excepciones en un conjunto de configuraciones para una actividad. Estas configuraciones reemplazarán las configuraciones de la actividad para los usuarios y grupos afectados.';
+$string['overridesummary'] = 'Hay {$a->noverrides} excepciones que afectan a {$a->nuseroverrides} usuarios y {$a->ngroupoverrides} grupos.';
+$string['paste'] = 'Pegar';
+$string['pause'] = 'Pausar';
+$string['pluginadministration'] = 'Administración de VPL';
+$string['pluginname'] = 'Laboratorio virtual de programación';
+$string['pluginnotfound'] = 'Subplugin de VPL no encontrado o mal definido: {$a}';
+$string['preferences'] = 'Preferencias';
+$string['previoussubmissionslist'] = 'Lista entregas previas';
+$string['print'] = 'Imprimir';
+$string['privacy:metadata:vpl'] = 'Informacion de la actividad';
+$string['privacy:metadata:vpl:course'] = 'ID del curso';
+$string['privacy:metadata:vpl:duedate'] = 'Fecha límite de la actividad';
+$string['privacy:metadata:vpl:freeevaluations'] = 'Numero de evaluaciones automáticas sin reducción de nota';
+$string['privacy:metadata:vpl:grade'] = 'Evaluación de la actividad';
+$string['privacy:metadata:vpl:id'] = 'Identificador numérico de la actividad';
+$string['privacy:metadata:vpl:name'] = 'Nombre de la actividad';
+$string['privacy:metadata:vpl:reductionbyevaluation'] = 'Reducción de la nota por cada petición del estudiante de evaluación automática';
+$string['privacy:metadata:vpl:shortdescription'] = 'Descripción corta de la actividad';
+$string['privacy:metadata:vpl:startdate'] = 'Fecha de inicio de la actividad';
+$string['privacy:metadata:vpl_assigned_overrides'] = 'Información de las excepciones de configuración de la actividad asignadas, si las hay';
+$string['privacy:metadata:vpl_assigned_overrides:overrideid'] = 'ID de la excepción asignada';
+$string['privacy:metadata:vpl_assigned_overrides:userid'] = 'ID del usuario en la base de datos';
+$string['privacy:metadata:vpl_assigned_overrides:vplid'] = 'ID de VPL en la base de datos';
+$string['privacy:metadata:vpl_assigned_variations'] = 'Información de la variación de la actividad asignada, si la hay';
+$string['privacy:metadata:vpl_assigned_variations:description'] = 'Descripción de la variación asignada';
+$string['privacy:metadata:vpl_assigned_variations:userid'] = 'ID del usuario en la base de datos.';
+$string['privacy:metadata:vpl_assigned_variations:vplid'] = 'ID de VPL en la base de datos';
+$string['privacy:metadata:vpl_ide_preferences'] = 'Preferencias del usuario para la interfaz del IDE: tema, tamaño de fuente, etc.';
+$string['privacy:metadata:vpl_running_processes'] = 'Información de los procesos en ejecución del usuario en esta actividad';
+$string['privacy:metadata:vpl_running_processes:server'] = 'Servidor que ejecuta la tarea';
+$string['privacy:metadata:vpl_running_processes:starttime'] = 'Fecha en que la tarea comienza a ejecutarse';
+$string['privacy:metadata:vpl_running_processes:userid'] = 'ID del usuario en la base de datos.';
+$string['privacy:metadata:vpl_running_processes:vplid'] = 'ID de VPL en la base de datos';
+$string['privacy:metadata:vpl_submissions'] = 'Información sobre el intento/entrega y sobre su evaluación si se realizó';
+$string['privacy:metadata:vpl_submissions:dategraded'] = 'Fecha y hora de la evaluación';
+$string['privacy:metadata:vpl_submissions:datesubmitted'] = 'Fecha y hora de la entrega';
+$string['privacy:metadata:vpl_submissions:debug_count'] = 'Número de veces que se ha depurado la entrega';
+$string['privacy:metadata:vpl_submissions:grade'] = 'La nota obtenida en esta entrega. Esta nota puede no coincidir con la que aparece en el libro de calificaciones';
+$string['privacy:metadata:vpl_submissions:gradercomments'] = 'Comentarios del evaluador sobre esta entrega';
+$string['privacy:metadata:vpl_submissions:graderid'] = 'DB id del usuario que evaluó esta entrega';
+$string['privacy:metadata:vpl_submissions:groupid'] = 'Identificador del grupo al que pertenece el usuario que realizó la entrega';
+$string['privacy:metadata:vpl_submissions:nevaluations'] = 'Número de evaluaciones automáticas pedidas por el estudiante';
+$string['privacy:metadata:vpl_submissions:run_count'] = 'Número de veces que se ha ejecutado la entrega';
+$string['privacy:metadata:vpl_submissions:save_count'] = 'Número de veces que se ha guardado la entrega';
+$string['privacy:metadata:vpl_submissions:studentcomments'] = 'Comentario escrito por el estudiante sobre la entrega';
+$string['privacy:metadata:vpl_submissions:userid'] = 'Identificador del usuario que realizó la entrega';
+$string['privacy:overridepath'] = 'excepcion_asignada';
+$string['privacy:runningprocesspath'] = 'proceso_en_ejecucion_{$a}';
+$string['privacy:submissionpath'] = 'entrega_{$a}';
+$string['privacy:variationpath'] = 'variacion_asignada';
+$string['proposedgrade'] = 'Nota propuesta: {$a}';
+$string['proxy'] = 'proxy';
+$string['proxy_description'] = 'Proxy de Moodle a servidores de ejecución';
+$string['redo'] = 'Rehacer';
+$string['reductionbyevaluation'] = 'Reducción por evaluación automática';
+$string['reductionbyevaluation_help'] = 'Reducir la puntuación final un valor o un porcentaje por cada evaluación automática solicitada por el estudiante';
+$string['regularscreen'] = 'Pantalla normal';
+$string['removeallsubmissions'] = 'Elimina todas las entregas y notas';
+$string['removeallsubmissions_help'] = 'Elimina todas las entregas y notas en todas las actividades VPL del curso seleccionado';
+$string['removebreakpoint'] = 'Elimina punto de parada';
+$string['removegrade'] = 'Borra calificación';
+$string['removegroupoverrides'] = 'Elimina las excepciones a grupos';
+$string['removegroupoverrides_help'] = 'Elimina todas las asignaciones de excepciones a grupos en todas las actividades VPL del curso seleccionado';
+$string['removeoverrides'] = 'Elimina todas las excepciones';
+$string['removeoverrides_help'] = 'Elimina todas las excepciones en todas las actividades VPL del curso seleccionado';
+$string['removeuseroverrides'] = 'Elimina las excepciones a usuarios';
+$string['removeuseroverrides_help'] = 'Elimina todas las asignaciones de excepciones a usuarios en todas las actividades VPL del curso seleccionado';
+$string['rename'] = 'Renombrar';
+$string['rename_directory'] = 'Renombrar directorio';
+$string['rename_file'] = 'Renombrar fichero';
+$string['renameuploadedfile'] = 'Renombrar fichero subido';
+$string['replace_find'] = 'Reemplazar/Buscar';
+$string['replacefile'] = 'Reemplazar contenidos';
+$string['replacenewer'] = "Se tiene guardada una versión más nueva.\n¿Seguro que quiere reemplazarla por la actual?";
+$string['requestedfiles'] = 'Ficheros requeridos';
+$string['requestedfiles_help'] = '<p>Aquí se fijan nombres y contenido inicial para los ficheros requeridos.</p>
+<p>Si no se fijan nombres para el número máximo de ficheros establecido en la definición básica de la actividad, los ficheros para los que no se han establecido nombres son opcionales y pueden tener cualquier nombre.</p>
+<p>Además, se pueden establecer contenidos para los ficheros requeridos, de forma que dichos contenidos estarán disponibles la primera vez que el fichero se abra usando el editor, si no se ha realizado una entrega previa.</p>';
+$string['requirednet'] = 'Entregas restringidas a la red';
+$string['requirednet_bad'] = 'Su dirección IP {$a} <b>no permite</b> que los estudiantes <b>accedan</b>';
+$string['requirednet_help'] = 'El acceso a VPL puede restringirse a subredes particulares en la LAN o Internet especificando una lista separada por comas de direcciones IP completas o parciales. Esto puede ser útil para asegurar que solo personas en una cierta ubicación pueden acceder al VPL.';
+$string['requirednet_pass'] = 'Su dirección IP {$a} <b>permite</b> que los estudiantes <b>accedan</b>';
+$string['requiredpassword'] = 'Se necesita una clave';
+$string['reset'] = 'Reinicia las actividades VPL';
+$string['resetfiles'] = 'Reestablecer ficheros';
+$string['resetvpl'] = 'Elimina las entregas VPL en {$a}';
+$string['resourcelimits'] = 'Límites de recursos de ejecución';
+$string['resourcelimits_help'] = '<p>Se pueden establecer límites máximos para el tiempo de ejecución, la memoria usada, el tamaño de los ficheros generados durante la ejecución y el número de procesos simultáneos.</p>
+<p>Estos límites se aplican al ejecutar los ficheros de script  vpl_run.sh, vpl_debug.sh y vpl_evaluate.sh, y el fichero the file vpl_execution generado por ellos.</p>
+<p>Si la actividad está basada en otra, los límites establecidos se pueden ver restringidos por los establecidos en aquella y otras en la que la misma se base, además de por los establecidos en la configuración global del módulo.</p>';
+$string['restrictededitor'] = "Desactivar la carga de archivos, pegar y soltar contenido externo";
+$string['resume'] = 'Continuar';
+$string['retrieve'] = 'Recupera resultados';
+$string['returntoownactivity'] = 'Volver a la actividad propia';
+$string['run'] = 'Ejecutar';
+$string['run_help'] = 'Permite a los estudiantes ejecutar su código en el editor. Los profesores siempre pueden ejecutar cualquier entrega.';
+$string['run_mode'] = 'Modo de ejecución';
+$string['run_mode:default'] = 'Detectar automáticamente el modo de ejecución (predeterminado)';
+$string['run_mode:gui'] = 'Ejecutar en una terminal gráfica';
+$string['run_mode:text'] = 'Ejecutar en una terminal de texto';
+$string['run_mode:textingui'] = 'Ejecutar aplicación de texto en una terminal gráfica';
+$string['run_mode:webapp'] = 'Ejecutar como una aplicación web';
+$string['run_mode_help'] = 'Selecciona el modo de ejecución interactiva para esta actividad.<br>
+<b>Predeterminado</b>: Ejecutar usando detección automática (comportamiento original).
+En este modo, use @vpl_run_[text|gui|webapp|textingui]_mode dentro de un comentario al inicio del código para seleccionar el modo de ejecución.<br>
+<b>Texto</b>: Ejecutar en una terminal de texto (sin GUI).<br>
+<b>GUI</b>: Ejecutar en una terminal gráfica (GUI).<br>
+<b>Aplicación web</b>: Ejecutar como una aplicación web (sin terminal).<br>
+<b>Texto en GUI</b>: Ejecutar aplicación de texto en una terminal gráfica (GUI).<br>
+<b>Nota</b>: Todos los modos no están disponibles en todos los lenguajes.<br>
+Si se usa un script de ejecución personalizado, este puede ignorar el modo de ejecución seleccionado.<br>';
+$string['running'] = "Ejecutando";
+$string['runscript'] = 'Script de ejecución';
+$string['runscript_help'] = 'Seleccione el script de ejecución a usar en esta actividad.<br>Personalizado indica que el script de ejecución se ha establecido con un script personalizado.';
+$string['save'] = 'Guardar';
+$string['savecontinue'] = 'Guardar y continuar';
+$string['saved'] = 'Guardado';
+$string['savedfile'] = "El fichero '{\$a}' ha sido guardado";
+$string['saveforotheruser'] = 'Está guardando una entrega para otro usuario,
+¿está seguro de querer hacerlo?';
+$string['saveoptions'] = 'Guardar opciones';
+$string['saving'] = "Guardando";
+$string['scanactivity'] = 'Actividad';
+$string['scandirectory'] = 'Directorio';
+$string['scanningdir'] = 'Examinando el directorio ...';
+$string['scanoptions'] = 'Opciones de búsqueda';
+$string['scanother'] = 'Buscar similitudes en otras fuentes';
+$string['scanzipfile'] = 'Fichero zip';
+$string['search:activity'] = 'Virtual Programming Lab - información de la actividad (nombre y descripción)';
+$string['sebkeys'] = 'Clave(s) de examen SEB';
+$string['sebkeys_bad'] = 'Su navegador SEB <b>no está usando</b> la configuración esperada';
+$string['sebkeys_help'] = 'Las claves de examen SEB se obtienen de los ficheros .seb<br>Este mecanismo es más seguro que sólo comprobar el navegador.<br>https://safeexambrowser.org';
+$string['sebkeys_pass'] = 'Su navegador SEB <b>sí está usando</b> la configuración esperada';
+$string['sebrequired'] = 'Se requiere navegador SEB';
+$string['sebrequired_bad'] = 'Parece que <b>no está usando</b> el navegador SEB';
+$string['sebrequired_help'] = 'Se requiere el navegador SEB apropiadamente configurado.';
+$string['sebrequired_pass'] = 'Parece que <b>sí está usando</b> el navegador SEB';
+$string['select_all'] = 'Seleccionar todo';
+$string['selectbreakpoint'] = 'Selecciona punto de parada';
+$string['server'] = 'Servidor';
+$string['serverexecutionerror'] = 'Error en el servidor de ejecución';
+$string['setbyexecutionoptions'] = 'establecido por las opciones de ejecución';
+$string['shortcuts'] = 'Atajos de teclado';
+$string['shortdescription'] = 'Descripción corta';
+$string['showinvisibles'] = 'Mostrar caracteres invisibles';
+$string['showparentfiles'] = 'Mostrar ficheros padre';
+$string['shrightpanel'] = 'Muestra/oculta panel derecho';
+$string['similarity'] = 'Similitud';
+$string['similarto'] = 'Similar a';
+$string['start'] = 'Ejecutar';
+$string['startanimate'] = 'Ejecutar animado';
+$string['startdate'] = 'Disponibilidad';
+$string['starting'] = 'Iniciando';
+$string['step'] = 'Un paso';
+$string['stop'] = 'Parar';
+$string['submission'] = 'Entrega';
+$string['submissionperiod'] = 'Periodo de entrega';
+$string['submissionrestrictions'] = 'Restricciones de entrega';
+$string['submissions'] = 'Entregas';
+$string['submissions_graded_overview'] = '<b>{$a->name}</b>: {$a->ugcount} / {$a->subcount} ({$a->subpercent}%) / {$a->gradedcount} ({$a->gradedpercent}%) - {$a->notgradedcount} ({$a->notgradedpercent}%)';
+$string['submissions_graded_overview_help'] = '[Número de estudiantes o grupos]<br>
+ / [Entregas] (% de estudiantes o grupos con entrega)<br>
+ / [Entregas evaluadas] (% de entregas evaluadas)<br>
+ - [Entregas no evaluadas] (% de entregas no evaluadas)';
+$string['submissions_graded_overview_short'] = '{$a->gradedcount} de {$a->subcount}';
+$string['submissions_overview'] = '<b>{$a->name}</b>: {$a->ugcount} / {$a->subcount} ({$a->subpercent}%)';
+$string['submissions_overview_help'] = '[Número de estudiantes o grupos] / [Número de entregas] (% de estudiantes o grupos con entrega)';
+$string['submissions_overview_short'] = '{$a->subcount} de {$a->ugcount}';
+$string['submissionselection'] = 'Selección de entregas';
+$string['submissionslist'] = 'Lista de entregas';
+$string['submissionview'] = 'Ver entrega';
+$string['submitarchive'] = 'Entregar archivo ZIP';
+$string['submitfiles'] = 'Entregar archivos individualmente';
+$string['submitmethod'] = 'Método de entrega';
+$string['submitmethod_default'] = 'Método de entrega predeterminado';
+$string['submitmethod_default_auto'] = 'Automático (basado en el número máximo de ficheros)';
+$string['submitmethod_default_description'] = 'Método de entrega por defecto cuando los estudiantes abren el formulario de entrega:
+"Automático" selecciona ficheros individuales cuando el número máximo de ficheros permitido es 3 o menos, archivo ZIP en caso contrario.
+"Entregar archivos individualmente" preselecciona siempre la entrega fichero a fichero.
+"Entregar archivo ZIP" preselecciona siempre la entrega en ZIP.
+Nota: el estudiante puede cambiar el método de entrega en el formulario de entrega, independientemente del método preseleccionado.';
+$string['submitmethod_help'] = 'Elija cómo entregar sus ficheros:
+<ul>
+<li><b>Entregar archivos individualmente</b>: suba cada fichero por separado en el mismo formulario.</li>
+<li><b>Entregar archivo ZIP</b>: suba un único archivo ZIP con todos los ficheros.</li>
+</ul>';
+$string['submittedby'] = 'Entregada por {$a}';
+$string['submittedon'] = 'Entregada el';
+$string['submittedonp'] = 'Entregada el {$a}';
+$string['subplugintype_vplevaluator'] = 'Evaluador de entregas para VPL';
+$string['subplugintype_vplevaluator_plural'] = 'Evaluadores de entregas para VPL';
+$string['sureresetfiles'] = '¿Quiere perder todo su trabajo y reestablecer los ficheros a su estado original?';
+$string['terminal'] = 'Terminal';
+$string['terminaltheme'] = 'Tema de terminal';
+$string['test'] = 'Probar actividad';
+$string['testcases'] = 'Configuración de pruebas';
+$string['testcases_help'] = '<p>Para usar las caracteristicas de evaluación automática de programas de VPL debe rellenar el fichero "vpl_evaluate.cases".
+Este fichero tiene el siguiente formato:
+<ul>
+<li>"<b>case</b> = Descripción del caso": Optional. Establece el inicio de un caso de prueba.</li>
+<li>"<b>input</b> = texto": puede ocupar varias líneas. Finaliza cuando se introduce otra instrucción.</li>
+<li>"<b>output</b> = texto": puede ocupar varias líneas.  Finaliza con otra instrucción. Un caso de prueba puede tener varias salidas válidas. Existen tres tipos de salidas: sólo números, texto y texto exacto:
+ <ul>
+ <li><b>números</b>: Se escriben sólo números. Solo se comprueban los número de la salida, el resto del texto es ignorado. Los números reales se comprueban con cierta tolerancia</li>
+ <li><b>texto</b>: Sólo se comprueban palabras, la comparación es insensible a mayúsculas y se ignora el resto de los caracteres.</li>
+ <li><b>texto exacto</b>: El texto se escribe entre comillas dobles.</li>
+ </ul>
+ </li>
+<li>"<b>grade reduction</b> = [valor|porcentaje%]" : Por defecto cuando se produce un error se descuenta de la nota máxima  (rango_nota/número de casos)
+ pero con esta instrucción se puede cambiar el descuento por otro valor o porcentaje.
+</li>
+</ul>';
+$string['text'] = 'Texto';
+$string['timeleft'] = 'Tiempo restante';
+$string['timelimited'] = 'Limitado en tiempo';
+$string['timeout'] = 'Tiempo sobrepasado';
+$string['timeshift'] = 'Desplaza fechas en actividades VPL en {$a}';
+$string['timespent'] = 'Tiempo dedicado';
+$string['timespent_help'] = 'Tiempo dedicado en esta actividad basado en las versiones almacenadas<br>El gráfico de barras muestra el número de estudiantes en cada rango de tiempo.';
+$string['timeunlimited'] = 'Sin límite de tiempo';
+$string['totalnumberoferrors'] = "Errores";
+$string['undo'] = 'Deshacer';
+$string['unexpected_file_name'] = "Nombre de fichero incorrecto: se esperaba '{\$a->expected}' y se encontro '{\$a->found}'";
+$string['unsaved'] = 'Cambios sin guardar';
+$string['unzipping'] = 'Descomprimiendo ...';
+$string['update'] = 'Actualización';
+$string['updating'] = 'Actualizando';
+$string['uploadfile'] = 'Cargar fichero';
+$string['use_xmlrpc'] = 'Usar XML-RPC';
+$string['use_xmlrpc_description'] = 'Si se establece, el sistema usará XML-RPC en vez de JSON-RPC para comunicarse con los vpl-jail-servers. Debe establecer esta opción si usa vpl-jail-servers con versiones inferiores a la V3.0.0';
+$string['usevariations'] = 'Usar variaciones';
+$string['usewatermarks'] = 'Usar marcas de agua';
+$string['usewatermarks_description'] = 'Añade marcas de agua a los ficheros de los estudiantes (sólo en lenguajes soportados)';
+$string['variables'] = 'Variables';
+$string['variation_n'] = 'Variación {$a}';
+$string['variation_n_i'] = 'Variación {$a->number}: {$a->identification}';
+$string['variation_options'] = 'Opciones de variación';
+$string['variations'] = 'Variaciones';
+$string['variations_help'] = '<p>Se pueden definir variaciones para las actividades. Las variaciones se asignan de forma aleatoria a los estudiantes.</p>
+<p>En esta página se puede indicar si la actividad tiene variaciones, dar un título al conjunto de variaciones, y añadir las variaciones deseadas.</p>
+<p>Cada variación tiene un código de identificación y una descripción. El identificador se usa en el fichero <b>vpl_environment.sh</b> para pasar la
+variación asignada al estudiante a los scripts. La descripción, con formato HTML, se muestra a los estudiantes a los que ha sido asignada la variación
+correspondiente.</p>';
+$string['variations_unused'] = 'Esta actividad tiene variaciones, pero están desactivadas';
+$string['variationtitle'] = 'Título de variación';
+$string['varidentification'] = 'Identificación';
+$string['visiblegrade'] = 'Mostrar evaluación';
+$string['vpl'] = 'Laboratorio virtual de programación';
+$string['vpl:addinstance'] = 'Añade nuevas actividades VPL';
+$string['vpl:editothersgrades'] = 'Editar notas realizadas por otros';
+$string['vpl:grade'] = 'Evaluar una entrega';
+$string['vpl:manage'] = 'Gestionar un VPL';
+$string['vpl:setjails'] = 'Establece servidores de ejecución para instancias concretas de VPL';
+$string['vpl:similarity'] = 'Buscar similitudes entre entregas';
+$string['vpl:submit'] = 'Hacer entregas';
+$string['vpl:view'] = 'Ver la descripción completa de un VPL';
+$string['vpl_debug.sh'] = "Prepara la depuración del programa";
+$string['vpl_evaluate.cases'] = 'Escriba aquí los casos de prueba para evaluar automáticamente el programa';
+$string['vpl_evaluate.sh'] = "Evalúa el programa";
+$string['vpl_run.sh'] = "Prepara la ejecución del programa";
+$string['webservice'] = 'Servicio web';
+$string['webservice_help'] = 'Este servicio web puede usarse para recuperar y enviar ficheros para actividades VPL.';
+$string['webserviceglobal'] = 'Servicio web VPL global';
+$string['webserviceglobal_help'] = 'El siguiente token personal es permanente y puede usarse para cualquier VPL en toda la plataforma, usando la URL de servicio web proporcionada.';
+$string['webservicelocal'] = 'Servicio web VPL local';
+$string['webservicelocal_help'] = 'El siguiente token personal solo puede usarse para esta actividad VPL. Es temporal y probablemente se restablecerá en las próximas 24 horas o al cerrar la sesión.';
+$string['webserviceloginasnotice'] = 'Está conectado como otro usuario. No se mostrará su token personal con acceso global.';
+$string['webservicetoken'] = 'Token personal:';
+$string['webserviceurl'] = 'URL del servicio web:';
+$string['webserviceurlfull'] = 'URL completa:';
+$string['webserviceurlpwdnotice'] = 'Este VPL está protegido con contraseña que no se proporciona por razones de seguridad. Debe añadirse a la URL proporcionada como un parámetro llamado "password".';
+$string['webservicevplid'] = 'ID de VPL:';
+$string['websocket_protocol'] = 'Protocolo WebSocket';
+$string['websocket_protocol_description'] = 'Tipo protocolo WebSocket (ws:// or wss://) a usar por el navegador al conectarse al servidor de ejecución.';
+$string['workingperiods'] = 'Periodos de trabajo';
+$string['worktype'] = 'Tipo de trabajo';

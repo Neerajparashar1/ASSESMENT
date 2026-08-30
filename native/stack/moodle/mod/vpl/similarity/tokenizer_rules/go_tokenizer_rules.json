@@ -1,0 +1,83 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Go",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/golang_highlight_rules.js",
+  "name": "golang-tokenizer",
+  "extension": [".go"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "\\/\\/.*$" },
+
+      { "token": "vpl_null", "regex": "\\/\\*\\*(?!\\/)", "next": "doc-comment" },
+      { "token": "vpl_null", "regex": "\\/\\*", "next": "block-comment" },
+
+      { "token": "vpl_literal", "regex": "\"", "next": "dqstring" },
+      { "token": "vpl_literal", "regex": "`", "next": "bqstring" },
+
+      {
+        "token": "vpl_literal",
+        "regex": "'(?:[^\\\\']|\\\\(?:[0-7]{3}|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|[abfnrtv'\"\\\\]))'"
+      },
+
+      { "token": "vpl_literal", "regex": "0[xX][0-9a-fA-F]+\\b" },
+      { "token": "vpl_literal", "regex": "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b" },
+
+      {
+        "token": ["vpl_reserved", "vpl_null", "vpl_identifier"],
+        "regex": "(\\bfunc\\b)(\\s+)([a-zA-Z_][a-zA-Z0-9_]*)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:else|break|case|return|goto|if|const|select|continue|struct|default|switch|for|range|func|import|package|chan|defer|fallthrough|go|interface|map|type|var)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:string|uint8|uint16|uint32|uint64|int8|int16|int32|int64|float32|float64|complex64|complex128|byte|rune|uint|int|uintptr|bool|error)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:new|close|cap|copy|panic|panicln|print|println|len|make|delete|real|recover|imag|append)\\b"
+      },
+
+      { "token": "vpl_literal", "regex": "\\b(?:nil|true|false|iota)\\b" },
+
+      {
+        "token": "vpl_operator",
+        "regex": "<<=|>>=|&\\^=|\\+=|\\-=|\\*=|\\/=|%=|&=|\\|=|\\^=|:=|&&|\\|\\||<\\-|\\+\\+|\\-\\-|<<|>>|&\\^|==|!=|<=|>=|\\.\\.\\.|!|\\+|\\-|\\*|\\/|%|&|\\||\\^|~|<|>|="
+      },
+      { "token": "vpl_operator", "regex": ":|,|;|\\." },
+      { "token": "vpl_operator", "regex": "[\\[\\]\\(\\)\\{\\}]" },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "block-comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "doc-comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "dqstring": [
+      { "token": "vpl_literal", "regex": "\\\\(?:[0-7]{3}|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|[abfnrtv'\"\\\\])" },
+      { "token": "vpl_literal", "regex": "\"|$", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "bqstring": [
+      { "token": "vpl_literal", "regex": "`", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

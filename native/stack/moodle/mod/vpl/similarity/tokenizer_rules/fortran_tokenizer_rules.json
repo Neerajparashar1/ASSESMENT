@@ -1,0 +1,77 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Fortran",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/fortran_highlight_rules.js",
+  "name": "fortran-tokenizer",
+  "extension": [".f", ".F", ".f90", ".F90", ".f95", ".F95", ".f03", ".F03", ".f08", ".F08"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "^[cC\\*].*$" },
+      { "token": "vpl_null", "regex": "!.*$" },
+
+      { "token": "vpl_literal", "regex": "\"", "next": "qqstring" },
+      { "token": "vpl_literal", "regex": "'", "next": "qstring" },
+
+      { "token": "vpl_literal", "regex": "\\b\\d+(?:\\.\\d*)?(?:[eEdDqQ][+-]?\\d+)?(?:_\\w+)?\\b" },
+      { "token": "vpl_literal", "regex": "\\.\\d+(?:[eEdDqQ][+-]?\\d+)?(?:_\\w+)?\\b" },
+      { "token": "vpl_literal", "regex": "\\b[bBoOzZ](?:'[0-9a-fA-F]+'|\"[0-9a-fA-F]+\")\\b" },
+
+      { "token": "vpl_reserved", "regex": "(?i)#\\s*(?:include|define|undef|endif|ifdef|else|elif|ifndef)\\b" },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:allocate|assign|backspace|block|call|case|close|common|contains|continue|cycle|data|deallocate|do|else|elseif|elsewhere|end|enddo|endif|endforall|endfunction|endinterface|endmodule|endprogram|endselect|endsubroutine|endtype|endwhere|entry|equivalence|exit|external|forall|format|function|go\\s*to|if|implicit|include|inquire|intent|interface|intrinsic|module|namelist|none|nullify|only|open|print|program|read|return|rewind|save|select|stop|subroutine|then|use|where|while|write)\\b"
+      },
+
+      {
+        "token": "vpl_operator",
+        "regex": "(?i)\\.(?:and|or|not|eqv|neqv|eq|ne|gt|ge|lt|le|true|false)\\."
+      },
+
+      {
+        "token": "vpl_literal",
+        "regex": "(?i)\\b(?:\\.true\\.|true|\\.false\\.|false)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:character|complex|double\\s*precision|integer|logical|real|type)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:allocatable|dimension|in|inout|intent|optional|out|parameter|pointer|private|public|recursive|target)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:abs|achar|acos|acosh|adjustl|adjustr|aimag|aint|all|anint|any|asin|asinh|associated|atan|atan2|atanh|bessel_j0|bessel_j1|bessel_jn|bessel_y0|bessel_y1|bessel_yn|bge|bgt|bit_size|ble|blt|btest|ceiling|char|cmplx|conjg|cos|cosh|count|cpu_time|cshift|date_and_time|dble|digits|dim|dot_product|dprod|dshiftl|dshiftr|dsqrt|eoshift|epsilon|erf|erfc|erfc_scaled|exp|float|floor|fraction|gamma|len|len_trim|lge|lgt|lle|llt|log|log10|maskl|maskr|matmul|max|maxloc|maxval|merge|min|minloc|minval|mod|modulo|nint|norm2|null|pack|parity|popcnt|poppar|precision|present|product|radix|random_number|random_seed|range|repeat|reshape|round|rrspacing|same_type_as|scale|scan|selected_char_kind|selected_int_kind|selected_real_kind|set_exponent|shape|shifta|shiftl|shiftr|sign|sin|sinh|size|sngl|spacing|spread|sqrt|sum|system_clock|tan|tanh|tiny|trailz|transfer|transpose|trim|ubound|unpack|verify)\\b"
+      },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+
+      { "token": "vpl_operator", "regex": "\\*\\*|\\/\\/|/=|<=|>=|==|=>|\\+|\\-|\\*|\\/|%|=|<|>" },
+
+      { "token": "vpl_operator", "regex": "[\\[\\(\\{]" },
+      { "token": "vpl_operator", "regex": "[\\]\\)\\}]" },
+      { "token": "vpl_operator", "regex": "[,;:]" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "qqstring": [
+      { "token": "vpl_literal", "regex": "\"\"" },
+      { "token": "vpl_literal", "regex": "\"|$", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "qstring": [
+      { "token": "vpl_literal", "regex": "''" },
+      { "token": "vpl_literal", "regex": "'|$", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

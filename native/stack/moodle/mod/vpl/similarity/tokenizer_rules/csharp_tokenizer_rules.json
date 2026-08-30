@@ -1,0 +1,106 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for C#",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/csharp_highlight_rules.js",
+  "name": "csharp-tokenizer",
+  "extension": [".cs"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "\\/\\/.*$" },
+
+      { "token": "vpl_null", "regex": "\\/\\*\\*(?!\\/)", "next": "doc-comment" },
+      { "token": "vpl_null", "regex": "\\/\\*", "next": "block-comment" },
+
+      { "token": "vpl_literal", "regex": "'(?:.|\\\\(?:u[\\da-fA-F]+|x[\\da-fA-F]+|[tbrf'\"n]))?'" },
+
+      { "token": "vpl_literal", "regex": "\\$+\"\"\"", "next": "raw-interp-string" },
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "raw-string" },
+
+      { "token": "vpl_literal", "regex": "\\$@\"", "next": "interp-verbatim-string" },
+      { "token": "vpl_literal", "regex": "@\\$\"", "next": "interp-verbatim-string" },
+
+      { "token": "vpl_literal", "regex": "@\"", "next": "verbatim-string" },
+
+      { "token": "vpl_literal", "regex": "\\$\"", "next": "interp-string" },
+
+      { "token": "vpl_literal", "regex": "\"", "next": "string" },
+
+      { "token": "vpl_literal", "regex": "0[xX][0-9a-fA-F]+\\b" },
+      { "token": "vpl_literal", "regex": "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b" },
+
+      { "token": "vpl_literal", "regex": "\\b(?:true|false|null)\\b" },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:abstract|async|await|event|new|struct|as|explicit|switch|base|extern|object|this|bool|operator|throw|break|finally|out|byte|fixed|override|try|case|float|params|typeof|catch|for|private|uint|char|foreach|protected|ulong|checked|goto|public|unchecked|class|if|readonly|unsafe|const|implicit|ref|ushort|continue|in|return|using|decimal|int|sbyte|virtual|default|interface|sealed|volatile|delegate|internal|partial|short|void|do|is|sizeof|while|double|lock|stackalloc|else|long|static|enum|namespace|string|var|dynamic)\\b"
+      },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "^\\s*#(?:if|else|elif|endif|define|undef|warning|error|line|region|endregion|pragma)\\b"
+      },
+
+      {
+        "token": "vpl_operator",
+        "regex": "\\?\\?=|>>>=|<<=|>>=|\\+=|-=|\\*=|/=|%=|&=|\\^=|\\|=|==|!=|<=|>=|=>|\\?\\?|\\?\\.|\\.\\.|>>>|<<|>>|&&|\\|\\||\\+\\+|--|\\?:|!|~|\\+|-|\\*|/|%|&|\\||\\^|=|<|>"
+      },
+
+      { "token": "vpl_operator", "regex": "[\\?\\:\\,\\;\\.]" },
+      { "token": "vpl_operator", "regex": "[\\[\\]\\(\\)\\{\\}]" },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z_@][a-zA-Z0-9_]*\\b" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "block-comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "doc-comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "string": [
+      { "token": "vpl_literal", "regex": "\\\\(?:u[\\da-fA-F]+|x[\\da-fA-F]+|[tbrf'\"n])" },
+      { "token": "vpl_literal", "regex": "\"|$", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "verbatim-string": [
+      { "token": "vpl_literal", "regex": "\"\"", "next": "verbatim-string" },
+      { "token": "vpl_literal", "regex": "\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "interp-string": [
+      { "token": "vpl_literal", "regex": "\\{\\{|\\}\\}" },
+      { "token": "vpl_literal", "regex": "\\\\(?:u[\\da-fA-F]+|x[\\da-fA-F]+|[tbrf'\"n])" },
+      { "token": "vpl_literal", "regex": "\"|$", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "interp-verbatim-string": [
+      { "token": "vpl_literal", "regex": "\"\"", "next": "interp-verbatim-string" },
+      { "token": "vpl_literal", "regex": "\\{\\{|\\}\\}" },
+      { "token": "vpl_literal", "regex": "\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "raw-string": [
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "raw-interp-string": [
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "start" },
+      { "token": "vpl_literal", "regex": "\\{\\{|\\}\\}" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

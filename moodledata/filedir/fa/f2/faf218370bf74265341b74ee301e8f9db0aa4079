@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="ITM Group of Institutions, Gwalior">
+  <defs>
+    <linearGradient id="m" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8A1B2C"/>
+      <stop offset="1" stop-color="#5E0F1B"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="url(#m)"/>
+  <rect x="2.5" y="2.5" width="123" height="123" rx="25.5" fill="none" stroke="#C9A24B" stroke-opacity="0.55" stroke-width="2"/>
+  <!-- structured, ascending bars: step-by-step upward growth -->
+  <g fill="#F3E6C7">
+    <rect x="30" y="74" width="34" height="11" rx="3"/>
+    <rect x="30" y="56" width="52" height="11" rx="3"/>
+    <rect x="30" y="38" width="68" height="11" rx="3"/>
+  </g>
+  <text x="64" y="112" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="18" letter-spacing="4" fill="#F3E6C7">ITM</text>
+</svg>

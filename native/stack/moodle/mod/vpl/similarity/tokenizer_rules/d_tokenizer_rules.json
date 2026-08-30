@@ -1,0 +1,110 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for D",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/d_highlight_rules.js",
+  "name": "d-tokenizer",
+  "extension": [".d", ".di"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "\\/\\/.*$" },
+      { "token": "vpl_null", "regex": "^\\s*#!.*$" },
+
+      { "token": "vpl_null", "regex": "\\/\\*\\*(?!\\/)", "next": "doc-comment" },
+      { "token": "vpl_null", "regex": "\\/\\*", "next": "star-comment" },
+      { "token": "vpl_null", "regex": "\\/\\+", "next": "plus-comment" },
+
+      { "token": "vpl_literal", "regex": "q\"\\[", "next": "qstring-bracket" },
+      { "token": "vpl_literal", "regex": "q\"\\(", "next": "qstring-paren" },
+      { "token": "vpl_literal", "regex": "q\"\\{", "next": "qstring-brace" },
+      { "token": "vpl_literal", "regex": "q\"\\<", "next": "qstring-angle" },
+
+      {
+        "token": "vpl_literal",
+        "regex": "q\"[A-Za-z_][A-Za-z0-9_]*\\b",
+        "next": "qstring-ident"
+      },
+
+      { "token": "vpl_literal", "regex": "[xr]?\"", "next": "quote-string" },
+      { "token": "vpl_literal", "regex": "[xr]?`", "next": "backtick-string" },
+      { "token": "vpl_literal", "regex": "[xr]?['](?:(?:\\\\.)|(?:[^'\\\\]))*?['][cdw]?" },
+
+      { "token": "vpl_literal", "regex": "0[xX][0-9a-fA-F_]+(l|ul|u|f|F|L|U|UL)?\\b" },
+      { "token": "vpl_literal", "regex": "[+-]?\\d[\\d_]*(?:(?:\\.[\\d_]*)?(?:[eE][+-]?[\\d_]+)?)?(l|ul|u|f|F|L|U|UL)?\\b" },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "\\b(?:this|super|import|module|body|mixin|__traits|invariant|alias|asm|delete|typeof|typeid|sizeof|cast|new|in|is|typedef|__vector|__parameters|break|case|continue|default|do|else|for|foreach|foreach_reverse|goto|if|return|switch|while|catch|try|throw|finally|version|assert|unittest|with|abstract|align|debug|deprecated|export|extern|const|final|inout|out|ref|immutable|lazy|nothrow|override|package|pragma|private|protected|public|pure|scope|shared|__gshared|synchronized|static|volatile|class|struct|union|template|interface|enum|macro|auto|bool|char|dchar|wchar|byte|ubyte|float|double|real|cfloat|creal|cdouble|cent|ifloat|ireal|idouble|int|long|short|void|uint|ulong|ushort|ucent|function|delegate|string|wstring|dstring|size_t|ptrdiff_t|hash_t|Object)\\b"
+      },
+
+      {
+        "token": "vpl_literal",
+        "regex": "\\b(?:null|true|false|__DATE__|__EOF__|__TIME__|__TIMESTAMP__|__VENDOR__|__VERSION__|__FILE__|__MODULE__|__LINE__|__FUNCTION__|__PRETTY_FUNCTION__)\\b"
+      },
+
+      { "token": "vpl_identifier", "regex": "@[a-zA-Z_\\x{00a1}-\\x{ffff}][a-zA-Z\\d_\\x{00a1}-\\x{ffff}]*\\b" },
+
+      { "token": "vpl_operator", "regex": "\\!\\<\\>\\=|\\!\\<\\>|\\<\\>\\=|\\>\\>\\>\\=|\\<\\<\\=|\\>\\>\\=|\\^\\^\\=|\\!\\<\\=|\\!\\>\\=|\\>\\>\\>|\\<\\<|\\>\\>|\\<\\>|\\<\\=|\\>\\=|\\!\\=|\\=\\=|\\!\\<|\\!\\>|\\&\\&|\\|\\||\\^\\^|\\+\\+|\\-\\-|\\+\\=|\\-\\=|\\*\\=|\\/\\=|%\\=|\\&\\=|\\|\\=|\\^\\=|~\\=|\\=\\>|\\+|\\-|\\*|\\/|%|\\&|\\||\\^|~|\\!|\\<|\\>|\\=|\\?|\\$|#" },
+      { "token": "vpl_operator", "regex": "[,;.:]" },
+      { "token": "vpl_operator", "regex": "[\\[\\]\\(\\)\\{\\}]" },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z_\\x{00a1}-\\x{ffff}][a-zA-Z\\d_\\x{00a1}-\\x{ffff}]*\\b" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "doc-comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "star-comment": [
+      { "token": "vpl_null", "regex": "\\*\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "plus-comment": [
+      { "token": "vpl_null", "regex": "\\+\\/", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "quote-string": [
+      { "token": "vpl_literal", "regex": "\\\\." },
+      { "token": "vpl_literal", "regex": "\"[cdw]?", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "backtick-string": [
+      { "token": "vpl_literal", "regex": "`[cdw]?", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "qstring-bracket": [
+      { "token": "vpl_literal", "regex": "\\]\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+    "qstring-paren": [
+      { "token": "vpl_literal", "regex": "\\)\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+    "qstring-brace": [
+      { "token": "vpl_literal", "regex": "\\}\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+    "qstring-angle": [
+      { "token": "vpl_literal", "regex": "\\>\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "qstring-ident": [
+      {
+        "token": "vpl_literal",
+        "regex": "^\\s*[A-Za-z_][A-Za-z0-9_]*\"\\s*$",
+        "next": "start"
+      },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

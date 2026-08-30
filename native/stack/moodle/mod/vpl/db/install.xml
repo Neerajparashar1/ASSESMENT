@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/vpl/db" VERSION="20210616" COMMENT="XMLDB file for Moodle mod/vpl"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="vpl" COMMENT="vpl assignment definition">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shortdescription" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Short assignment description"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Full description"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Intro format"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Date the vpl will be avaliable"/>
+        <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="After this date this vpl instance will not be available"/>
+        <FIELD NAME="maxfiles" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum number of files"/>
+        <FIELD NAME="maxfilesize" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum number of bytes per file"/>
+        <FIELD NAME="requirednet" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Allowed submissions from"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Password required to submit"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Grade scale or max"/>
+        <FIELD NAME="visiblegrade" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="0 visible grade no, 1 yes"/>
+        <FIELD NAME="usevariations" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Boolean to set if use variations or not in this vpl"/>
+        <FIELD NAME="variationtitle" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Variation tittle, is show with the variation description"/>
+        <FIELD NAME="basedon" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Optionally, set the VPL id from this will be based on"/>
+        <FIELD NAME="run" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Let the student Run the program intertive (0=no, 1=yes)"/>
+        <FIELD NAME="debug" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Let to the student debug the program"/>
+        <FIELD NAME="evaluate" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Let the student get feedback from the teacher tests"/>
+        <FIELD NAME="evaluateonsubmission" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Evaluate the assigment when it is submitted or saved in editor"/>
+        <FIELD NAME="automaticgrading" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Use automatic evaluation results as final grade and comments"/>
+        <FIELD NAME="maxexetime" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum time in seconds to run, debug or evaluate the program"/>
+        <FIELD NAME="restrictededitor" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Submission by means of restricted Code Editor that disable external paste."/>
+        <FIELD NAME="activity_mode" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Activity mode: normal, example, nostudents, basedon, studentsreadonly, vplquestion."/>
+        <FIELD NAME="maxexememory" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum memory in bytes allocable to run, debug or evaluate"/>
+        <FIELD NAME="maxexefilesize" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum size in bytes for every file created running, debugging or evaluating"/>
+        <FIELD NAME="maxexeprocesses" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum number of processes can be running simultaneously"/>
+        <FIELD NAME="jailservers" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="List of jail servers"/>
+        <FIELD NAME="worktype" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Type of work 0=individual, 1=group"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of when this VPL instance was last modified"/>
+        <FIELD NAME="freeevaluations" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of automatic evaluations that do not reduce final score"/>
+        <FIELD NAME="reductionbyevaluation" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Reduce final score by a value or percentage for each automatic evaluation"/>
+        <FIELD NAME="sebrequired" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Safe Exam Browser required"/>
+        <FIELD NAME="sebkeys" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Safe Exam Browser keys, one by line"/>
+        <FIELD NAME="runscript" TYPE="char" LENGTH="63" NOTNULL="false" SEQUENCE="false" COMMENT="Name of script to run code"/>
+        <FIELD NAME="debugscript" TYPE="char" LENGTH="63" NOTNULL="false" SEQUENCE="false" COMMENT="Name of script to debug code"/>
+        <FIELD NAME="evaluator" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="Name of evaluator framework to use"/>
+        <FIELD NAME="run_mode" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="run mode: text terminal, GUI, Web app, text terminal in GUI."/>
+        <FIELD NAME="evaluation_mode" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Evaluation mode: text terminal, GUI, Web app, text terminal in GUI."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course_indx" UNIQUE="false" FIELDS="course"/>
+        <INDEX NAME="startdate_indx" UNIQUE="false" FIELDS="startdate"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="vpl_submissions" COMMENT="Information about submission and grade">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="vpl" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="datesubmitted" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Student submission comments"/>
+        <FIELD NAME="grader" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dategraded" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="nevaluations" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of evaluations executed"/>
+        <FIELD NAME="save_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of save actions"/>
+        <FIELD NAME="run_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of run actions"/>
+        <FIELD NAME="debug_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of debug action"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="vpl" TYPE="foreign" FIELDS="vpl" REFTABLE="vpl" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="vpl_userid_indx" UNIQUE="false" FIELDS="vpl, userid"/>
+        <INDEX NAME="vpl_groupid_indx" UNIQUE="false" FIELDS="vpl, groupid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="vpl_jailservers" COMMENT="Keep info about jail servers">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="server" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="server URL"/>
+        <FIELD NAME="lastfail" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Lastfail time"/>
+        <FIELD NAME="nfails" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Number of server fails"/>
+        <FIELD NAME="laststrerror" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Last error string"/>
+        <FIELD NAME="nrequests" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of requests"/>
+        <FIELD NAME="nbusy" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of replies &quot;busy&quot;"/>
+        <FIELD NAME="serverhash" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Improves server search"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="serverhash_idx" UNIQUE="false" FIELDS="serverhash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="vpl_variations" COMMENT="Variations to a vpl instance">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="vpl" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="asociate vpl id"/>
+        <FIELD NAME="identification" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Identificacion text uppercase"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Variation description"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="vpl_id" UNIQUE="true" FIELDS="vpl, id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="vpl_assigned_variations" COMMENT="Variations asigned to users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User id"/>
+        <FIELD NAME="vpl" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="vpl id"/>
+        <FIELD NAME="variation" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Variation id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="user_vpl" UNIQUE="true" FIELDS="userid, vpl" COMMENT="Index for userid vpl"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="vpl_running_processes" COMMENT="Running processes in jail servers">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User id"/>
+        <FIELD NAME="vpl" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="VPL id"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Type of process (0 run, 1 debug, 2 evalaute, 4 directrun)"/>
+        <FIELD NAME="server" TYPE="char" LENGTH="256" NOTNULL="true" SEQUENCE="false" COMMENT="URL jail server"/>
+        <FIELD NAME="start_time" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Start time of process"/>
+        <FIELD NAME="time_limit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time limit. Process must stop."/>
+        <FIELD NAME="adminticket" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="Admin ticket to control process"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Submission ID related to the process or 0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_id" UNIQUE="true" FIELDS="userid, id" COMMENT="Index for userid id"/>
+        <INDEX NAME="idx_time_limit" UNIQUE="false" FIELDS="time_limit"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="vpl_overrides" COMMENT="Overrides to VPL settings">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="vpl" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="VPL id"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If set, date the vpl will be available"/>
+        <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If set, after this date this vpl instance will not be available"/>
+        <FIELD NAME="freeevaluations" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If set, number of automatic evaluations that do not reduce final score"/>
+        <FIELD NAME="reductionbyevaluation" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If set, reduce final score by a value or percentage for each automatic evaluation"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="If set, replace or set the password required to submit the task"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="vpl" UNIQUE="false" FIELDS="vpl"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="vpl_assigned_overrides" COMMENT="Overrides assignations to users and groups">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="vpl" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="VPL id"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="User this override applies to"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Group this override applies to"/>
+        <FIELD NAME="override" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Override id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="vpl" UNIQUE="false" FIELDS="vpl"/>
+        <INDEX NAME="override" UNIQUE="false" FIELDS="override"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

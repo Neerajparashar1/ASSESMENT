@@ -1,0 +1,11 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1440, "h": 900, "title": "Centered card" },
+    { "file": "SplitScreen.dc.html", "x": 1580, "y": 0, "w": 1440, "h": 900, "title": "Split screen" },
+    { "file": "Mobile.dc.html", "x": 3160, "y": 0, "w": 390, "h": 844, "title": "Mobile" }
+  ],
+  "annotations": [
+    { "id": "note-brief", "x": 0, "y": -132, "w": 520, "text": "ITM GOI — Online Examination Portal · login\nMaroon #8a1b2c + gold #c9a24b · Source Serif 4 (college name) + Inter (form)\nThree takes: centered card (primary), split-screen, mobile." }
+  ],
+  "launch": { "view": "canvas" }
+}

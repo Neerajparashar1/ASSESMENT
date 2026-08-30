@@ -1,0 +1,1010 @@
+<?php
+// This file is part of VPL for Moodle - http://vpl.dis.ulpgc.es/
+//
+// VPL for Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// VPL for Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with VPL for Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * VPLT:: Tokenizer for tokenizer rules JSON files
+ *
+ * @package mod_vpl
+ * @copyright 2022 David Parreño Barbuzano
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author David Parreño Barbuzano <losedavidpb@gmail.com>
+ */
+namespace mod_vpl\tokenizer;
+
+use mod_vpl\util\assertf;
+use mod_vpl\tokenizer\tokenizer_base;
+
+// @codeCoverageIgnoreStart
+if (!function_exists('str_starts_with')) {
+    /**
+     * Check if a string starts with a given substring.
+     *
+     * @param string $haystack The string to search in.
+     * @param string $needle The substring to search for at the start of $haystack.
+     * @return bool True if $haystack starts with $needle, false otherwise.
+     */
+    function str_starts_with($haystack, $needle) {
+        return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
+}
+
+if (!function_exists('str_ends_with')) {
+    /**
+     * Check if a string ends with a given substring.
+     *
+     * @param string $haystack The string to search in.
+     * @param string $needle The substring to search for at the end of $haystack.
+     * @return bool True if $haystack ends with $needle, false otherwise.
+     */
+    function str_ends_with($haystack, $needle) {
+        return $needle !== '' && substr($haystack, -strlen($needle)) === (string)$needle;
+    }
+}
+// @codeCoverageIgnoreEnd
+
+/**
+ * Adjust this flag in order to avoid showing error messages
+ * which are not catched as exceptions. On production, this
+ * should be commnented or set to false.
+ */
+define('TOKENIZER_ON_TEST', true);
+
+/**
+ * Tokenizer class for tokenizer rules JSON files.
+ * This class is used to parse the rules defined in the JSON file
+ * and tokenize the source code based on those rules.
+ *
+ * @codeCoverageIgnore
+ */
+class tokenizer extends tokenizer_base {
+    /**
+     * @var string $name Name of the tokenizer.
+     * This is used to identify the tokenizer and to load the rules from the JSON file.
+     */
+    protected string $name = 'default';
+
+    /**
+     * @var array $extension List of extensions for current tokenizer.
+     */
+    protected array $extension = ['no-ext'];
+
+    /**
+     * @var bool $checkrules true to check rules defined in the JSON file
+     */
+    protected bool $checkrules = true;
+
+    /**
+     * @var array $inheritrules List of inherited rules from other tokenizers.
+     */
+    protected string $inheritrules;
+
+    /**
+     * @var bool $setcheckrules true to set checkrules=true and false to define it based on $rulefilename
+     * This is used to avoid setting checkrules if it is already defined in the JSON file.
+     */
+    protected bool $setcheckrules;
+
+    /**
+     * @var array $rawoverridetokens Raw override tokens defined in the JSON file.
+     */
+    protected array $rawoverridetokens = [];
+
+    /**
+     * @var int $maxtokencount Maximum number of tokens in a line that tokenizer allow
+     * before performance gets worse
+     */
+    protected int $maxtokencount = 20000;
+
+    /**
+     * @var array TOKENTYPES Available data types for token's options,
+     * which could be numbers, strings, arrays, and objects.
+     *
+     * Keys of this array are the token's names, and
+     * values the list of all data types associated.
+     */
+    protected const TOKENTYPES = [
+        "token"                 => ["string", "array_string"],
+        "regex"                 => ["string"],
+        "next"                  => ["string"],
+        "default_token"         => ["string"],
+    ];
+
+    /**
+     * @var array REQUIREDGROUPRULEOPTIONS Group of rule's options which must be defined together.
+     * This was defined in order to avoid no-sense definitions.
+     */
+    protected const REQUIREDGROUPRULEOPTIONS = [
+        "token"         => ["regex"],
+        "regex"         => ["token"],
+    ];
+
+    /**
+     * @var array VPLTOKENTYPES List of all VPL token types used at override_tokens
+     */
+    protected const VPLTOKENTYPES = [
+        "vpl_identifier", "vpl_literal", "vpl_operator",
+        "vpl_reserved", "vpl_other", "vpl_null",
+    ];
+
+    /**
+     * @var array $availabletokens Available names for tokens based on TextMate and ACE editor.
+     *
+     * Each token must be declared as one of the token_type available types
+     * in order to be compatible for similarity classes.
+     *
+     * It is important to notice that if one token's name has not a valid type,
+     * tokenizer would delete it for similarity tests.
+     *
+     * For more information about the meaning of some names, see
+     * https://macromates.com/manual/en/language_grammars at Naming Conventions section
+     */
+    protected array $availabletokens = [
+        "comment" => null,
+        "comment.line" => null,
+        "comment.line.double-slash" => null,
+        "comment.line.double-dash" => null,
+        "comment.line.number-sign" => null,
+        "comment.line.percentage" => null,
+        "comment.line.character" => null,
+        "comment.block" => null,
+        "comment.block.documentation" => null,
+        "constant" => token_type::LITERAL,
+        "constant.numeric" => token_type::LITERAL,
+        "constant.character" => token_type::LITERAL,
+        "constant.character.escape" => token_type::LITERAL,
+        "constant.language" => token_type::LITERAL,
+        "constant.language.escape" => token_type::LITERAL,
+        "constant.other" => token_type::LITERAL,
+        "entity" => null,
+        "entity.name" => token_type::IDENTIFIER,
+        "entity.name.function" => token_type::IDENTIFIER,
+        "entity.name.type" => token_type::IDENTIFIER,
+        "entity.name.tag" => token_type::RESERVED,
+        "entity.name.section" => token_type::IDENTIFIER,
+        "entity.other" => token_type::IDENTIFIER,
+        "entity.other.inherited-class" => token_type::IDENTIFIER,
+        "entity.other.attribute-name" => token_type::RESERVED,
+        "keyword" => token_type::RESERVED,
+        "keyword.control" => token_type::RESERVED,
+        "keyword.operator" => token_type::OPERATOR,
+        "keyword.other" => token_type::RESERVED,
+        "markup" => null,
+        "markup.underline" => token_type::OTHER,
+        "markup.underline.link" => token_type::OTHER,
+        "markup.bold" => token_type::OTHER,
+        "markup.heading" => token_type::OTHER,
+        "markup.italic" => token_type::OTHER,
+        "markup.list" => token_type::OTHER,
+        "markup.list.numbered" => token_type::OTHER,
+        "markup.list.unnumbered" => token_type::OTHER,
+        "markup.quote" => token_type::OTHER,
+        "markup.raw" => token_type::OTHER,
+        "markup.other" => token_type::OTHER,
+        "meta" => null,
+        "storage" => null,
+        "storage.type" => token_type::RESERVED,
+        "storage.modifier" => token_type::RESERVED,
+        "string" => token_type::LITERAL,
+        "string.quoted" => token_type::LITERAL,
+        "string.quoted.single" => token_type::LITERAL,
+        "string.quoted.double" => token_type::LITERAL,
+        "string.quoted.triple" => token_type::LITERAL,
+        "string.quoted.other" => token_type::LITERAL,
+        "string.unquoted" => token_type::LITERAL,
+        "string.interpolated" => token_type::LITERAL,
+        "string.regexp" => token_type::LITERAL,
+        "string.double" => token_type::LITERAL,
+        "string.single" => token_type::LITERAL,
+        "string.other" => token_type::LITERAL,
+        "support" => null,
+        "support.function" => token_type::RESERVED,
+        "support.class" => token_type::RESERVED,
+        "support.type" => token_type::RESERVED,
+        "support.constant" => token_type::LITERAL,
+        "support.variable" => token_type::IDENTIFIER,
+        "support.other" => token_type::OTHER,
+        "identifier" => token_type::IDENTIFIER,
+        "variable" => token_type::IDENTIFIER,
+        "variable.parameter" => token_type::IDENTIFIER,
+        "variable.language" => token_type::RESERVED,
+        "variable.other" => token_type::IDENTIFIER,
+        "text" => null,
+        "punctuation" => null,
+        "punctuation.separator" => token_type::OPERATOR,
+        "paren" => token_type::OPERATOR,
+        "paren.lparen" => token_type::OPERATOR,
+        "paren.rparen" => token_type::OPERATOR,
+
+        // VPL types.
+        "vpl_identifier" => token_type::IDENTIFIER,
+        "vpl_literal" => token_type::LITERAL,
+        "vpl_operator" => token_type::OPERATOR,
+        "vpl_reserved" => token_type::RESERVED,
+        "vpl_other" => token_type::OTHER,
+        "vpl_null" => null, // Same as "" at JSON files.
+    ];
+
+    /**
+     * Get availabletokens for current tokenizer
+     *
+     * @return array
+     * @codeCoverageIgnore
+     */
+    protected function get_override_tokens(): array {
+        return $this->availabletokens;
+    }
+
+    /**
+     * Get rawoverridetokens for current tokenizer
+     *
+     * @return array
+     * @codeCoverageIgnore
+     */
+    protected function get_raw_override_tokens(): array {
+        return $this->rawoverridetokens;
+    }
+
+    /**
+     * Get maxtokencount for current tokenizer
+     *
+     * @return int
+     * @codeCoverageIgnore
+     */
+    protected function get_max_token_count(): int {
+        return $this->maxtokencount;
+    }
+
+    /**
+     * Creates a new instance of \mod_vpl\tokenizer\tokenizer class
+     *
+     * @param string $rulefilename JSON file with highlight rules
+     * @param bool $setcheckrules true to set checkrules=true and false to define it based on $rulefilename
+     */
+    public function __construct(string $rulefilename, bool $setcheckrules = false) {
+        parent::__construct();
+
+        assertf::assert(
+            file_exists($rulefilename),
+            $rulefilename,
+            'file ' . $rulefilename . ' must exist'
+        );
+
+        assertf::assert(
+            str_ends_with($rulefilename, '_tokenizer_rules.json'),
+            $rulefilename,
+            $rulefilename . ' must have suffix _tokenizer_rules.json'
+        );
+
+        $this->setcheckrules = $setcheckrules;
+        $jsonobj = self::load_json($rulefilename);
+
+        $this->init_check_rules($rulefilename, $jsonobj);
+        $this->init_inherit_rules($rulefilename, $jsonobj);
+        $this->init_override_tokens($rulefilename, $jsonobj);
+        $this->init_max_token_count($rulefilename, $jsonobj);
+        $this->init_tokenizer_name($rulefilename, $jsonobj);
+        $this->init_extension($rulefilename, $jsonobj);
+        $this->init_states($rulefilename, $jsonobj);
+
+        // Ignore options starting with vpl_doc_ as documentation.
+        $restoptions = array_filter(
+            get_object_vars($jsonobj),
+            fn($key) => !str_starts_with($key, 'vpl_doc_'),
+            ARRAY_FILTER_USE_KEY
+        );
+        $areinvalidoptions = count($restoptions) != 0;
+
+        if ($areinvalidoptions == true) {
+            $errmssg = 'invalid options: ' . implode(',', array_keys($restoptions));
+            assertf::assert($areinvalidoptions == false, $rulefilename, $errmssg);
+        }
+
+        $this->apply_inheritance();
+        self::prepare_tokenizer($rulefilename);
+    }
+
+    /**
+     * Set tokenizer::$maxtokencount whether $maxtokencount is natural
+     *
+     * @param int $maxtokencount natural number to set to $maxtokencount
+     * @codeCoverageIgnore
+     */
+    public function set_max_token_count(int $maxtokencount = 0): void {
+        if ($maxtokencount >= 0) {
+            $this->maxtokencount = $maxtokencount;
+        }
+    }
+
+    /**
+     * Get all tokens for passed filename for similarity
+     *
+     * @param string $data content or file to tokenize
+     * @param bool $isfile check if $data is filename
+     * @return array
+     */
+    public function parse(string $data, bool $isfile = true): array {
+        if ($isfile === true) {
+            $tokens = $this->get_all_tokens_in_file($data);
+        } else {
+            $tokens = $this->get_all_tokens($data);
+        }
+        $tokensprepared = [];
+        foreach ($tokens as $dataofline) {
+            foreach ($dataofline['tokens'] as $token) {
+                $cond = array_key_exists($token->type, $this->availabletokens);
+                assertf::assert($cond, null, 'token ' . $token->type . ' is not valid');
+                $type = $this->availabletokens[$token->type];
+
+                if (is_null($type) === false) {
+                    if (strlen(trim($token->value)) > 0) {
+                        $tokensprepared[] = new token($type, trim($token->value), $token->line);
+                    }
+                }
+            }
+        }
+
+        $this->tokens = $tokensprepared;
+        return $tokensprepared;
+    }
+
+    /**
+     * Get tokens from a file
+     *
+     * @param string $filename name of the file to get tokens from
+     * @return array
+     */
+    public function get_all_tokens_in_file(string $filename): array {
+        assertf::assert(file_exists($filename), $this->name, 'file ' . $filename . ' does not exist');
+        $hasvalidext = false;
+
+        foreach ($this->extension as $ext) {
+            if (strcmp($ext, "no-ext") != 0) {
+                $hasvalidext = str_ends_with($filename, $ext) ? true : $hasvalidext;
+            }
+        }
+
+        $extensionsstr = implode(',', $this->extension);
+        assertf::assert($hasvalidext, $this->name, $filename . ' must end with one of the extensions ' . $extensionsstr);
+        return $this->get_all_tokens(file_get_contents($filename));
+    }
+
+    /**
+     * Get tokens in a string (file contens)
+     *
+     * @param string $code to tokenize
+     * @return array
+     */
+    public function get_all_tokens(string $code): array {
+        $infolines = [];
+        $state = 'start';
+        $numline = 1;
+        $code = str_replace("\r\n", "\n", $code); // Sanitize new line code.
+        $lines = explode("\n", $code);
+        foreach ($lines as $textperline) {
+            $infoline = $this->get_line_tokens($textperline, $state, $numline++);
+            $state = $infoline["state"];
+            $infolines[] = $infoline;
+        }
+        return $infolines;
+    }
+
+    /**
+     * Get all tokens for passed line
+     * Based on Ace Editor
+     * (https://github.com/ajaxorg/ace/blob/master/lib/ace/tokenizer.js).
+     *
+     * @param string $line content of the line
+     * @param string $startstate state on which stack would start
+     * @param int    $numline number of line
+     * @return array
+     */
+    public function get_line_tokens(string $line, string $startstate, int $numline): array {
+        $startstate = !isset($startstate) ? "" : $startstate;
+        $currentstate = strcmp($startstate, "") === 0 ? "start" : $startstate;
+        $tokens = [];
+
+        if (!isset($this->states[$currentstate])) {
+            $currentstate = "start";
+            $state = $this->states[$currentstate];
+        } else {
+            $state = $this->states[$currentstate];
+        }
+
+        $mapping = $this->matchmappings[$currentstate];
+        $regex = $this->regexprs[$currentstate];
+        $offset = $matchattempts = 0;
+        $token = new token(null, "", -1);
+
+        while (preg_match($regex, $line, $matches, PREG_OFFSET_CAPTURE, $offset) === 1) {
+            if (++$matchattempts > $this->maxtokencount) {
+                // @codeCoverageIgnoreStart
+                if ($matchattempts > 2 * strlen($line)) {
+                    if (!defined('TOKENIZER_ON_TEST') || constant('TOKENIZER_ON_TEST') === false) {
+                        assertf::showerr(null, "infinite loop with " . $startstate . " in tokenizer");
+                    }
+                }
+                // @codeCoverageIgnoreEnd
+                self::add_token($tokens, $token);
+                while ($offset < strlen($line)) {
+                    $overflowval = substr($line, $offset, 500);
+                    $token = new token("vpl_literal", $overflowval, $numline);
+                    self::add_token($tokens, $token);
+                    $offset += 500;
+                }
+                $token = new token(null, "", -1);
+                $currentstate = "start";
+                break;
+            }
+
+            $value = $matches[0][0];
+            $lastindex = $offset;
+            $offset = $matches[0][1] + (strlen($value) > 0 ? strlen($value) : 1);
+            $type = $mapping["default_token"];
+            $skippedlen = $matches[0][1] - $lastindex;
+            if ($skippedlen > 0) {
+                $skipped = substr($line, $lastindex, $skippedlen);
+                if ($token->type === $type) {
+                    $token->value .= $skipped;
+                } else {
+                    self::add_token($tokens, $token);
+                    $token = new token($type, $skipped, $numline);
+                }
+            }
+
+            for ($i = 0; $i < count($matches) - 1; $i++) {
+                if ($matches[$i + 1][1] != -1) {
+                    if (isset($mapping[$i])) {
+                        $rule = $state[$mapping[$i]];
+                        $type = isset($rule->token) ? $rule->token : $rule->token_array;
+
+                        if (isset($rule->next)) {
+                            $currentstate = $rule->next;
+
+                            if (!isset($this->states[$currentstate])) {
+                                // @codeCoverageIgnoreStart
+                                if (!defined('TOKENIZER_ON_TEST') || constant('TOKENIZER_ON_TEST') === false) {
+                                    assertf::showerr(null, "state " . $currentstate . " doesn't exist");
+                                }
+                                // @codeCoverageIgnoreEnd
+
+                                $currentstate = "start";
+                                $state = $this->states[$currentstate];
+                            } else {
+                                $state = $this->states[$currentstate];
+                            }
+
+                            $mapping = $this->matchmappings[$currentstate];
+                            $regex = $this->regexprs[$currentstate];
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            if (isset($value)) {
+                if (isset($type) && is_string($type)) {
+                    if (!isset($rule) && $token->type === $type) {
+                        $token->value .= $value;
+                    } else {
+                        self::add_token($tokens, $token);
+                        $token = new token($type, $value, $numline);
+                    }
+                } else {
+                    self::add_token($tokens, $token);
+                    $token = new token(null, "", -1);
+                    $tokenarray = tokenizer_base::get_token_array($numline, $type, $value, $regex);
+
+                    foreach ($tokenarray as $tokensplit) {
+                        $tokens[] = $tokensplit;
+                    }
+                }
+            }
+
+            $condexit = $lastindex >= strlen($line) || $offset >= strlen($line);
+
+            if ($condexit) {
+                break;
+            }
+        }
+        self::add_token($tokens, $token);
+        if ($offset < strlen($line)) {
+            $token = new token($mapping["default_token"], substr($line, $offset), $numline);
+            self::add_token($tokens, $token);
+        }
+        return [ "state"  => $currentstate, "tokens" => $tokens ];
+    }
+
+    /**
+     * Prepare tokenizer based on the rules defined in the JSON file.
+     * This method processes the rules for each state,
+     * compiles regular expressions, and sets up mappings for token types.
+     *
+     * @param string $rulefilename name of the file with rules
+     *
+     * This method is based on the Ace Editor's tokenizer.js
+     * https://github.com/ajaxorg/ace/blob/master/lib/ace/tokenizer.js
+     */
+    private function prepare_tokenizer(string $rulefilename): void {
+        foreach ($this->states as $statename => $rules) {
+            $ruleregexpr = [];
+            $matchtotal = 0;
+
+            $mapping = [ "default_token" => "text" ];
+            for ($i = 0; $i < count($rules); $i++) {
+                $rule = $rules[$i];
+
+                if (isset($rule->default_token)) {
+                    $mapping["default_token"] = $rule->default_token;
+                }
+
+                if (!isset($rule->regex)) {
+                    continue;
+                }
+
+                $adjustedregex = $rule->regex;
+                $umod = (strpos($adjustedregex, '\x{') !== false) ? 'u' : '';
+                $result = preg_match("\x01(?:(" . $adjustedregex . ")|(.))\x01" . $umod, "a", $matches);
+                $matchcount = ($result !== false && count($matches) >= 3) ? count($matches) - 2 : 1;
+
+                if (is_array($rule->token)) {
+                    if (count($rule->token) == 1 || $matchcount == 1) {
+                        $rule->token = $rule->token[0];
+                    } else if ($matchcount - 1 != count($rule->token)) {
+                        // @codeCoverageIgnoreStart
+                        if (!defined('TOKENIZER_ON_TEST') || constant('TOKENIZER_ON_TEST') === false) {
+                            $errmssg = "number of classes and regexp groups doesn't match ";
+                            $errmssg .= ($matchcount - 1) . " != " . count($rule->token);
+                            assertf::showerr($rulefilename, $errmssg);
+                        }
+                        // @codeCoverageIgnoreEnd
+
+                        $rule->token = $rule->token[0];
+                    } else {
+                        $rule->token_array = $rule->token;
+                        unset($rule->token);
+                    }
+                }
+
+                if ($matchcount > 1) {
+                    if (preg_match("/\\\(\d)/", $rule->regex) === 1) {
+                        $adjustedregex = preg_replace_callback("/\\\([0-9]+)/", function ($value) use ($matchtotal) {
+                            return "\\" . (intval(substr($value[0], 1), 10) + $matchtotal + 1);
+                        }, $rule->regex);
+                    } else {
+                        $matchcount = 1;
+                        $adjustedregex = self::remove_capturing_groups($rule->regex);
+                    }
+                }
+
+                $mapping[$matchtotal] = $i;
+                $matchtotal += $matchcount;
+                $ruleregexpr[] = $adjustedregex;
+            }
+
+            if (count($ruleregexpr) == 0) {
+                $mapping[0] = 0;
+                $ruleregexpr[] = "$";
+            }
+
+            $this->matchmappings[$statename] = $mapping;
+            $combined = "\x01(" . join(")|(", $ruleregexpr) . ")|($)\x01";
+            if (strpos($combined, '\x{') !== false) {
+                $combined .= 'u';
+            }
+            $this->regexprs[$statename] = $combined;
+        }
+    }
+
+    /**
+     * Add a token to the tokens array if it has a valid type
+     * and its value is not empty or, if settrim is true,
+     * its trimmed value is not empty.
+     *
+     * @param array $tokens array of tokens to add the token to
+     * @param token $token the token to add
+     * @param bool $settrim whether to trim the token value before checking its length
+     */
+    private static function add_token(array &$tokens, token $token, bool $settrim = false): void {
+        if (isset($token->type)) {
+            $cond = !$settrim ? strlen($token->value) >= 1 : strlen(trim($token->value)) >= 1;
+
+            if ($cond) {
+                $tokens[] = $token;
+            }
+        }
+    }
+
+    /**
+     * Load JSON file and return its content as an object.
+     * This method reads the file content,
+     * removes C-style comments and blank lines,
+     * and decodes the JSON into an object.
+     *
+     * @param string $filename name of the JSON file to load
+     * @return object JSON object containing the rules
+     */
+    private static function load_json(string $filename): object {
+        $data = file_get_contents($filename);
+        assertf::assert($data !== false, $filename, 'file ' . $filename . ' could not be read');
+
+        // Discard C-style block comments and standalone // line comments (lines with no other content).
+        $content = preg_replace('#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(^\s*//.*)#m', '', $data) ?? $data;
+        $content = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $content) ?? $content;
+
+        if (trim($content) === '') {
+            assertf::assert(false, $filename, 'file ' . $filename . ' is empty');
+        }
+
+        $jsonobj = json_decode($content, null, 512, JSON_INVALID_UTF8_SUBSTITUTE);
+        $errmsg = "JSON parse file '$filename' error: " . json_last_error_msg();
+        assertf::assert(isset($jsonobj), $filename, $errmsg);
+        return $jsonobj;
+    }
+
+    /**
+     * Initialize max_token_count from JSON object.
+     *
+     * This method checks that the "max_token_count" option is defined,
+     * and if checkrules is true, it validates that the value is numeric
+     * and non-negative.
+     * It sets the maxtokencount property to the value of the option.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param object $jsonobj JSON object containing the rules
+     */
+    private function init_max_token_count(string $rulefilename, object $jsonobj) {
+        if (isset($jsonobj->max_token_count)) {
+            if ($this->checkrules === true) {
+                assertf::assert(
+                    is_numeric($jsonobj->max_token_count),
+                    $rulefilename,
+                    '"max_token_count" option must be numeric'
+                );
+
+                assertf::assert(
+                    $jsonobj->max_token_count >= 0,
+                    $rulefilename,
+                    '"max_token_count" option must be a positive integer'
+                );
+            }
+
+            $this->set_max_token_count($jsonobj->max_token_count);
+            unset($jsonobj->max_token_count);
+        }
+    }
+
+    /**
+     * Initialize override tokens from JSON object.
+     *
+     * This method checks that the "override_tokens" option is defined,
+     * and if checkrules is true, it validates that the value is an object.
+     * It sets the availabletokens property to the values defined in the
+     * "override_tokens" option, allowing for custom token types to be defined.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param object $jsonobj JSON object containing the rules
+     */
+    private function init_override_tokens(string $rulefilename, object $jsonobj) {
+        if (isset($jsonobj->override_tokens)) {
+            if ($this->checkrules === true) {
+                assertf::assert(
+                    is_object($jsonobj->override_tokens),
+                    $rulefilename,
+                    '"override_tokens" option must be an object'
+                );
+            }
+
+            $overridetokens = (array)$jsonobj->override_tokens;
+            $this->rawoverridetokens = $overridetokens;
+
+            foreach ($overridetokens as $tokename => $strtokentype) {
+                if ($this->checkrules === true) {
+                    assertf::assert(
+                        !in_array($tokename, self::VPLTOKENTYPES),
+                        $rulefilename,
+                        $tokename . ' could not be overrided'
+                    );
+
+                    assertf::assert(
+                        isset($this->availabletokens[$strtokentype]) || strcmp($strtokentype, 'vpl_null') == 0,
+                        $rulefilename,
+                        $strtokentype . ' does not exist'
+                    );
+                }
+
+                $tokentype = $this->availabletokens[$strtokentype];
+                $this->availabletokens[$tokename] = $tokentype;
+            }
+
+            unset($jsonobj->override_tokens);
+        }
+
+        // Inherit override_tokens before checking rules.
+        if (!empty($this->inheritrules)) {
+            $inherittokenizer = new tokenizer($this->inheritrules);
+            $src = $inherittokenizer->get_override_tokens();
+            $rawsrc = $inherittokenizer->get_raw_override_tokens();
+
+            foreach (array_keys($rawsrc) as $tokename) {
+                $this->availabletokens[$tokename] = $src[$tokename];
+            }
+        }
+    }
+
+    /**
+     * Initialize tokenizer name from JSON object.
+     *
+     * This method checks that the "name" option is defined,
+     * and if checkrules is true, it validates that the value is a string.
+     * It sets the name property to the value of the option.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param object $jsonobj JSON object containing the rules
+     */
+    private function init_tokenizer_name(string $rulefilename, object $jsonobj) {
+        if (isset($jsonobj->name)) {
+            if ($this->checkrules === true) {
+                assertf::assert(
+                    is_string($jsonobj->name),
+                    $rulefilename,
+                    '"name" option must be a string'
+                );
+            }
+
+            $this->name = $jsonobj->name;
+            unset($jsonobj->name);
+        }
+    }
+
+    /**
+     * Initialize extension from JSON object.
+     *
+     * This method checks that the "extension" option is defined,
+     * and if checkrules is true, it validates that the value is a string
+     * or an array of strings. It sets the extension property to the value
+     * of the option.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param object $jsonobj JSON object containing the rules
+     */
+    private function init_extension(string $rulefilename, object $jsonobj) {
+        if (isset($jsonobj->extension)) {
+            if ($this->checkrules === true) {
+                assertf::assert(
+                    is_string($jsonobj->extension) || tokenizer_base::check_type($jsonobj->extension, "array_string") === true,
+                    $rulefilename,
+                    '"extension" option must be a string or an array of strings'
+                );
+            }
+
+            if (is_string($jsonobj->extension)) {
+                $this->extension = [$jsonobj->extension];
+            } else {
+                $this->extension = $jsonobj->extension;
+            }
+
+            if ($this->checkrules === true) {
+                foreach ($this->extension as $ext) {
+                    if (strcmp($ext, 'no-ext') != 0) {
+                        $errmssg = 'extension ' . $ext . ' must start with .';
+                        assertf::assert(str_starts_with($ext, '.'), $rulefilename, $errmssg);
+                    }
+                }
+            }
+
+            unset($jsonobj->extension);
+        }
+    }
+
+    /**
+     * Initialize check rules from JSON object.
+     *
+     * This method checks that the "check_rules" option is defined,
+     * and if checkrules is true, it validates that the value is a boolean.
+     * It sets the checkrules property to the value of the option.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param object $jsonobj JSON object containing the rules
+     */
+    private function init_check_rules(string $rulefilename, object $jsonobj) {
+        if (isset($jsonobj->check_rules)) {
+            $optionval = $jsonobj->check_rules;
+
+            assertf::assert(
+                is_bool($optionval),
+                $rulefilename,
+                '"check_rules" option must be a boolean'
+            );
+
+            if (!$this->setcheckrules) {
+                $this->checkrules = $optionval;
+            }
+
+            unset($jsonobj->check_rules);
+        }
+    }
+
+    /**
+     * Initialize inherit rules from JSON object.
+     *
+     * This method checks that the "inherit_rules" option is defined,
+     * and if checkrules is true, it validates that the file exists.
+     * It sets the inheritrules property to the path of the inherited rules.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param object $jsonobj JSON object containing the rules
+     */
+    private function init_inherit_rules(string $rulefilename, object $jsonobj) {
+        if (isset($jsonobj->inherit_rules)) {
+            $optionval = $jsonobj->inherit_rules;
+
+            if ($this->checkrules == true) {
+                $errmssg = '"inherit_rules" option must be a string';
+                assertf::assert(is_string($optionval), $rulefilename, $errmssg);
+            }
+
+            $this->inheritrules = dirname($rulefilename) . '/' . $optionval . '.json';
+
+            if ($this->checkrules == true) {
+                assertf::assert(
+                    file_exists($this->inheritrules),
+                    $rulefilename,
+                    "inherit JSON file " . $this->inheritrules . ' does not exist'
+                );
+            }
+
+            unset($jsonobj->inherit_rules);
+        }
+    }
+
+    /**
+     * Initialize states from JSON object.
+     *
+     * This method checks that the "states" option is defined, and if
+     * checkrules is true, it validates the structure of each state,
+     * ensuring that each state is an object with valid rules.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param object $jsonobj JSON object containing the rules
+     */
+    private function init_states(string $rulefilename, object $jsonobj) {
+        assertf::assert(isset($jsonobj->states), $rulefilename, '"states" option must be defined');
+
+        if ($this->checkrules == true) {
+            assertf::assert(
+                is_object($jsonobj->states),
+                $rulefilename,
+                '"states" option must be an object'
+            );
+
+            $numstate = 0;
+
+            foreach (get_object_vars($jsonobj->states) as $statename => $state) {
+                assertf::assert(is_string($statename), $rulefilename, 'name for state ' . $numstate . ' must be a string');
+                assertf::assert(strcmp(trim($statename), "") != 0, $rulefilename, 'state ' . $numstate . ' must have a name');
+
+                assertf::assert(is_array($state), $rulefilename, 'state ' . $numstate . ' must be an array');
+                $this->check_rules($rulefilename, $statename, $state, $numstate, 0);
+
+                $numstate = $numstate + 1;
+            }
+        }
+
+        $this->states = (array)$jsonobj->states;
+
+        if ($this->checkrules == true) {
+            assertf::assert(isset($this->states['start']), $rulefilename, '"start" state must exist');
+        }
+
+        unset($jsonobj->states);
+    }
+
+    /**
+     * Check rules for a state.
+     *
+     * This method checks that each rule in the state is an object,
+     * that all options are valid, and that required options are
+     * defined together.
+     *
+     * @param string $rulefilename name of the file with rules
+     * @param string $statename name of the state
+     * @param array $state array of rules for the state
+     * @param int $nstate number of the state
+     * @param int $nrule number of the rule in the state
+     */
+    private function check_rules(string $rulefilename, string $statename, array $state, int $nstate, int $nrule): void {
+        foreach ($state as $rule) {
+            $errmssg = "rule " . $nrule . " of state \"" . $statename . "\" no. " . $nstate . " must be an object";
+            assertf::assert(is_object($rule), $rulefilename, $errmssg);
+
+            $optionsdefined = [];
+
+            foreach (get_object_vars($rule) as $optionname => $optionvalue) {
+                $errmssg = "invalid option " . $optionname . " at rule " . $nrule . " of state \"";
+                $errmssg .= $statename . "\" no. " . $nstate;
+                assertf::assert(array_key_exists($optionname, self::TOKENTYPES), $rulefilename, $errmssg);
+
+                $optionsdefined[] = $optionname;
+                $istypevalid = false;
+
+                foreach (self::TOKENTYPES[$optionname] as $typevalue) {
+                    $condtype = tokenizer_base::check_type($optionvalue, $typevalue);
+
+                    if ($condtype === true) {
+                        $istypevalid = true;
+                        break;
+                    }
+                }
+
+                $errmssg = "invalid data type for " . $optionname . " at rule " . $nrule . " of state \"";
+                $errmssg .= $statename . "\" no. " . $nstate;
+                assertf::assert($istypevalid, $rulefilename, $errmssg);
+
+                if (strcmp($optionname, "token") == 0) {
+                    $errmssg = "invalid token at rule " . $nrule . " of state \"" . $statename . "\" no. " . $nstate;
+                    $cond = tokenizer_base::check_token($optionvalue, $this->availabletokens);
+                    assertf::assert($cond, $rulefilename, $errmssg);
+                }
+            }
+
+            foreach (self::REQUIREDGROUPRULEOPTIONS as $optionrequired => $group) {
+                if (in_array($optionrequired, $optionsdefined)) {
+                    foreach ($group as $optiong) {
+                        $errmssg = "option " . $optionrequired . " must be defined next to " . $optiong . " at rule ";
+                        $errmssg .= $nrule . " of state \"" . $statename . "\" no. " . $nstate;
+                        assertf::assert(in_array($optiong, $optionsdefined), $rulefilename, $errmssg);
+                    }
+                }
+            }
+
+            if (in_array("default_token", $optionsdefined)) {
+                $errmssg = "option default_token must be alone at rule " . $nrule . " of state \"";
+                $errmssg .= $statename . "\" no. " . $nstate;
+                assertf::assert(count($optionsdefined) == 1, $rulefilename, $errmssg);
+            }
+
+            $nrule = $nrule + 1;
+        }
+    }
+
+    /**
+     * Apply inheritance rules to current tokenizer.
+     *
+     * This method will merge the states of the current tokenizer with
+     * the states of the inherited tokenizer, ensuring that if a state
+     * exists in both, the rules from the inherited tokenizer are added
+     * to the current one without overwriting existing rules.
+     */
+    private function apply_inheritance(): void {
+        if (!empty($this->inheritrules)) {
+            $inherittokenizer = new tokenizer($this->inheritrules);
+            $src = $inherittokenizer->get_states();
+
+            foreach ($src as $srcname => $srcvalue) {
+                if (!isset($this->states[$srcname])) {
+                    $this->states[$srcname] = $srcvalue;
+                } else {
+                    foreach ($srcvalue as $rulesrc) {
+                        if (!tokenizer_base::contains_rule($this->states[$srcname], $rulesrc)) {
+                            $this->states[$srcname][] = $rulesrc;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

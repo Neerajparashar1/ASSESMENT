@@ -1,0 +1,36 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for COBOL",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/cobol_highlight_rules.js",
+  "name": "cobol-tokenizer",
+  "extension": [".cob", ".cbl", ".cobol"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "\\*>.*$" },
+      { "token": "vpl_null", "regex": "^......[\\*/].*$" },
+      { "token": "vpl_null", "regex": "^......[dD].*$" },
+
+      { "token": "vpl_literal", "regex": "\"(?:[^\"]|\"\")*\"" },
+      { "token": "vpl_literal", "regex": "'(?:[^']|'')*'" },
+
+      { "token": "vpl_literal", "regex": "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b" },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:ACCEPT|ACCESS|ADD|ADVANCING|AFTER|ALL|ALPHABET|ALSO|ALTERNATE|AND|ANY|ARE|AREA|ASCENDING|ASSIGN|AT|AUTHOR|BEFORE|BLANK|BLOCK|BOTTOM|BY|CALL|CANCEL|CD|CHARACTER|CLOSE|COLUMN|COMMA|COMMON|COMMUNICATION|COMP|COMPUTE|CONFIGURATION|CONTAINS|CONTINUE|CONTROL|COPY|COUNT|DATA|DATE|DAY|DELETE|DESTINATION|DISABLE|DISPLAY|DIVISION|DIVIDE|DOWN|ELSE|ENABLE|END-ADD|END-CALL|END-COMPUTE|END-DELETE|END-DISPLAY|END-DIVIDE|END-EVALUATE|END-IF|END-MULTIPLY|END-PERFORM|END-READ|END-RECEIVE|END-RETURN|END-REWRITE|END-SEARCH|END-START|END-STRING|END-SUBTRACT|END-UNSTRING|END-WRITE|END|ENVIRONMENT|EQUAL|ERROR|EVALUATE|EXIT|EXTERNAL|FALSE|FD|FILE|FILLER|GO|GREATER|IDENTIFICATION|IF|INITIALIZE|INSPECT|JUST|JUSTIFIED|LENGTH|LESS|LIMIT|LINE|LINKAGE|LOCK|LOW-VALUE|MERGE|MESSAGE|MODE|MOVE|MULTIPLY|NEGATIVE|NEXT|NO|NOT|NULL|NUMBER|OCCURS|OF|OFF|OMITTED|ON|OPEN|OR|OTHER|OUTPUT|PAGE|PERFORM|PIC|PICTURE|PLUS|POINTER|POSITION|POSITIVE|PROCEDURE|PROGRAM-ID|PROGRAM|QUOTE|RANDOM|READ|RECEIVE|RECORD|REDEFINES|REFERENCE|REMAINDER|REPLACE|REPORT|RESERVE|RESET|RETURN|REWIND|REWRITE|RIGHT|RUN|SAME|SEARCH|SECTION|SELECT|SENTENCE|SEQUENTIAL|SET|SIGN|SIZE|SORT|SOURCE|SPACE|STANDARD|START|STOP|STRING|SUBTRACT|SUM|TABLE|TAPE|TEST|TEXT|THAN|THEN|THROUGH|THRU|TIME|TO|TOP|TRUE|TYPE|UNIT|UNSTRING|UNTIL|UP|USE|USING|VALUE|VALUES|WHEN|WITH|WORKING-STORAGE|WRITE|ZERO|ZEROS|ZEROES)\\b"
+      },
+
+      { "token": "vpl_literal", "regex": "(?i)\\b(?:true|false|null)\\b" },
+
+      { "token": "vpl_operator", "regex": "\\*\\*|<=|>=|<>|\\+|\\-|\\*|/|=|<|>|\\." },
+
+      { "token": "vpl_operator", "regex": "[\\(]" },
+      { "token": "vpl_operator", "regex": "[\\)]" },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z][a-zA-Z0-9\\-]*\\b" },
+
+      { "token": "vpl_null", "regex": "\\s+" }
+    ]
+  }
+}

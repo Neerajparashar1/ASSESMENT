@@ -1,0 +1,49 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Lua",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/lua_highlight_rules.js",
+  "name": "lua-tokenizer-structural",
+  "extension": [".lua"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "support.function": "vpl_identifier",
+    "variable.language": "vpl_identifier",
+    "identifier": "vpl_identifier",
+    "constant.language": "vpl_literal",
+    "constant.numeric": "vpl_literal",
+    "string": "vpl_literal",
+    "keyword.operator": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "comment": "vpl_null",
+    "comment.body": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment", "regex": "\\-\\-\\[=*\\[", "next": "block_comment" },
+      { "token": "comment", "regex": "\\-\\-.*$" },
+      { "token": "string", "regex": "\\[=*\\[", "next": "bracket_string" },
+      { "token": "string", "regex": "\"(?:[^\\\\]|\\\\.)*?\"" },
+      { "token": "string", "regex": "'(?:[^\\\\]|\\\\.)*?'" },
+      { "token": "constant.numeric", "regex": "\\b0[xX][0-9A-Fa-f]+\\b" },
+      { "token": "constant.numeric", "regex": "\\b(?:[1-9]\\d*|0)(?:\\.\\d+)?\\b" },
+      { "token": "constant.language", "regex": "\\b(?:true|false|nil)\\b" },
+      { "token": "keyword", "regex": "\\b(?:break|do|else|elseif|end|for|function|if|in|local|repeat|return|then|until|while|or|and|not)\\b" },
+      { "token": "keyword.operator", "regex": "\\.\\.\\.|\\.\\.|\/\/|<=|>=|==|~=|<<|>>|\\+|\\-|\\*|\\/|%|\\#|\\^|~|&|\\||<|>|=|:" },
+      { "token": "paren.lparen", "regex": "[\\[\\(\\{]" },
+      { "token": "paren.rparen", "regex": "[\\]\\)\\}]" },
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*" },
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+    "block_comment": [
+      { "token": "comment", "regex": "\\]=*\\]", "next": "start" },
+      { "default_token": "comment.body" }
+    ],
+    "bracket_string": [
+      { "token": "string", "regex": "\\]=*\\]", "next": "start" },
+      { "default_token": "string" }
+    ]
+  }
+}

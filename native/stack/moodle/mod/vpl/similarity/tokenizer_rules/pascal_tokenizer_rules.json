@@ -1,0 +1,62 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Pascal",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/pascal_highlight_rules.js",
+  "name": "pascal-tokenizer",
+  "extension": [".pas", ".pp"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword.control": "vpl_reserved",
+    "storage.type.function": "vpl_reserved",
+    "storage.type.prototype": "vpl_reserved",
+    "identifier": "vpl_identifier",
+    "entity.name.function": "vpl_identifier",
+    "entity.name.function.prototype": "vpl_identifier",
+    "variable": "vpl_identifier",
+    "constant.numeric": "vpl_literal",
+    "string.quoted.double": "vpl_literal",
+    "string.quoted.single": "vpl_literal",
+    "constant.character.escape": "vpl_literal",
+    "constant.character.escape.apostrophe": "vpl_literal",
+    "keyword.operator": "vpl_operator",
+    "punctuation.definition.string.begin": "vpl_literal",
+    "punctuation.definition.string.end": "vpl_literal",
+    "punctuation.definition.comment": "vpl_null",
+    "comment.block.one": "vpl_null",
+    "comment.block.two": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "punctuation.definition.comment", "regex": "\\/\\/.*$" },
+      { "token": "punctuation.definition.comment", "regex": "\\(\\*", "next": "comment_block1" },
+      { "token": "punctuation.definition.comment", "regex": "\\{", "next": "comment_block2" },
+      { "token": ["storage.type.function", "text", "entity.name.function"], "regex": "\\b(function|procedure)(\\s+)(\\w+)" },
+      { "token": "keyword.control", "regex": "\\b(?:absolute|abstract|all|and|and_then|array|as|asm|attribute|begin|bindable|case|class|const|constructor|destructor|div|do|downto|else|end|except|export|exports|external|far|file|finalization|finally|for|forward|goto|if|implementation|import|in|inherited|initialization|interface|interrupt|is|label|library|mod|module|name|near|nil|not|object|of|only|operator|or|or_else|otherwise|packed|pow|private|program|property|protected|public|published|qualified|raise|record|repeat|resident|restricted|segment|set|shl|shr|string|then|to|try|type|unit|until|uses|value|var|view|virtual|while|with|xor)\\b" },
+      { "token": "constant.numeric", "regex": "\\b(?:0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)\\b|\\$[0-9a-fA-F]+\\b" },
+      { "token": "punctuation.definition.string.begin", "regex": "\"", "next": "dq_string" },
+      { "token": "punctuation.definition.string.begin", "regex": "'", "next": "sq_string" },
+      { "token": "keyword.operator", "regex": ":=|<>|<=|>=|\\.\\.|[+\\-;,/*\\.\\^@=<>]" },
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*" },
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+    "comment_block1": [
+      { "token": "punctuation.definition.comment", "regex": "\\*\\)", "next": "start" },
+      { "default_token": "comment.block.one" }
+    ],
+    "comment_block2": [
+      { "token": "punctuation.definition.comment", "regex": "\\}", "next": "start" },
+      { "default_token": "comment.block.two" }
+    ],
+    "dq_string": [
+      { "token": "constant.character.escape", "regex": "\"\"" },
+      { "token": "punctuation.definition.string.end", "regex": "\"", "next": "start" },
+      { "default_token": "string.quoted.double" }
+    ],
+    "sq_string": [
+      { "token": "constant.character.escape.apostrophe", "regex": "''" },
+      { "token": "punctuation.definition.string.end", "regex": "'", "next": "start" },
+      { "default_token": "string.quoted.single" }
+    ]
+  }
+}

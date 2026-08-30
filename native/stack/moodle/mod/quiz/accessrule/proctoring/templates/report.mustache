@@ -1,0 +1,118 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template quizaccess_proctoring/proctoring_page
+    Example context (json):
+    {
+        'quizname': 'Sample Quiz',
+        'url': 'http://example.com/search',
+        'courseid': '123',
+        'cmid': '456',
+        'searchkey': 'example@domain.com',
+        'showclearbutton': true,
+        'settingsbtn': true,
+        'settingspageurl': 'http://example.com/settings',
+        'proctoringsummary': 'Summary of proctoring details.',
+        'checkrow': true,
+        'rows': [
+            {
+                'userlink': 'http://example.com/user/1',
+                'fullname': 'John Doe',
+                'email': 'john.doe@example.com',
+                'timemodified': '2024-01-01',
+                'warningicon': true,
+                'viewurl': 'http://example.com/view',
+                'deleteurl': 'http://example.com/delete/1'
+            }
+        ]
+    }
+}}
+
+<div id="main" >
+    <h2>{{quizname}}</h2>
+   <div class="box generalbox adminerror p-y-1">
+        {{proctoringsummary}}
+   </div>
+   <br/>
+   <div class="mb-3">
+    <a href="{{backbutton}}" type="button" class="btn btn-secondary">{{#str}}back,quizaccess_proctoring{{/str}}</a>
+</div>
+
+       <div class="container-fluid mb-3 p-1 m-1">
+        <div class="row d-flex justify-content-between align-items-start flex-wrap p-0">
+            <div class="col-8 p-0">
+                <form action="{{url}}" class="d-flex flex-wrap align-items-start p-0">
+                    <input type="hidden" id="courseid" name="courseid" value="{{courseid}}">
+                    <input type="hidden" id="cmid" name="cmid" value="{{cmid}}">
+                    <input type="text"
+                           class="form-control ml-2"
+                           id="searchKey"
+                           name="searchKey"
+                           placeholder="Search by email"
+                           value="{{searchkey}}">
+
+                    <input type="submit" class="btn btn-primary ml-2" name="submitType" value="Search">
+
+                    {{#showclearbutton}}
+                    <input type="submit" class="btn btn-secondary ml-2" name="submitType" value="Clear">
+                    {{/showclearbutton}}
+                </form>
+            </div>
+
+            <div class="col-md-auto mt-2 mt-md-0 text-md-end me-0 pe-0">
+                {{#settingsbtn}}
+                <a class="btn btn-primary" href="{{settingspageurl}}">{{#str}}course_proctoring_summary,quizaccess_proctoring{{/str}}</a>
+                {{/settingsbtn}}
+            </div>
+        </div>
+    </div>
+
+{{#checkrow}}
+<table class="table">
+<thead>
+        <tr>
+            <th>{{#str}}user,quizaccess_proctoring{{/str}}</th>
+            <th>{{#str}}email,quizaccess_proctoring{{/str}}</th>
+            <th>{{#str}}dateverified,quizaccess_proctoring{{/str}}</th>
+            <th>{{#str}}identity_mismatch_label,quizaccess_proctoring{{/str}}</th>
+            <th>{{#str}}actions,quizaccess_proctoring{{/str}}</th>
+        </tr>
+    </thead>
+<tbody>
+{{#rows}}
+    <tr>
+        <td><a href="{{userlink}}" target="_blank">{{fullname}}</a></td>
+        <td>{{email}}</td>
+        <td>{{timemodified}}</td>
+        <td>
+            {{#warningicon}}
+                {{#str}}notfoundtext,quizaccess_proctoring{{/str}}         
+            {{/warningicon}}
+             {{^warningicon}}
+                {{#str}}foundtext,quizaccess_proctoring{{/str}}        
+            {{/warningicon}}
+        </td>
+        <td>
+            {{{actionmenu}}}
+        </td>
+    </tr>
+    </tbody>
+{{/rows}}
+</table>
+{{/checkrow}}
+
+{{^checkrow}}
+<div class="alert alert-info text-center" role="alert">
+   {{#str}}examdata,quizaccess_proctoring{{/str}}
+</div>
+{{/checkrow}}

@@ -1,0 +1,156 @@
+# =====================================================================
+#  Enterprise-Grade, Zero-License-Cost AI-Proctored Assessment Platform
+#  Core: Moodle 4.5 LTS  |  PHP 8.2  |  MariaDB 11.4  |  Redis 7
+# =====================================================================
+name: assesment
+
+services:
+
+  # ---------------------------------------------------------------
+  #  PHASE 1 - Database (UTF8MB4 + tuned InnoDB)
+  # ---------------------------------------------------------------
+  mariadb:
+    image: mariadb:11.4
+    container_name: eap-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASS}
+      MARIADB_AUTO_UPGRADE: "1"
+      TZ: ${TZ:-UTC}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-file-per-table=1
+      - --innodb-buffer-pool-size=${INNODB_BUFFER_POOL_SIZE:-1G}
+      - --innodb-default-row-format=dynamic
+      - --innodb-flush-log-at-trx-commit=2
+      - --innodb-log-file-size=256M
+      - --max-connections=300
+      - --skip-name-resolve
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./config/mariadb/moodle.cnf:/etc/mysql/conf.d/zz-moodle.cnf:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    networks: [eapnet]
+
+  # ---------------------------------------------------------------
+  #  Redis - session handler + application cache (network-drop safe)
+  # ---------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: eap-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks: [eapnet]
+
+  # ---------------------------------------------------------------
+  #  PHASE 2/3/4 - Moodle application (Apache + PHP-FPM-less mod_php)
+  # ---------------------------------------------------------------
+  moodle:
+    build:
+      context: .
+      dockerfile: docker/moodle/Dockerfile
+      args:
+        MOODLE_BRANCH: ${MOODLE_BRANCH:-MOODLE_405_STABLE}
+    image: eap/moodle:4.5
+    container_name: eap-moodle
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      MOODLE_WWWROOT: ${MOODLE_WWWROOT}
+      MOODLE_SSLPROXY: ${MOODLE_SSLPROXY:-false}
+      MOODLE_REVERSEPROXY: ${MOODLE_REVERSEPROXY:-false}
+      MOODLE_SITE_FULLNAME: ${MOODLE_SITE_FULLNAME}
+      MOODLE_SITE_SHORTNAME: ${MOODLE_SITE_SHORTNAME}
+      MOODLE_ADMIN_USER: ${MOODLE_ADMIN_USER}
+      MOODLE_ADMIN_PASS: ${MOODLE_ADMIN_PASS}
+      MOODLE_ADMIN_EMAIL: ${MOODLE_ADMIN_EMAIL}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      SEB_QUIT_PASSWORD: ${SEB_QUIT_PASSWORD}
+      TZ: ${TZ:-UTC}
+      CONTAINER_ROLE: web
+    volumes:
+      - moodle_code:/var/www/html/moodle
+      - moodledata:/var/moodledata
+      - ./config/moodle/custom.scss:/opt/eap/custom.scss:ro
+      - ./scripts/moodle:/opt/eap/scripts:ro
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/login/index.php", "-o", "/dev/null"]
+      interval: 20s
+      timeout: 10s
+      retries: 15
+      start_period: 180s
+    networks: [eapnet]
+
+  # ---------------------------------------------------------------
+  #  PHASE 2 - Dedicated Moodle cron runner (every 60s)
+  # ---------------------------------------------------------------
+  cron:
+    image: eap/moodle:4.5
+    container_name: eap-cron
+    restart: unless-stopped
+    depends_on:
+      moodle:
+        condition: service_healthy
+    environment:
+      TZ: ${TZ:-UTC}
+      CONTAINER_ROLE: cron
+    entrypoint: ["/usr/local/bin/entrypoint.sh"]
+    command: ["cron-loop"]
+    volumes:
+      - moodle_code:/var/www/html/moodle
+      - moodledata:/var/moodledata
+    networks: [eapnet]
+
+  # ---------------------------------------------------------------
+  #  PHASE 4 - VPL Jail execution server (C/C++/Java/Python)
+  #  Optional: `docker compose --profile vpl up -d`
+  #  Needs privileged mode for sandboxing (chroot/cgroups).
+  # ---------------------------------------------------------------
+  vpl-jail:
+    image: jcrodriguezc/vpl-jail-system:latest
+    container_name: eap-vpl-jail
+    restart: unless-stopped
+    profiles: ["vpl"]
+    privileged: true
+    environment:
+      VPL_JAIL_PORT: "80"
+      VPL_JAIL_SECURE_PORT: "443"
+      TZ: ${TZ:-UTC}
+    ports:
+      - "127.0.0.1:8081:80"
+    networks: [eapnet]
+
+volumes:
+  mariadb_data:
+  redis_data:
+  moodle_code:
+  moodledata:
+
+networks:
+  eapnet:
+    driver: bridge

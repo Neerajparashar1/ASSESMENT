@@ -1,0 +1,58 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for MATLAB",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/matlab_highlight_rules.js",
+  "name": "matlab-tokenizer-structural",
+  "extension": [".m"],
+  "check_rules": false,
+  "override_tokens": {
+    "keyword": "vpl_reserved",
+    "storage.type": "vpl_reserved",
+    "identifier": "vpl_identifier",
+    "support.function": "vpl_identifier",
+    "constant.language": "vpl_literal",
+    "constant.numeric": "vpl_literal",
+    "string": "vpl_literal",
+    "constant.language.escape": "vpl_literal",
+    "keyword.operator": "vpl_operator",
+    "punctuation.operator": "vpl_operator",
+    "paren.lparen": "vpl_operator",
+    "paren.rparen": "vpl_operator",
+    "comment": "vpl_null",
+    "comment.start": "vpl_null",
+    "comment.end": "vpl_null",
+    "text": "vpl_null"
+  },
+  "states": {
+    "start": [
+      { "token": "comment.start", "regex": "^\\s*%\\{\\s*$", "next": "block_comment" },
+      { "token": "comment", "regex": "%.*$" },
+      { "token": "string", "regex": "'", "next": "sq_string" },
+      { "token": "string", "regex": "\"", "next": "dq_string" },
+      { "token": "constant.numeric", "regex": "[+-]?\\d+(?:\\.\\d*)?(?:[eE][+-]?\\d+)?\\b" },
+      { "token": "constant.language", "regex": "\\b(?:true|false|inf|Inf|nan|NaN|eps|pi|ans|nargin|nargout|varargin|varargout)\\b" },
+      { "token": "keyword", "regex": "\\b(?:break|case|catch|classdef|continue|else|elseif|end|for|function|global|if|otherwise|parfor|persistent|return|spmd|switch|try|while)\\b" },
+      { "token": "storage.type", "regex": "\\b(?:cell|struct|char|double|single|logical|u?int(?:8|16|32|64)|sparse)\\b" },
+      { "token": "keyword.operator", "regex": "\\.\\*|\\.\\^|\\.\\/|\\.\\\\|&&|\\|\\||~=|<=|>=|==|\\+|\\-|\\*|\\/|\\\\|\\^|~|&|\\||@|<|>|=" },
+      { "token": "punctuation.operator", "regex": ":|,|;|\\." },
+      { "token": "paren.lparen", "regex": "[({\\[]"},
+      { "token": "paren.rparen", "regex": "[\\]})]" },
+      { "token": "identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+      { "token": "text", "regex": "\\s+" },
+      { "token": "identifier", "regex": "." }
+    ],
+    "block_comment": [
+      { "token": "comment.end", "regex": "^\\s*%\\}\\s*$", "next": "start" },
+      { "default_token": "comment" }
+    ],
+    "sq_string": [
+      { "token": "constant.language.escape", "regex": "''" },
+      { "token": "string", "regex": "'|$", "next": "start" },
+      { "default_token": "string" }
+    ],
+    "dq_string": [
+      { "token": "constant.language.escape", "regex": "\\\\." },
+      { "token": "string", "regex": "\"|$", "next": "start" },
+      { "default_token": "string" }
+    ]
+  }
+}

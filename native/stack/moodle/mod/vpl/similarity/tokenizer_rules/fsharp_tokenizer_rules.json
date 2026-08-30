@@ -1,0 +1,86 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for F#",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/fsharp_highlight_rules.js",
+  "name": "fsharp-tokenizer",
+  "extension": [".fs", ".fsi", ".fsx"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "\\/\\/.*$" },
+
+      { "token": "vpl_null", "regex": "\\(\\*(?!\\))", "next": "blockComment1" },
+
+      { "token": "vpl_literal", "regex": "'.'" },
+
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "tripleString" },
+
+      { "token": ["vpl_literal", "vpl_literal"], "regex": "(@?)(\")", "next": "qqstring" },
+
+      {
+        "token": "vpl_literal",
+        "regex": "(?:(?:(?:(?:(?:(?:\\d+)?(?:\\.\\d+))|(?:(?:\\d+)\\.))|(?:\\d+))(?:[eE][+-]?\\d+))|(?:(?:(?:\\d+)?(?:\\.\\d+))|(?:(?:\\d+)\\.)))"
+      },
+      {
+        "token": "vpl_literal",
+        "regex": "(?:0[xX][\\dA-Fa-f][\\dA-Fa-f_]*|0[oO][0-7][0-7_]*|0[bB][01][01_]*|\\d[\\d_]*)(?:y|uy|s|us|l|ul|L|UL|n|un)?\\b"
+      },
+
+      {
+        "token": ["vpl_reserved", "vpl_identifier"],
+        "regex": "(?i)(type\\s)([a-zA-Z0-9_-]*\\b)"
+      },
+
+      { "token": "vpl_literal", "regex": "\\b(?:true|false|null)\\b" },
+
+      {
+        "token": "vpl_reserved",
+        "regex": "(?i)\\b(?:abstract|assert|base|begin|class|default|delegate|done|downcast|downto|elif|else|exception|extern|finally|function|global|inherit|inline|interface|internal|lazy|match|member|module|mutable|namespace|open|or|override|private|public|rec|return|return!|select|static|struct|then|to|try|typeof|upcast|use|use!|val|void|when|while|with|yield|yield!|__SOURCE_DIRECTORY__|as|asr|land|lor|lsl|lsr|lxor|mod|sig|atomic|break|checked|component|const|constraint|constructor|continue|eager|event|external|fixed|functor|include|method|mixin|object|parallel|process|protected|pure|sealed|tailcall|trait|virtual|volatile|and|do|end|for|fun|if|in|let|let!|new|not|of|endif)\\b"
+      },
+
+      { "token": "vpl_identifier", "regex": "\\bthis\\b" },
+
+      {
+        "token": "vpl_operator",
+        "regex": "\\|>|<\\||>>>|<<<|>>|<<|;;|::|\\.\\.|\\*\\*|<>|<=|>=|<-|->|==|!=|\\+|\\-|\\*|\\/|%|&|\\||\\^|~|<|>|=|#|\\(\\*\\)"
+      },
+
+      { "token": "vpl_operator", "regex": "[\\[\\]\\(\\)\\{\\}]" },
+
+      { "token": "vpl_identifier", "regex": "[a-zA-Z_][a-zA-Z0-9_]*\\b" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "blockComment1": [
+      { "token": "vpl_null", "regex": "\\(\\*(?!\\))", "next": "blockComment2" },
+      { "token": "vpl_null", "regex": "\\*\\)", "next": "start" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "blockComment2": [
+      { "token": "vpl_null", "regex": "\\(\\*(?!\\))", "next": "blockComment3" },
+      { "token": "vpl_null", "regex": "\\*\\)", "next": "blockComment1" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "blockComment3": [
+      { "token": "vpl_null", "regex": "\\*\\)", "next": "blockComment2" },
+      { "default_token": "vpl_null" }
+    ],
+
+    "tripleString": [
+      { "token": "vpl_literal", "regex": "\"\"\"", "next": "start" },
+      { "token": "vpl_literal", "regex": "\\\\.", "next": "tripleString" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "qqstring": [
+      { "token": "vpl_literal", "regex": "\"\"", "next": "qqstring" },
+      { "token": "vpl_literal", "regex": "\"", "next": "start" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "vpl_doc_01": "Rules derived from Ace Editor's highlighter for Erlang",
+  "vpl_doc_02": "https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/erlang_highlight_rules.js",
+  "name": "erlang-tokenizer",
+  "extension": [".erl", ".hrl"],
+  "check_rules": false,
+  "inherit_rules": "text_tokenizer_rules",
+  "states": {
+    "start": [
+      { "token": "vpl_null", "regex": "%.*$" },
+
+      { "token": "vpl_reserved", "regex": "^\\s*-\\s*(module|export|import|record|define|ifdef|ifndef|undef|behaviour)\\b" },
+      { "token": "vpl_operator", "regex": "^\\s*-" },
+
+      { "token": "vpl_operator", "regex": "\\." },
+      { "token": "vpl_operator", "regex": "," },
+      { "token": "vpl_operator", "regex": ";" },
+      { "token": "vpl_operator", "regex": ":" },
+
+      { "token": "vpl_operator", "regex": "\\(" },
+      { "token": "vpl_operator", "regex": "\\)" },
+      { "token": "vpl_operator", "regex": "\\[" },
+      { "token": "vpl_operator", "regex": "\\]" },
+      { "token": "vpl_operator", "regex": "\\{" },
+      { "token": "vpl_operator", "regex": "\\}" },
+
+      { "token": "vpl_operator", "regex": "<<", "next": "binary" },
+
+      { "token": "vpl_literal", "regex": "\"", "next": "string" },
+
+      { "token": "vpl_literal", "regex": "\\$", "next": "character" },
+
+      { "token": "vpl_identifier", "regex": "(\\?\\??)(\\s*)([a-zA-Z\\d@_]+)" },
+
+      { "token": "vpl_identifier", "regex": "#\\s*(?:[a-z][a-zA-Z\\d@_]*|'[^']*')" },
+
+      { "token": "vpl_literal", "regex": "'", "next": "atom_quoted" },
+
+      { "token": "vpl_literal", "regex": "(\\d+)(\\.)(\\d+)(?:[eE][\\+\\-]?\\d+)?\\b" },
+
+      { "token": "vpl_literal", "regex": "\\b(\\d{1,2})#([\\da-zA-Z]+)\\b" },
+      { "token": "vpl_literal", "regex": "\\b\\d+\\b" },
+
+      { "token": "vpl_reserved", "regex": "\\b(?:after|begin|case|catch|cond|end|fun|if|let|of|query|try|receive|when)\\b" },
+
+      { "token": "vpl_operator", "regex": "\\b(?:andalso|band|and|bxor|xor|bor|orelse|or|bnot|not|bsl|bsr|div|rem)\\b" },
+
+      { "token": "vpl_operator", "regex": "\\+\\+|\\+|--|-|\\*|/=|/|=/=|=:=|==|=<|=|<-|<|>=|>|!|::|->|\\|\\||\\||#|\\?" },
+
+      { "token": "vpl_identifier", "regex": "(?:_[a-zA-Z\\d@_]+|[A-Z][a-zA-Z\\d@_]*|_)" },
+
+      { "token": "vpl_identifier", "regex": "[a-z][a-zA-Z\\d@_]*" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "token": "vpl_operator", "regex": "." }
+    ],
+
+    "string": [
+      { "token": "vpl_literal", "regex": "\"", "next": "start" },
+
+      { "token": "vpl_literal", "regex": "(\\\\)(?:([bdefnrstv\\\\'\\\"])|(\\^)([@-_])|([0-7]{1,3}))" },
+
+      { "token": "vpl_literal", "regex": "(~)(?:((?:\\-)?)(\\d+)|(\\*))?(?:(\\.)(?:(\\d+)|(\\*)))?(?:(\\.)(?:(\\*)|(.)))?([~cfegswpWPBX#bx\\+ni])" },
+      { "token": "vpl_literal", "regex": "(~)((?:\\*)?)((?:\\d+)?)([~du\\-#fsacl])" },
+
+      { "default_token": "vpl_literal" }
+    ],
+
+    "atom_quoted": [
+      { "token": "vpl_literal", "regex": "'", "next": "start" },
+
+      { "token": "vpl_literal", "regex": "(\\\\)(?:([bdefnrstv\\\\'\\\"])|(\\^)([@-_])|([0-7]{1,3}))" },
+
+      { "default_token": "vpl_literal" }
+    ],
+
+    "character": [
+      { "token": "vpl_literal", "regex": "(\\\\)(?:([bdefnrstv\\\\'\\\"])|(\\^)([@-_])|([0-7]{1,3}))", "next": "start" },
+      { "token": "vpl_literal", "regex": "\\S", "next": "start" },
+      { "token": "vpl_operator", "regex": ".", "next": "start" }
+    ],
+
+    "binary": [
+      { "token": "vpl_operator", "regex": ">>", "next": "start" },
+
+      { "token": "vpl_operator", "regex": "," },
+      { "token": "vpl_operator", "regex": ":" },
+      { "token": "vpl_operator", "regex": "/" },
+
+      { "token": "vpl_reserved", "regex": "\\b(?:integer|float|binary|bytes|bitstring|bits|signed|unsigned|big|little|native|unit)\\b" },
+
+      { "token": "vpl_null", "regex": "%.*$" },
+      { "token": "vpl_literal", "regex": "\"", "next": "string_in_binary" },
+      { "token": "vpl_literal", "regex": "'", "next": "atom_quoted_in_binary" },
+
+      { "token": "vpl_literal", "regex": "(\\d+)(\\.)(\\d+)(?:[eE][\\+\\-]?\\d+)?\\b" },
+      { "token": "vpl_literal", "regex": "\\b(\\d{1,2})#([\\da-zA-Z]+)\\b" },
+      { "token": "vpl_literal", "regex": "\\b\\d+\\b" },
+
+      { "token": "vpl_operator", "regex": "\\+\\+|\\+|--|-|\\*|/=|/|=/=|=:=|==|=<|=|<-|<|>=|>|!|::|->|\\|\\||\\||#|\\?" },
+
+      { "token": "vpl_identifier", "regex": "(?:_[a-zA-Z\\d@_]+|[A-Z][a-zA-Z\\d@_]*|_)" },
+      { "token": "vpl_identifier", "regex": "[a-z][a-zA-Z\\d@_]*" },
+
+      { "token": "vpl_null", "regex": "\\s+" },
+
+      { "default_token": "vpl_literal" }
+    ],
+
+    "string_in_binary": [
+      { "token": "vpl_literal", "regex": "\"", "next": "binary" },
+      { "token": "vpl_literal", "regex": "(\\\\)(?:([bdefnrstv\\\\'\\\"])|(\\^)([@-_])|([0-7]{1,3}))" },
+      { "default_token": "vpl_literal" }
+    ],
+
+    "atom_quoted_in_binary": [
+      { "token": "vpl_literal", "regex": "'", "next": "binary" },
+      { "token": "vpl_literal", "regex": "(\\\\)(?:([bdefnrstv\\\\'\\\"])|(\\^)([@-_])|([0-7]{1,3}))" },
+      { "default_token": "vpl_literal" }
+    ]
+  }
+}
