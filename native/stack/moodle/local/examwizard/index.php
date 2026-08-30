@@ -357,9 +357,8 @@ if (trim($sebquit) !== '') {
 }
 echo html_writer::tag('dt', $s('help_studentlogin'));
 echo html_writer::tag('dd', $s('help_studentlogin_d', $CFG->wwwroot));
-echo html_writer::tag('dt', $s('ps_title'));
-echo html_writer::tag('dd', $s('ps_note') . ($cansebconfig ? ' ' . html_writer::link(
-    new moodle_url('/local/examwizard/seb.php'), $s('ps_download')) : ''));
+echo html_writer::tag('dt', $s('sl_title'));
+echo html_writer::tag('dd', $s('sl_note'));
 echo html_writer::end_tag('dl');
 echo html_writer::end_div();
 

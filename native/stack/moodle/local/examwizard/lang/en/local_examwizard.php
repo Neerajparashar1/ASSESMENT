@@ -252,15 +252,14 @@ $string['seb_err_mismatch'] = 'The two passwords do not match';
 $string['seb_warn'] = 'Changing the quit password changes the SEB configuration key of every exam it is applied to. Any candidate who already has a .seb file for one of those exams must download it again, or SEB will refuse to start the exam.';
 $string['seb_change'] = 'Change';
 
-// Portal bootstrap .seb.
-$string['ps_title'] = 'The portal SEB file';
-$string['ps_intro'] = 'Hand this ONE file to every candidate. It only opens SEB on the portal login page - each exam\'s real settings are pulled from the server when the candidate opens the quiz.';
-$string['ps_step1'] = 'Download the file below and share it with candidates (email, LMS, USB) - once.';
-$string['ps_step2'] = 'A candidate double-clicks it; SEB starts locked down on the portal login page.';
-$string['ps_step3'] = 'They log in and open their exam. SEB fetches that exam\'s current config automatically.';
-$string['ps_download'] = 'Download the portal SEB file';
-$string['ps_copylink'] = 'Copy the download link';
-$string['ps_note'] = 'You never have to re-send this file. Change quit password, timing or any SEB setting freely - the next launch picks it up.';
+// How candidates launch SEB (mode 1 - nothing to send).
+$string['sl_title'] = 'How candidates start an exam in SEB';
+$string['sl_intro'] = 'There is no file to email or re-send. Every exam page has a "Launch Safe Exam Browser" button that hands SEB that exam\'s current settings.';
+$string['sl_step1'] = 'Candidate installs Safe Exam Browser once (the exam page has a download link).';
+$string['sl_step2'] = 'In a normal browser they log in, open their exam, and click "Launch Safe Exam Browser".';
+$string['sl_step3'] = 'SEB takes over the screen, loads that exam\'s config, then "Attempt quiz".';
+$string['sl_step4'] = 'If nothing happens on click, use "Download configuration" on the same page and open that file.';
+$string['sl_note'] = 'Because the config is served live per click, you can change the quit password, timing or any SEB setting whenever you like - the next launch picks it up. Nothing to re-distribute.';
 
 $string['help_title'] = 'Handy to know';
 $string['help_sebpw'] = 'Safe Exam Browser quit password';

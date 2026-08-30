@@ -134,7 +134,9 @@ class quiz_builder {
             'quizid' => $quiz->id,
             'cmid' => $cm->id,
             'templateid' => 0,
-            'requiresafeexambrowser' => 1,        // USE_SEB_CONFIG_MANUALLY
+            'requiresafeexambrowser' => 1,        // USE_SEB_CONFIG_MANUALLY - the quiz page's
+                                                 // "Launch SEB" button serves the current config
+                                                 // live, so nothing is ever re-sent by hand.
             'showsebtaskbar' => 1,
             'showwificontrol' => 0,
             'showreloadbutton' => 1,
