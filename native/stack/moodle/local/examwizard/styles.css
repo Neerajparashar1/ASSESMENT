@@ -1,0 +1,178 @@
+/* local_examwizard - uses the ITM theme tokens (--itm-*) when present. */
+
+.path-local-examwizard {
+    --ew-maroon:   var(--itm-maroon, #8a1b2c);
+    --ew-maroon-d: var(--itm-maroon-900, #4a0d17);
+    --ew-gold:     var(--itm-gold, #c9a24b);
+    --ew-line:     var(--itm-line, #e7dfe0);
+    --ew-tint:     var(--itm-maroon-050, #fbf3f4);
+    --ew-ink:      var(--itm-ink, #21181a);
+    --ew-slate:    var(--itm-slate, #5f575a);
+    --ew-ok:       #2f9e63;
+    --ew-ok-bg:    #e7f3ec;
+    --ew-err:      #a11226;
+    --ew-err-bg:   #fbeaec;
+}
+
+/* ---- stepper ---- */
+.path-local-examwizard .ew-stepper {
+    list-style: none;
+    display: flex;
+    gap: .4rem;
+    padding: 0;
+    margin: 0 0 1.6rem;
+}
+.path-local-examwizard .ew-step {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .4rem .9rem .4rem .5rem;
+    border-radius: 999px;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--ew-slate);
+    background: #fff;
+    border: 1px solid var(--ew-line);
+}
+.path-local-examwizard .ew-step-dot {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: .8rem;
+    background: var(--ew-line);
+    color: #fff;
+}
+.path-local-examwizard .ew-step-current {
+    color: var(--ew-maroon-d);
+    border-color: var(--ew-maroon);
+    box-shadow: 0 0 0 3px rgba(138, 27, 44, .12);
+}
+.path-local-examwizard .ew-step-current .ew-step-dot { background: var(--ew-maroon); }
+.path-local-examwizard .ew-step-done .ew-step-dot { background: var(--ew-ok); }
+
+/* ---- landing course grid ---- */
+.path-local-examwizard .ew-coursegrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+.path-local-examwizard .ew-course-card {
+    display: block;
+    padding: 1.2rem 1.3rem;
+    border: 1px solid var(--ew-line);
+    border-top: 3px solid var(--ew-maroon);
+    border-radius: 12px;
+    background: #fff;
+    text-decoration: none;
+    color: var(--ew-ink);
+    box-shadow: 0 10px 30px -24px rgba(74, 13, 23, .4);
+    transition: transform .14s ease, box-shadow .14s ease;
+}
+.path-local-examwizard .ew-course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -22px rgba(74, 13, 23, .5);
+    text-decoration: none;
+}
+.path-local-examwizard .ew-course-action {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ew-maroon);
+}
+.path-local-examwizard .ew-course-card h3 { margin: .35rem 0 .1rem; font-size: 1.05rem; color: var(--ew-maroon-d); }
+.path-local-examwizard .ew-course-card p { margin: 0; color: var(--ew-slate); font-size: .85rem; }
+
+/* ---- review summary pills ---- */
+.path-local-examwizard .ew-review-summary { display: flex; gap: .5rem; margin: 0 0 1.2rem; }
+.path-local-examwizard .ew-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: .3rem .8rem;
+    border-radius: 999px;
+    font-size: .82rem;
+    font-weight: 700;
+}
+.path-local-examwizard .ew-pill-ok  { background: var(--ew-ok-bg); color: #14512f; }
+.path-local-examwizard .ew-pill-err { background: var(--ew-err-bg); color: var(--ew-err); }
+
+/* ---- question preview cards ---- */
+.path-local-examwizard .ew-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.6rem;
+}
+.path-local-examwizard .ew-qcard {
+    border: 1px solid var(--ew-line);
+    border-left: 4px solid var(--ew-ok);
+    border-radius: 12px;
+    background: #fff;
+    padding: .9rem 1.1rem 1rem;
+    box-shadow: 0 8px 24px -20px rgba(74, 13, 23, .4);
+}
+.path-local-examwizard .ew-qcard-bad { border-left-color: var(--ew-err); background: #fffafb; }
+.path-local-examwizard .ew-qcard-head {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+.path-local-examwizard .ew-qnum { color: var(--ew-slate); }
+.path-local-examwizard .ew-qtype {
+    padding: .1rem .5rem;
+    border-radius: 6px;
+    background: var(--ew-tint);
+    color: var(--ew-maroon-d);
+}
+.path-local-examwizard .ew-qmarks { margin-left: auto; color: var(--ew-slate); }
+.path-local-examwizard .ew-qtext {
+    font-size: .95rem;
+    line-height: 1.5;
+    color: var(--ew-ink);
+    margin-bottom: .6rem;
+}
+.path-local-examwizard .ew-qopts { list-style: none; padding: 0; margin: 0; }
+.path-local-examwizard .ew-qopts li {
+    padding: .3rem .55rem;
+    border-radius: 7px;
+    font-size: .86rem;
+    border: 1px solid transparent;
+}
+.path-local-examwizard .ew-opt-correct {
+    background: var(--ew-ok-bg);
+    border-color: #bfe3cd !important;
+    color: #14512f;
+    font-weight: 600;
+}
+.path-local-examwizard .ew-qopts li b { color: var(--ew-slate); margin-right: .3rem; }
+.path-local-examwizard .ew-opt-correct b { color: #14512f; }
+.path-local-examwizard .ew-qans { font-size: .86rem; color: var(--ew-ink); }
+.path-local-examwizard .ew-qerrors {
+    margin: .6rem 0 0;
+    padding: .5rem .5rem .5rem 1.4rem;
+    background: var(--ew-err-bg);
+    border-radius: 8px;
+    color: var(--ew-err);
+    font-size: .8rem;
+}
+
+.path-local-examwizard .ew-review-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+/* ---- drag/drop hint on the file field (JS adds .ew-dropzone-over) ---- */
+.path-local-examwizard .ew-dropzone {
+    border: 2px dashed var(--ew-line);
+    border-radius: 12px;
+    padding: 1.1rem;
+    transition: border-color .12s ease, background-color .12s ease;
+}
+.path-local-examwizard .ew-dropzone-over {
+    border-color: var(--ew-maroon);
+    background: var(--ew-tint);
+}
