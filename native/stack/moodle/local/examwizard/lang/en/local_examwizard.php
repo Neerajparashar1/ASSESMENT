@@ -165,6 +165,40 @@ $string['stat_live'] = 'Live';
 $string['stat_open'] = 'Open';
 $string['stat_scheduled'] = 'Scheduled';
 $string['stat_closed'] = 'Closed';
+$string['ye_results'] = 'Results';
+
+// Live now spotlight.
+$string['live_title'] = 'Live now';
+$string['live_refresh'] = 'This card refreshes every 30 seconds.';
+$string['live_inprogress'] = 'in progress';
+$string['live_submitted'] = 'submitted';
+$string['live_notstarted'] = 'not started';
+$string['live_monitor'] = 'Open monitor';
+
+// Recent results.
+$string['rr_title'] = 'Recent results';
+$string['rr_submitted'] = 'Submitted';
+$string['rr_export'] = 'Export CSV';
+
+// Results page.
+$string['rs_title'] = 'Exam results';
+$string['rs_intro'] = 'A quick summary and a per-candidate breakdown. Use "Download CSV" to open the marks in Excel.';
+$string['rs_download'] = 'Download CSV';
+$string['rs_fullreport'] = 'Full Moodle report';
+$string['rs_attempted'] = 'Attempted';
+$string['rs_average'] = 'Average score';
+$string['rs_inprogress'] = 'In progress';
+$string['rs_notstarted'] = 'Not started';
+$string['rs_passrate'] = 'Pass rate';
+$string['rs_score'] = 'Score';
+$string['rs_percent'] = 'Percent';
+$string['rs_result'] = 'Result';
+$string['rs_duration'] = 'Time taken';
+$string['rs_state'] = 'State';
+$string['rs_st_finished'] = 'Submitted';
+$string['rs_st_inprogress'] = 'In progress';
+$string['rs_st_abandoned'] = 'Abandoned';
+$string['rs_st_notstarted'] = 'Not started';
 
 $string['help_title'] = 'Handy to know';
 $string['help_sebpw'] = 'Safe Exam Browser quit password';

@@ -102,7 +102,9 @@ foreach ($courses as $c) {
         $hasseb = $DB->record_exists_select('quizaccess_seb_quizsettings',
             'quizid = ? AND requiresafeexambrowser > 0', [$q->id]);
         $started = $DB->count_records('quiz_attempts', ['quiz' => $q->id, 'state' => 'inprogress']);
-        $finished = $DB->count_records('quiz_attempts', ['quiz' => $q->id, 'state' => 'finished']);
+        $submittedusers = $DB->count_records('quiz_grades', ['quiz' => $q->id]);
+        $modcontext = context_module::instance($cm->id);
+        $enrolled = count_enrolled_users($modcontext, 'mod/quiz:attempt');
 
         $exams[] = [
             'name' => format_string($q->name),
@@ -112,7 +114,10 @@ foreach ($courses as $c) {
             'status' => $status,
             'seb' => $hasseb,
             'started' => $started,
-            'finished' => $finished,
+            'submitted' => $submittedusers,
+            'enrolled' => $enrolled,
+            'notstarted' => max(0, $enrolled - $submittedusers - $started),
+            'closetime' => (int) $q->timeclose,
             'when' => $q->timeopen ? userdate($q->timeopen, get_string('strftimedatetimeshort')) : '',
         ];
     }
@@ -120,6 +125,13 @@ foreach ($courses as $c) {
 // live first, then scheduled, open, closed
 $order = ['live' => 0, 'open' => 1, 'scheduled' => 2, 'closed' => 3];
 usort($exams, fn($a, $b) => ($order[$a['status']] <=> $order[$b['status']]) ?: strcmp($a['name'], $b['name']));
+
+$liveexams = array_values(array_filter($exams,
+    fn($e) => $e['status'] === 'live' || ($e['status'] === 'open' && $e['started'] > 0)));
+$recentexams = array_values(array_filter($exams,
+    fn($e) => $e['submitted'] > 0));
+usort($recentexams, fn($a, $b) => $b['closetime'] <=> $a['closetime']);
+$recentexams = array_slice($recentexams, 0, 5);
 
 // ---------------------------------------------------------------------
 // Checklist status (auto-detected).
@@ -137,6 +149,7 @@ $done = count(array_filter($checks));
 // =====================================================================
 //  Render
 // =====================================================================
+$reloadjs = $liveexams ? "setTimeout(function(){ location.reload(); }, 30000);" : "";
 $PAGE->requires->js_amd_inline("
     require(['jquery'], function($){
         $('.ew-copy').on('click', function(){
@@ -148,6 +161,7 @@ $PAGE->requires->js_amd_inline("
             e.preventDefault();
             $('#' + $(this).data('target')).toggleClass('ew-masked');
         });
+        $reloadjs
     });
 ");
 
@@ -169,6 +183,36 @@ foreach ([
         'ew-glance-item ew-glance-' . $k);
 }
 echo html_writer::end_div();
+
+// ---- LIVE NOW spotlight ----
+if ($liveexams) {
+    echo html_writer::start_div('ew-card ew-card-live');
+    echo html_writer::tag('h3', $s('live_title'), ['class' => 'ew-card-h']);
+    echo html_writer::div($s('live_refresh'), 'ew-live-refresh small text-muted mb-2');
+    foreach ($liveexams as $e) {
+        $bar = $e['enrolled']
+            ? round(($e['submitted'] / max(1, $e['enrolled'])) * 100)
+            : 0;
+        echo html_writer::start_div('ew-live-item');
+        echo html_writer::div(
+            html_writer::tag('span', s($e['name']), ['class' => 'ew-ename']) .
+            html_writer::tag('span', s($e['course']), ['class' => 'ew-emeta']), 'ew-live-name');
+        echo html_writer::start_div('ew-live-stats');
+        echo html_writer::tag('span', $e['started'] . ' ' . $s('live_inprogress'), ['class' => 'ew-live-n ew-live-progress']);
+        echo html_writer::tag('span', $e['submitted'] . ' ' . $s('live_submitted'), ['class' => 'ew-live-n ew-live-done']);
+        echo html_writer::tag('span', $e['notstarted'] . ' ' . $s('live_notstarted'), ['class' => 'ew-live-n ew-live-wait']);
+        echo html_writer::end_div();
+        echo html_writer::div(html_writer::div('', 'ew-live-fill', ['style' => 'width:' . $bar . '%']), 'ew-live-bar');
+        echo html_writer::div(
+            html_writer::link(new moodle_url('/mod/quiz/report.php', ['id' => $e['cmid'], 'mode' => 'overview']),
+                $s('live_monitor'), ['class' => 'btn btn-primary btn-sm mr-2']) .
+            html_writer::link(new moodle_url('/local/examwizard/results.php', ['cmid' => $e['cmid']]),
+                $s('ye_results'), ['class' => 'btn btn-outline-secondary btn-sm']),
+            'mt-2');
+        echo html_writer::end_div();
+    }
+    echo html_writer::end_div();
+}
 
 // ---- CARD 1 : getting started ----
 if (!get_user_preferences('local_examwizard_hidechecklist')) {
@@ -238,8 +282,8 @@ if (!$exams) {
             ['class' => 'ew-badge ew-badge-' . $e['status']]);
         $links = html_writer::link(new moodle_url('/mod/quiz/report.php',
             ['id' => $e['cmid'], 'mode' => 'overview']), $s('ye_monitor'), ['class' => 'ew-tlink']);
-        $links .= html_writer::link(new moodle_url('/grade/report/grader/index.php',
-            ['id' => $e['courseid']]), $s('ye_grades'), ['class' => 'ew-tlink']);
+        $links .= html_writer::link(new moodle_url('/local/examwizard/results.php',
+            ['cmid' => $e['cmid']]), $s('ye_results'), ['class' => 'ew-tlink']);
         if ($e['seb']) {
             $links .= html_writer::link(new moodle_url('/mod/quiz/accessrule/seb/config.php',
                 ['cmid' => $e['cmid']]), $s('ye_seb'), ['class' => 'ew-tlink']);
@@ -249,13 +293,41 @@ if (!$exams) {
                 html_writer::div(s($e['name']), 'ew-ename') .
                 html_writer::div(s($e['course']) . ($e['when'] ? ' · ' . s($e['when']) : ''), 'ew-emeta')) .
             html_writer::tag('td', $statusbadge) .
-            html_writer::tag('td', $s('ye_attcount', (object) ['live' => $e['started'], 'done' => $e['finished']])) .
+            html_writer::tag('td', $s('ye_attcount',
+                (object) ['live' => $e['started'], 'done' => $e['submitted']])) .
             html_writer::tag('td', $links, ['class' => 'ew-elinks']));
     }
     echo html_writer::end_tag('tbody');
     echo html_writer::end_tag('table');
 }
 echo html_writer::end_div();
+
+// ---- CARD : recent results ----
+if ($recentexams) {
+    echo html_writer::start_div('ew-card');
+    echo html_writer::tag('h3', $s('rr_title'), ['class' => 'ew-card-h']);
+    echo html_writer::start_tag('table', ['class' => 'ew-exams']);
+    echo html_writer::tag('thead', html_writer::tag('tr',
+        html_writer::tag('th', $s('ye_exam')) . html_writer::tag('th', $s('rr_submitted')) .
+        html_writer::tag('th', '')));
+    echo html_writer::start_tag('tbody');
+    foreach ($recentexams as $e) {
+        echo html_writer::tag('tr',
+            html_writer::tag('td',
+                html_writer::div(s($e['name']), 'ew-ename') .
+                html_writer::div(s($e['course']), 'ew-emeta')) .
+            html_writer::tag('td', $e['submitted'] . ' / ' . $e['enrolled']) .
+            html_writer::tag('td',
+                html_writer::link(new moodle_url('/local/examwizard/results.php', ['cmid' => $e['cmid']]),
+                    $s('ye_results'), ['class' => 'ew-tlink']) .
+                html_writer::link(new moodle_url('/local/examwizard/results.php',
+                    ['cmid' => $e['cmid'], 'export' => 'csv']), $s('rr_export'), ['class' => 'ew-tlink']),
+                ['class' => 'ew-elinks']));
+    }
+    echo html_writer::end_tag('tbody');
+    echo html_writer::end_tag('table');
+    echo html_writer::end_div();
+}
 
 // ---- CARD : help / references ----
 echo html_writer::start_div('ew-card ew-card-help');

@@ -323,6 +323,54 @@
 }
 .path-local-examwizard .ew-masked { filter: blur(5px); user-select: none; }
 
+/* ---- Live now spotlight ---- */
+.path-local-examwizard .ew-card-live {
+    border: 1px solid #bfe3cd;
+    border-left: 4px solid var(--ew-ok);
+    background: linear-gradient(180deg, #f2fbf6, #fff 60%);
+}
+.path-local-examwizard .ew-card-live .ew-card-h { color: #14512f; }
+.path-local-examwizard .ew-card-live .ew-card-h::before {
+    content: "";
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: .5rem;
+    border-radius: 50%;
+    background: var(--ew-ok);
+    animation: ew-pulse 1.4s ease-in-out infinite;
+    vertical-align: middle;
+}
+@keyframes ew-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(47,158,99,.5); } 50% { box-shadow: 0 0 0 6px rgba(47,158,99,0); } }
+.path-local-examwizard .ew-live-item { padding: .6rem 0; border-top: 1px solid #d8ede1; }
+.path-local-examwizard .ew-live-item:first-of-type { border-top: 0; }
+.path-local-examwizard .ew-live-name .ew-ename { display: block; }
+.path-local-examwizard .ew-live-stats { display: flex; gap: 1.2rem; margin: .4rem 0; }
+.path-local-examwizard .ew-live-n { font-size: .85rem; font-weight: 700; }
+.path-local-examwizard .ew-live-n::before {
+    content: "";
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    margin-right: .35rem;
+    vertical-align: middle;
+}
+.path-local-examwizard .ew-live-progress { color: #2d5782; }
+.path-local-examwizard .ew-live-progress::before { background: #3a6ea5; }
+.path-local-examwizard .ew-live-done { color: #14512f; }
+.path-local-examwizard .ew-live-done::before { background: var(--ew-ok); }
+.path-local-examwizard .ew-live-wait { color: var(--ew-slate); }
+.path-local-examwizard .ew-live-wait::before { background: var(--ew-line); }
+.path-local-examwizard .ew-live-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: #e3efe8;
+    overflow: hidden;
+}
+.path-local-examwizard .ew-live-fill { height: 100%; background: var(--ew-ok); border-radius: 999px; transition: width .4s ease; }
+
+.path-local-examwizard .ew-results td { font-variant-numeric: tabular-nums; }
+
 /* ---- drag/drop hint on the file field (JS adds .ew-dropzone-over) ---- */
 .path-local-examwizard .ew-dropzone {
     border: 2px dashed var(--ew-line);
