@@ -135,7 +135,7 @@ class quiz_builder {
             'showtime' => 1,
             'showkeyboardlayout' => 1,
             'allowuserquitseb' => 1,
-            'quitpassword' => '',
+            'quitpassword' => (string) get_config('quizaccess_seb', 'quitpassword'),
             'linkquitseb' => rtrim($CFG->wwwroot, '/') . '/local/sebkiosk/finish.php?cmid=' . $cm->id,
             'userconfirmquit' => 1,
             'enableaudiocontrol' => 0,

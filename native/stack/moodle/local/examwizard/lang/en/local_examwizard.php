@@ -200,6 +200,21 @@ $string['rs_st_inprogress'] = 'In progress';
 $string['rs_st_abandoned'] = 'Abandoned';
 $string['rs_st_notstarted'] = 'Not started';
 
+// SEB quit password page.
+$string['seb_title'] = 'Safe Exam Browser quit password';
+$string['seb_intro'] = 'This is the password an invigilator types to exit Safe Exam Browser during an exam. Students cannot quit SEB without it.';
+$string['seb_current'] = 'Current password';
+$string['seb_current_none'] = 'No quit password is set - anyone can quit SEB freely.';
+$string['seb_newpw'] = 'New quit password';
+$string['seb_newpw_help'] = 'Leave both boxes empty to remove the quit password (students would then be able to quit SEB on their own).';
+$string['seb_newpw2'] = 'Confirm new password';
+$string['seb_applyall'] = 'Also apply it to the {$a} exam(s) that already require SEB';
+$string['seb_save'] = 'Save quit password';
+$string['seb_saved'] = 'Quit password saved. {$a->count} existing exam(s) updated.';
+$string['seb_err_mismatch'] = 'The two passwords do not match';
+$string['seb_warn'] = 'Changing the quit password changes the SEB configuration key of every exam it is applied to. Any candidate who already has a .seb file for one of those exams must download it again, or SEB will refuse to start the exam.';
+$string['seb_change'] = 'Change';
+
 $string['help_title'] = 'Handy to know';
 $string['help_sebpw'] = 'Safe Exam Browser quit password';
 $string['help_reveal'] = 'show';

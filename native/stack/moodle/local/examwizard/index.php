@@ -220,7 +220,7 @@ if (!get_user_preferences('local_examwizard_hidechecklist')) {
         ['branding', $s('chk_branding'), new moodle_url('/admin/settings.php', ['section' => 'themesettingboost_union'])],
         ['students', $s('chk_students'), new moodle_url('/local/examwizard/students.php', ['courseid' => $firstcourseid])],
         ['exam', $s('chk_exam'), new moodle_url('/local/examwizard/wizard.php', ['courseid' => $firstcourseid])],
-        ['sebpw', $s('chk_sebpw'), new moodle_url('/admin/settings.php', ['section' => 'modsettingsquizsecseb'])],
+        ['sebpw', $s('chk_sebpw'), new moodle_url('/local/examwizard/seb.php')],
         ['testrun', $s('chk_testrun'), new moodle_url('/local/examwizard/index.php')],
     ];
     echo html_writer::start_div('ew-card ew-card-checklist');
@@ -256,7 +256,7 @@ $actions = [
     ['t/add', $s('qa_createexam'), new moodle_url('/local/examwizard/wizard.php', ['courseid' => $firstcourseid]), 'primary'],
     ['i/import', $s('qa_upload'), new moodle_url('/local/examwizard/questions.php', ['courseid' => $firstcourseid]), 'secondary'],
     ['i/users', $s('qa_students'), new moodle_url('/local/examwizard/students.php', ['courseid' => $firstcourseid]), 'secondary'],
-    ['i/down', $s('qa_seb'), new moodle_url('/admin/settings.php', ['section' => 'modsettingsquizsecseb']), 'secondary'],
+    ['i/down', $s('qa_seb'), new moodle_url('/local/examwizard/seb.php'), 'secondary'],
 ];
 foreach ($actions as [$icon, $label, $url, $style]) {
     echo html_writer::link($url,
@@ -334,15 +334,19 @@ echo html_writer::start_div('ew-card ew-card-help');
 echo html_writer::tag('h3', $s('help_title'), ['class' => 'ew-card-h']);
 echo html_writer::start_tag('dl', ['class' => 'ew-help']);
 echo html_writer::tag('dt', $s('help_sebpw'));
+$cansebconfig = has_capability('moodle/site:config', context_system::instance());
 if (trim($sebquit) !== '') {
     echo html_writer::tag('dd',
         html_writer::tag('code', $sebquit, ['id' => 'ew-sebpw', 'class' => 'ew-masked']) . ' ' .
         html_writer::link('#', $s('help_reveal'), ['class' => 'ew-reveal', 'data-target' => 'ew-sebpw']) . ' ' .
         html_writer::tag('button', $s('help_copy'),
-            ['type' => 'button', 'class' => 'ew-copy btn btn-sm btn-outline-secondary', 'data-copy' => $sebquit]));
+            ['type' => 'button', 'class' => 'ew-copy btn btn-sm btn-outline-secondary', 'data-copy' => $sebquit]) .
+        ($cansebconfig ? ' ' . html_writer::link(new moodle_url('/local/examwizard/seb.php'),
+            $s('seb_change'), ['class' => 'ml-1']) : ''));
 } else {
-    echo html_writer::tag('dd', html_writer::link(
-        new moodle_url('/admin/settings.php', ['section' => 'modsettingsquizsecseb']), $s('help_setsebpw')));
+    echo html_writer::tag('dd', $cansebconfig
+        ? html_writer::link(new moodle_url('/local/examwizard/seb.php'), $s('help_setsebpw'))
+        : $s('seb_current_none'));
 }
 echo html_writer::tag('dt', $s('help_studentlogin'));
 echo html_writer::tag('dd', $s('help_studentlogin_d', $CFG->wwwroot));
