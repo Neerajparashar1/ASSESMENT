@@ -14,12 +14,28 @@ function local_examwizard_extend_navigation_course(navigation_node $navigation, 
     if (!has_capability('local/examwizard:use', $context) || !has_capability('moodle/question:add', $context)) {
         return;
     }
-    $navigation->add(
+    $node = $navigation->add(
         get_string('pluginname', 'local_examwizard'),
+        new moodle_url('/local/examwizard/index.php'),
+        navigation_node::TYPE_CONTAINER,
+        null,
+        'local_examwizard',
+        new pix_icon('i/import', '')
+    );
+    $node->add(
+        get_string('createexam', 'local_examwizard'),
+        new moodle_url('/local/examwizard/wizard.php', ['courseid' => $course->id]),
+        navigation_node::TYPE_SETTING,
+        null,
+        'local_examwizard_wizard',
+        new pix_icon('i/course', '')
+    );
+    $node->add(
+        get_string('uploadquestions', 'local_examwizard'),
         new moodle_url('/local/examwizard/questions.php', ['courseid' => $course->id]),
         navigation_node::TYPE_SETTING,
         null,
-        'local_examwizard',
+        'local_examwizard_upload',
         new pix_icon('i/import', '')
     );
 }

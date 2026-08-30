@@ -261,9 +261,10 @@ class csv_questions {
      * Build a Moodle-XML <quiz> document from the rows that have no errors.
      *
      * @param array $rows output of parse_rows()['rows']
+     * @param bool $negative apply 1/3 negative marking to single-choice MCQ wrong options
      * @return string XML
      */
-    public static function build_xml(array $rows): string {
+    public static function build_xml(array $rows, bool $negative = false): string {
         $x = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<quiz>\n";
         foreach ($rows as $row) {
             if (!empty($row['errors'])) {
@@ -272,7 +273,7 @@ class csv_questions {
             switch ($row['type']) {
                 case 'mcq':
                 case 'multi':
-                    $x .= self::xml_multichoice($row);
+                    $x .= self::xml_multichoice($row, $negative);
                     break;
                 case 'truefalse':
                     $x .= self::xml_truefalse($row);
@@ -308,12 +309,13 @@ class csv_questions {
         return $x;
     }
 
-    private static function xml_multichoice(array $row): string {
+    private static function xml_multichoice(array $row, bool $negative = false): string {
         $single = $row['type'] === 'mcq';
         $correct = self::answer_letters($row['answer']);
         $ncorrect = count($correct);
         $pos = $single ? '100' : (self::MULTI_FRACTIONS[$ncorrect] ?? '0');
-        $neg = $single ? '0' : '-' . $pos;
+        // single-choice: wrong = 0, or -33.33333 (1/3 penalty) when negative marking is on.
+        $neg = $single ? ($negative ? '-33.33333' : '0') : '-' . $pos;
 
         $x  = "<question type=\"multichoice\">\n";
         $x .= self::common_head($row);

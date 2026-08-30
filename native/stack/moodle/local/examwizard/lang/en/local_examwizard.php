@@ -60,4 +60,70 @@ $string['type_multi'] = 'Multiple choice (several answers)';
 $string['type_truefalse'] = 'True / False';
 $string['type_short'] = 'Short answer';
 
+// ===== Create Exam wizard (Phase 2) =====
+$string['createexam'] = 'Create an exam';
+$string['createexam_desc'] = 'A short guided form that builds the quiz with exam-ready settings.';
+$string['w_title'] = 'Create an exam';
+$string['w_step_basics'] = 'Basics';
+$string['w_step_questions'] = 'Questions';
+$string['w_step_rules'] = 'Rules';
+$string['w_step_review'] = 'Review';
+$string['w_next'] = 'Next';
+$string['w_back'] = 'Back';
+$string['w_publish'] = 'Publish exam';
+$string['w_published'] = 'Exam published';
+$string['w_published_msg'] = 'The exam "{$a->name}" has been created. {$a->questions}';
+$string['w_pub_added'] = '{$a} question(s) were added to it.';
+$string['w_pub_later'] = 'No questions yet - add them from the quiz\'s Questions tab.';
+$string['w_wired_seb'] = 'Safe Exam Browser is enforced (manual config, quit link -> auto-submit).';
+$string['w_wired_proctoring'] = 'AI proctoring is required for this exam.';
+$string['w_openquiz'] = 'Open the exam';
+$string['w_editquestions'] = 'Edit questions';
+$string['w_another'] = 'Create another';
+$string['w_generalsection'] = 'General (top of the course)';
+
+// Step 1.
+$string['w_examname'] = 'Exam name';
+$string['w_section'] = 'Place in course section';
+$string['w_timelimit'] = 'Duration (minutes)';
+$string['w_timelimit_help'] = 'How long a candidate gets once they start. 0 = no limit (not recommended for a proctored exam).';
+$string['w_instructions'] = 'Instructions for candidates (optional)';
+$string['w_err_timelimit'] = 'Duration cannot be negative';
+$string['w_err_closebeforeopen'] = 'The close time must be after the open time';
+
+// Step 2.
+$string['w_questions_intro'] = 'How do you want to add questions to this exam?';
+$string['w_source'] = 'Questions source';
+$string['w_source_upload'] = 'Upload a question file now (CSV / Excel / GIFT / XML)';
+$string['w_source_category'] = 'Use questions already in a question category';
+$string['w_source_later'] = 'I\'ll add questions later';
+
+// Step 3.
+$string['w_attempts'] = 'Attempts allowed';
+$string['w_review'] = 'When can candidates see their results?';
+$string['w_review_help'] = '"After the exam closes" keeps marks hidden until everyone has finished - the usual choice for a formal exam.';
+$string['w_review_afterclose'] = 'Only after the exam closes';
+$string['w_review_immediately'] = 'Immediately after each attempt';
+$string['w_shuffle'] = 'Shuffle the order of questions';
+$string['w_negative'] = 'Negative marking (-1/3 on wrong single-choice answers)';
+$string['w_negative_help'] = 'Applies a one-third penalty to wrong answers on single-answer multiple-choice questions imported in this exam.';
+$string['w_security'] = 'Security';
+$string['w_seb'] = 'Require Safe Exam Browser';
+$string['w_seb_help'] = 'Candidates must sit the exam inside SEB. Leaving SEB without submitting auto-submits the attempt. You still need to give candidates the .seb file for this quiz.';
+$string['w_proctoring'] = 'Require AI proctoring (webcam)';
+$string['w_proctoring_help'] = 'Records / monitors the candidate through their webcam. Do not combine with SEB unless your SEB config allows camera capture.';
+
+// Review labels.
+$string['w_minutes'] = 'minutes';
+$string['w_none'] = 'none';
+$string['w_no'] = 'No';
+$string['w_yes'] = 'Yes';
+$string['w_rev_when'] = 'Window';
+$string['w_rev_opens'] = 'Opens:';
+$string['w_rev_closes'] = 'Closes:';
+$string['w_rev_anytime'] = 'Open any time (no dates set)';
+$string['w_rev_q_upload'] = 'Upload file - {$a->valid} ready, {$a->errors} will be skipped';
+$string['w_rev_q_category'] = 'From an existing question category';
+$string['w_rev_q_later'] = 'To be added later';
+
 $string['privacy:metadata'] = 'The Exam Wizard plugin does not store any personal data; imported questions are stored by Moodle\'s question bank.';

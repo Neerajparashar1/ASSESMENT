@@ -59,31 +59,45 @@
     gap: 1rem;
 }
 .path-local-examwizard .ew-course-card {
-    display: block;
     padding: 1.2rem 1.3rem;
     border: 1px solid var(--ew-line);
     border-top: 3px solid var(--ew-maroon);
     border-radius: 12px;
     background: #fff;
-    text-decoration: none;
     color: var(--ew-ink);
     box-shadow: 0 10px 30px -24px rgba(74, 13, 23, .4);
-    transition: transform .14s ease, box-shadow .14s ease;
 }
-.path-local-examwizard .ew-course-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px -22px rgba(74, 13, 23, .5);
-    text-decoration: none;
+.path-local-examwizard .ew-course-card h3 { margin: 0 0 .1rem; font-size: 1.05rem; color: var(--ew-maroon-d); }
+.path-local-examwizard .ew-course-card p { margin: 0 0 .8rem; color: var(--ew-slate); font-size: .85rem; }
+.path-local-examwizard .ew-course-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- wizard review table ---- */
+.path-local-examwizard .ew-review-table {
+    border: 1px solid var(--ew-line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    max-width: 640px;
 }
-.path-local-examwizard .ew-course-action {
-    font-size: .7rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--ew-maroon);
+.path-local-examwizard .ew-rrow {
+    display: flex;
+    gap: 1rem;
+    padding: .6rem 1rem;
+    border-bottom: 1px solid var(--ew-line);
 }
-.path-local-examwizard .ew-course-card h3 { margin: .35rem 0 .1rem; font-size: 1.05rem; color: var(--ew-maroon-d); }
-.path-local-examwizard .ew-course-card p { margin: 0; color: var(--ew-slate); font-size: .85rem; }
+.path-local-examwizard .ew-rrow:last-child { border-bottom: 0; }
+.path-local-examwizard .ew-rrow:nth-child(odd) { background: #fcf8f9; }
+.path-local-examwizard .ew-rk { flex: 0 0 42%; font-weight: 600; color: var(--ew-slate); }
+.path-local-examwizard .ew-rv { flex: 1; color: var(--ew-ink); }
+.path-local-examwizard .ew-wires {
+    max-width: 640px;
+    margin: .8rem 0 0;
+    padding: .6rem .6rem .6rem 1.4rem;
+    background: var(--ew-tint);
+    border-radius: 8px;
+    font-size: .85rem;
+    color: var(--ew-maroon-d);
+}
 
 /* ---- review summary pills ---- */
 .path-local-examwizard .ew-review-summary { display: flex; gap: .5rem; margin: 0 0 1.2rem; }

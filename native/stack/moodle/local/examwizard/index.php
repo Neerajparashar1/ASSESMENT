@@ -42,11 +42,18 @@ if (!$courses) {
 
 echo html_writer::start_div('ew-coursegrid');
 foreach ($courses as $c) {
-    $url = new moodle_url('/local/examwizard/questions.php', ['courseid' => $c->id]);
-    $card = html_writer::tag('span', get_string('uploadquestions', 'local_examwizard'), ['class' => 'ew-course-action']) .
-        html_writer::tag('h3', format_string($c->fullname)) .
-        html_writer::tag('p', format_string($c->shortname));
-    echo html_writer::link($url, $card, ['class' => 'ew-course-card']);
+    $wizardurl = new moodle_url('/local/examwizard/wizard.php', ['courseid' => $c->id]);
+    $uploadurl = new moodle_url('/local/examwizard/questions.php', ['courseid' => $c->id]);
+    echo html_writer::start_div('ew-course-card');
+    echo html_writer::tag('h3', format_string($c->fullname));
+    echo html_writer::tag('p', format_string($c->shortname));
+    echo html_writer::div(
+        html_writer::link($wizardurl, get_string('createexam', 'local_examwizard'),
+            ['class' => 'btn btn-primary btn-sm mr-2']) .
+        html_writer::link($uploadurl, get_string('uploadquestions', 'local_examwizard'),
+            ['class' => 'btn btn-outline-secondary btn-sm']),
+        'ew-course-actions');
+    echo html_writer::end_div();
 }
 echo html_writer::end_div();
 
