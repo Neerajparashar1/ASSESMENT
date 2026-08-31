@@ -1,221 +1,223 @@
-# Enterprise AI-Proctored Online Assessment Platform
-### Moodle 4.5 LTS · PHP 8.2 · MariaDB 11.4 · Redis 7 — 100 % containerised, zero licence cost
+# ITM Group of Institutions — Online Examination Portal
 
-> Built to run on this **Windows 11 + Docker Desktop** host. The mission brief
-> targeted an Ubuntu server; every Linux-server component instead runs inside
-> Debian/Ubuntu-based containers, orchestrated by `docker-compose.yml`.
+### Moodle 4.5 LTS · Apache 2.4 · PHP 8.3 (mod_php) · MariaDB 11.4 LTS — self-hosted, AI-proctored, **no Docker**
 
----
+A secured, invigilated online-exam platform: question banks, an exam builder, Safe Exam
+Browser kiosk lockdown, webcam proctoring, live invigilation, and results export — all
+from one Windows machine with no cloud hosting.
 
-## 1. Quick start
+> **Runtime.** The platform runs natively on Windows as two services (`eap-apache`,
+> `eap-mariadb`) plus a one-minute cron task. It is installed and operated through the
+> scripts in `native/`. The `docker/` + `docker-compose.yml` files are kept for
+> reference only — Docker Desktop's Linux engine does not start on the target host, so
+> the stack was ported to run natively.
 
-```powershell
-cd E:\ASSESMENT
-# 1. review / edit secrets
-notepad .env
-# 2. build the Moodle image (Moodle core + plugins are fetched here, ~5-10 min)
-docker compose build
-# 3. launch the stack (first boot runs the non-interactive Moodle install, ~3-5 min)
-docker compose up -d
-# 4. watch the install finish
-docker compose logs -f moodle      # wait for "Server listening" / healthcheck healthy
-# 5. health check
-python scripts\audit.py
-```
-
-Then open **<http://localhost:8080>**.
-
-### Optional — coding-exam execution server (VPL)
-```powershell
-docker compose --profile vpl up -d vpl-jail
-```
+**Full reference document:** [`docs/ITM-GOI-Examination-Portal.html`](docs/ITM-GOI-Examination-Portal.html)
+· [`docs/ITM-GOI-Examination-Portal.docx`](docs/ITM-GOI-Examination-Portal.docx)
 
 ---
 
-## 2. Portal access & credentials
+## 1. Setup
+
+Everything the platform needs — PHP, Apache, MariaDB, Moodle — ships inside this
+repository. Setup is a clone plus one script; the script derives every path from the
+folder it sits in, so the project can live on any drive.
+
+**You need:** Windows 10 (1809+) or 11 · local administrator · Windows PowerShell 5.1 ·
+Git for Windows · ~2 GB free disk · port 8080 free (or use `-Port`).
+
+```powershell
+# 1. get the code (long paths + a short, non-OneDrive folder)
+git config --global core.longpaths true
+git clone https://github.com/Neerajparashar1/ASSESMENT.git
+cd ASSESMENT
+
+# 2. add the folder to your antivirus exclusions
+#    Windows Security -> Virus & threat protection -> Exclusions -> Add -> Folder
+#    (Defender sometimes quarantines a bundled MariaDB/PHP .exe otherwise)
+
+# 3. secrets
+copy .env.example .env
+notepad .env        # set DB_ROOT_PASS, DB_PASS, MOODLE_ADMIN_*, SEB_QUIT_PASSWORD, TZ
+
+# 4. install  --  ALWAYS use -Reinstall on any machine other than the one the
+#    repo was built on (it carries a machine-specific config.php + no database)
+powershell -ExecutionPolicy Bypass -File .\native\Setup-MoodleNative.ps1 -Reinstall
+
+# 5. exam-specific config (roles + theme are already covered by -Reinstall)
+set PHP=native\stack\php\php.exe
+%PHP% native\Setup-SebLockdownTemplate.php --all
+%PHP% native\Setup-InvigilatorRoles.php
+%PHP% native\apply_itm_theme.php
+```
+
+Then double-click **`start.bat`** (self-elevating; starts both services, registers the
+cron task, waits for the portal, opens it) and go to **<http://localhost:8080>**.
+`stop.bat` takes it down. The services are set to start automatically, so after a
+reboot the portal is already running.
+
+**Verify:** `native\Manage-Moodle.ps1 status` should show both services `Running`, the
+cron task present, and `HTTP :8080  200 OK`. *Site administration → Notifications*
+should report no problems.
+
+Common setup problems (port in use, `php8apache2_4.dll` missing, "accessible only via…",
+antivirus quarantine, `git clone` "filename too long") are covered in the reference
+document, §3.10.
+
+---
+
+## 2. Access & credentials
 
 | | Value |
 |---|---|
-| **Portal URL** | `http://localhost:8080` (change via `MOODLE_WWWROOT` + `HTTP_PORT` in `.env`) |
-| **Super Admin (Exam Cell)** | user `examadmin` — password = `MOODLE_ADMIN_PASS` in `.env` |
-| **Admin email** | `MOODLE_ADMIN_EMAIL` in `.env` |
-| **DB name / user** | `moodle` / `moodleuser` — password = `DB_PASS` in `.env` |
-| **DB root** | password = `DB_ROOT_PASS` in `.env` |
-| **SEB quit password** | `SEB_QUIT_PASSWORD` in `.env` |
+| **Portal URL** | `http://localhost:8080` (`MOODLE_WWWROOT` + `HTTP_PORT` in `.env`) |
+| **Site administrator** | `examadmin` — password `MOODLE_ADMIN_PASS` |
+| **Database** | `moodle` / `moodleuser` — password `DB_PASS`; root password `DB_ROOT_PASS` |
+| **SEB quit password** | `SEB_QUIT_PASSWORD` |
 
-> `.env` is git-ignored. Treat it as a secret store. Rotate `MOODLE_ADMIN_PASS`
-> after first login: *Preferences → Change password*.
+`.env` is git-ignored — treat it as a secret store.
 
 ---
 
 ## 3. Architecture
 
-```
-                 ┌──────────────────────────── docker network: eapnet ───────────────────────────┐
-  browser :8080 ─┤  moodle  (Apache + mod_php 8.2, Moodle 4.5)  ── volume: moodle_code           │
-                 │     │                                         ── volume: moodledata (0770)    │
-                 │     ├── mariadb  11.4  (utf8mb4_unicode_ci, InnoDB tuned) ── volume: mariadb  │
-                 │     ├── redis    7     (sessions + MUC application cache)  ── volume: redis    │
-                 │     └── cron     (same image; admin/cli/cron.php every 60s)                    │
-                 │  vpl-jail (profile: vpl, privileged) — C/C++/Java/Python sandbox              │
-                 └──────────────────────────────────────────────────────────────────────────────┘
-```
-
-| Phase | Delivered by |
-|---|---|
-| **1 · LAMP provisioning** | `docker/moodle/Dockerfile`, `config/php/moodle-php.ini`, `config/mariadb/moodle.cnf`, `docker-compose.yml` |
-| **2 · Moodle CLI install + cron** | `docker/moodle/entrypoint.sh` (non-interactive `admin/cli/install.php`), `cron` service |
-| **3 · Frontend modernisation** | `theme_boost_union` + `config/moodle/custom.scss` (injected by `scripts/moodle/post_install.php`) |
-| **4 · Anti-cheating** | SEB (`seb/`), `quizaccess_proctoring`, quiz-hardening defaults + copy/paste block (`post_install.php`, managed `config.php` block) |
-| **5 · Bulk onboarding + RBAC** | `scripts/bulk_import_students.py`, `scripts/students_sample.csv`, "Invigilator / Proctor" role |
-| **6 · Audit & launch report** | `scripts/audit.py`, this file |
-
----
-
-## 4. The 3-tier anti-cheating architecture
-
-1. **SEB kiosk lockdown** — `seb/exam-default.seb` blocks Alt+Tab, Task Manager,
-   dual monitors, and filters URLs to the portal only. See `seb/README-SEB.md`.
-2. **Webcam / AI proctoring** — `quizaccess_proctoring` captures periodic webcam
-   snapshots (30 s interval, configured site-wide). Review under
-   *Quiz → Results → Proctoring report*. No paid cloud API is enabled
-   (`facematch=0`) — turn on AWS Rekognition face-match only if you add keys.
-3. **Dynamic shuffling** — site defaults now force *shuffle questions* +
-   *shuffle answers* + one-question-per-page + free navigation. Multichoice
-   A/B/C/D options are scrambled per attempt. Copy / cut / paste / right-click
-   are disabled on the quiz attempt page (`$CFG->additionalhtmlfooter`).
-
-### Running an exam — SEB mode vs Normal Browser mode
-* **SEB mode (high-stakes):** quiz settings → *Safe Exam Browser* → *Require… =
-  “Yes – Upload my own config”* → upload `seb/exam-default.seb`; set the quit
-  password. Students get a *Launch Safe Exam Browser* button and cannot start in
-  a normal browser.
-* **Normal Browser mode (practice / low-stakes):** *Require SEB = No*. Proctoring
-  snapshots and question shuffling still apply.
-
----
-
-## 5. Importing questions (Question Bank)
-
-```powershell
-# GIFT format
-docker compose exec -T moodle runuser -u www-data -- `
-  php admin/cli/import_questions.php --category-id=<CATID> --file=/tmp/bank.gift --format=gift
-# Aiken format
-docker compose exec -T moodle runuser -u www-data -- `
-  php admin/cli/import_questions.php --category-id=<CATID> --file=/tmp/bank.aiken --format=aiken
-```
-Copy the file in first: `docker compose cp bank.gift moodle:/tmp/bank.gift`.
-UI route: *Question bank → Import → choose GIFT / Aiken / Moodle XML*.
-Get category ids with:
-`docker compose exec -T moodle runuser -u www-data -- php admin/cli/import_questions.php --list-categories --courseid=<ID>`
-
----
-
-## 6. Bulk student onboarding (Phase 5)
-
-```powershell
-python scripts\bulk_import_students.py scripts\students_sample.csv          # add new
-python scripts\bulk_import_students.py roll_2026.csv --update               # add + update
-python scripts\bulk_import_students.py roll_2026.csv --dry-run              # validate only
-```
-CSV headers: `username,password,firstname,lastname,email,idnumber,cohort1`.
-The script validates the file, copies it into the container and calls Moodle's
-native `admin/tool/uploaduser/cli/uploaduser.php`.
-
-### RBAC — three clean tiers
-| Tier | Moodle role | Scope |
+| Layer | Component | Notes |
 |---|---|---|
-| **System Administrator / Exam Cell** | `Site Administrator` (`examadmin`) | full site config |
-| **Faculty / Invigilator** | **`Invigilator / Proctor`** (custom, created on install) | course + module: build quizzes & question banks, run live proctoring & SEB review — **no** site admin |
-| **Student** | `Student` (auth user) | distraction-free exam portal only |
+| Application | Moodle 4.5 LTS | `native/stack/moodle` |
+| Web server | Apache 2.4 + `mod_php` | service `eap-apache` · port 8080 |
+| Language | PHP 8.3, Thread-Safe | OPcache, 512 MB limit, 100 MB uploads |
+| Database | MariaDB 11.4 LTS | service `eap-mariadb` · `utf8mb4_unicode_ci` |
+| Scheduler | Windows Task `EAP-Moodle-Cron` | Moodle cron every minute as SYSTEM |
+| Theme | Boost Union + custom Raw SCSS | compiled from `config/moodle/custom.scss` |
 
-Assign faculty: *Course → Participants → Enrol users → role “Invigilator / Proctor”*.
-
----
-
-## 7. Instant results → Excel (Phase 4)
-
-```powershell
-python scripts\export_grades.py --list                 # show course ids
-python scripts\export_grades.py --course EXAM101        # -> E:\ASSESMENT\exports\*.xlsx
-```
-Produces a real `.xlsx` (Moodle's bundled `dataformat_excel`, no external libs);
-falls back to CSV if unavailable. UI route: *Course → Grades → Export → Excel spreadsheet*.
+Data lives at `<project>\moodledata`; secrets in `.env`.
 
 ---
 
-## 8. Production readiness
+## 4. What's in the box
 
-* **Performance** — OPcache (128 MB / 10 000 files), Redis sessions + MUC cache,
-  InnoDB buffer pool 1 GB (`INNODB_BUFFER_POOL_SIZE` in `.env`), Apache
-  deflate + far-future asset caching, `$CFG->cachejs`.
-* **Cron** — dedicated `cron` container runs `admin/cli/cron.php` every 60 s;
-  `cronclionly=1` blocks web cron.
-* **Network-drop resilience** — quiz auto-save every 15 s (`$CFG->autosavefrequency`);
-  Redis session locks tuned (120 s acquire / 7200 s expire) so a dropped client
-  can resume the same attempt.
-* **HTTPS** — terminate TLS at a reverse proxy, then set in `.env`:
-  `MOODLE_WWWROOT=https://exams.example.edu`, `MOODLE_SSLPROXY=true`,
-  `MOODLE_REVERSEPROXY=true`, and `docker compose up -d`.
-* **Hardening** — `expose_php=Off`, `ServerTokens Prod`, security headers
-  (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`,
-  `Permissions-Policy`, conditional HSTS), dotfile/VCS deny rules,
-  `moodledata` outside web root at `0770 www-data:www-data`,
-  password policy on (min 8), web services limited.
+| Plugin | Purpose |
+|---|---|
+| **`local_examwizard`** (custom) | Exam-cell control centre: question uploader (CSV/XLSX/GIFT/XML), 4-step exam builder, **Exam Control** hub, live exam control, results + CSV export, bulk student onboarding, SEB quit-password manager. |
+| **`local_sebkiosk`** (custom) | Leaving Safe Exam Browser finalises the attempt; carries the front-end theme runtime (`exam-ui.js`). |
+| `quizaccess_seb` | Safe Exam Browser access rule (template mode + the *EAP Kiosk Lockdown* template). |
+| `quizaccess_proctoring` | Periodic webcam snapshots (~30 s) + a review report. |
+| `theme_boost_union` | Base theme, skinned in the ITM GOI identity. |
 
-### Backups
+---
+
+## 5. Anti-cheating
+
+1. **SEB kiosk lockdown** — new isolated desktop, Explorer shell killed (no Task
+   Manager / Start menu), every escape hotkey disabled, single display, no VM / screen
+   share, URL-filtered to the portal. Quit is password-protected and is the only
+   sanctioned exit.
+2. **Exit = auto-submit** — the SEB quit link and a page-unload beacon both finalise
+   every in-progress attempt for that student (`local_sebkiosk`). A hard kill is caught
+   by the time limit + automatic overdue submission + the one-minute cron task.
+3. **Webcam proctoring** — `quizaccess_proctoring` snapshots, reviewed under
+   *Quiz → Results → Proctoring report*. No paid cloud face-match is enabled.
+4. **Shuffled, paged, copy-protected** — one attempt, questions shuffled, one per page,
+   free navigation; copy / cut / paste / right-click disabled on the attempt page;
+   autosave every 15 s; SEB config-key checked on every request.
+
+### Running an exam
+- **High-stakes:** build it with the Exam Wizard (SEB is wired in automatically), or on
+  a quiz set *Safe Exam Browser → Require… = Configure manually* and pick the
+  *EAP Kiosk Lockdown* template. Students get a **Launch Safe Exam Browser** button.
+- **Practice / low-stakes:** *Require SEB = No* — shuffling, paging and proctoring still
+  apply.
+
+---
+
+## 6. Roles
+
+| Role | Scope |
+|---|---|
+| **Site administrator** (`examadmin`) | Full platform + server settings. The only admin. |
+| **Invigilator / Proctor** (`invigilator`) | Course / module: build quizzes & question banks, manage SEB, run proctoring review, grade, run live control. No site admin. |
+| **Exam Hall Invigilator** (`examinvigilator`) | Watch + intervene only — monitor report, proctoring feed, live control (pause / reopen / extend / force-submit / resume). **Cannot** edit exams, edit questions, grade, delete attempts. Assignable site-wide so one login oversees every session. |
+| **Student** | Sit assigned exams only. |
+
+Backed by a dedicated capability `local/examwizard:control`, kept separate from
+`mod/quiz:manage`. Assign via *Course → Participants → Enrol users* or
+`native\Setup-InvigilatorRoles.php`.
+
+---
+
+## 7. Bulk operations
+
 ```powershell
-# database
-docker compose exec -T mariadb sh -c 'exec mariadb-dump -uroot -p"$MARIADB_ROOT_PASSWORD" --single-transaction moodle' > backup_moodle.sql
-# moodledata
-docker run --rm -v assesment_moodledata:/data -v ${PWD}:/out alpine tar czf /out/moodledata.tgz -C /data .
+# students
+native\Import-Students.ps1 -Csv .\roll_2026.csv            # add new
+native\Import-Students.ps1 -Csv .\roll_2026.csv -Update    # add + update
+native\Import-Students.ps1 -Csv .\roll_2026.csv -DryRun    # validate only
 ```
+Or use the Exam Wizard: *Exam Control → Add students* (CSV/XLSX preview → create + enrol).
+
+**Questions:** *Exam Control → Upload questions* — CSV/XLSX with a validated card preview,
+or hand a `.gift` / `.xml` straight to Moodle's importers.
+
+**Results:** *Exam Control → your exam → Results → Download CSV*, or gradebook export to
+ODS / XLS / TXT / XML.
+
+---
+
+## 8. Sharing a live demo (no cloud hosting)
+
+```powershell
+demo-cf.bat            # Cloudflare quick tunnel — double-click, no account.
+                       #   prints + copies a https://*.trycloudflare.com link
+demo-cf-stop.bat       # end it, restore http://localhost:8080
+
+# or, for a stable reusable URL (needs a free ngrok account + static domain):
+.\demo.ps1 -Domain <name>.ngrok-free.app
+.\demo-stop.ps1
+```
+Both repoint `$CFG->wwwroot` at the public address and turn on proxied-SSL; the stop
+script reverts. **SEB exams do not work over a tunnel** — demo the portal, admin and
+non-SEB flows.
 
 ---
 
 ## 9. Common operations
 
 ```powershell
-docker compose ps                       # status
-docker compose logs -f moodle           # app logs
-docker compose exec moodle bash         # shell in the app container
-docker compose exec -T moodle runuser -u www-data -- php admin/cli/purge_caches.php
-docker compose exec -T moodle runuser -u www-data -- php admin/cli/cron.php
-docker compose down                     # stop (keeps volumes/data)
-docker compose down -v                  # DESTROY everything incl. database
-docker compose build --no-cache moodle  # rebuild after changing Dockerfile / plugins
+native\Manage-Moodle.ps1 status        # services + HTTP probe
+native\Manage-Moodle.ps1 restart       # (elevated) restart both services
+native\Manage-Moodle.ps1 cron          # run one cron cycle now
+native\Manage-Moodle.ps1 purge         # purge all caches
+native\Manage-Moodle.ps1 upgrade       # after adding / updating plugins
+native\Manage-Moodle.ps1 backup        # DB dump + moodledata archive -> backups\
 ```
-After editing `config/moodle/custom.scss`:
-`docker compose restart moodle` (entrypoint re-applies SCSS + purges caches).
+After editing `config/moodle/custom.scss` or `local/sebkiosk/exam-ui.js`:
+`native\stack\php\php.exe native\apply_itm_theme.php` (recompiles the theme, bumps the
+revision, purges caches). Bump the `?v=` on `exam-ui.js` in `config.php` **and**
+`native\harden_seb_quiz.php` after any JS change.
 
 ---
 
 ## 10. File map
 
 ```
-E:\ASSESMENT\
-├─ docker-compose.yml            stack definition
-├─ .env / .env.example           secrets + tunables
-├─ config\
-│  ├─ php\moodle-php.ini         Phase 1 PHP tuning + OPcache
-│  ├─ mariadb\moodle.cnf         Phase 1 UTF8MB4 + InnoDB
-│  ├─ apache\000-moodle.conf     Phase 6 vhost, AllowOverride All
-│  ├─ apache\security.conf       Phase 6 hardening headers
-│  └─ moodle\custom.scss         Phase 3 SaaS theme (Inter/Jakarta, glass, quiz UX)
-├─ docker\moodle\
-│  ├─ Dockerfile                 Moodle 4.5 + PHP exts + plugins
-│  └─ entrypoint.sh              non-interactive install / upgrade / harden
-├─ scripts\
-│  ├─ bulk_import_students.py    Phase 5 CSV onboarding
-│  ├─ students_sample.csv        Phase 5 template
-│  ├─ export_grades.py           Phase 4 1-click Excel export (wrapper)
-│  ├─ audit.py                   Phase 6 health check
-│  ├─ make-seb.sh               SEB config generator
-│  └─ moodle\
-│     ├─ post_install.php        theme + SEB + proctoring + RBAC tuning
-│     └─ export_grades.php       gradebook -> xlsx (in-container)
-└─ seb\
-   ├─ exam-default.seb           kiosk lockdown template
-   └─ README-SEB.md              SEB usage guide
+ASSESMENT\
+├─ start.bat / stop.bat                run / stop the stack
+├─ demo-cf.bat / demo-cf-stop.bat      Cloudflare demo tunnel
+├─ demo.ps1 / demo-stop.ps1            ngrok / manual demo tunnel
+├─ .env / .env.example                 secrets + tunables (git-ignored)
+├─ docs\                               reference document (HTML + DOCX) + generator
+├─ config\moodle\custom.scss           all portal styling
+├─ native\
+│  ├─ Setup-MoodleNative.ps1           full native install
+│  ├─ Manage-Moodle.ps1                day-to-day operations
+│  ├─ Setup-SebLockdownTemplate.php    create / apply the kiosk SEB template
+│  ├─ Setup-InvigilatorRoles.php       create the two invigilation roles
+│  ├─ Import-Students.ps1              bulk student import (CLI)
+│  ├─ apply_itm_theme.php              compile custom.scss into the theme
+│  ├─ harden_seb_quiz.php              per-quiz SEB / auto-submit wiring
+│  ├─ README-NATIVE.md                 native stack notes + manual install
+│  └─ stack\                           bundled Apache / PHP / MariaDB / Moodle
+├─ scripts\moodle\post_install.php     first-run config — roles, SEB, proctoring, theme
+├─ seb\                                SEB templates + notes
+└─ docker\ , docker-compose.yml        reference only — not used
 ```
