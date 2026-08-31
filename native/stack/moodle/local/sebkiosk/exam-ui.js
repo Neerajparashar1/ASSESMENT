@@ -760,6 +760,34 @@
     })();
   }
 
+  /* -----------------------------------------------------------------
+   * 0e. PARTICIPANTS : a prominent "Bulk import users" action that
+   *     jumps to Moodle's CSV upload tool. Admins only (needs
+   *     moodle/site:uploadusers) - gated on the "Site administration"
+   *     primary-nav link being present.
+   * --------------------------------------------------------------- */
+  if (body && (body.id === "page-course-view-participants" ||
+               body.id === "page-user-index")) {
+    (function addBulkImport() {
+      if (document.querySelector(".itm-bulkimport")) { return; }
+      var isAdmin = !!document.querySelector(
+        '.primary-navigation a[href*="/admin/"], #usernavigation a[href*="/admin/search.php"]');
+      if (!isAdmin) { return; }
+      var row = document.querySelector(".tertiary-navigation .row") ||
+                document.querySelector(".tertiary-navigation");
+      if (!row) { return; }
+      var item = document.createElement("div");
+      item.className = "navitem itm-bulkimport";
+      item.innerHTML =
+        '<a class="btn itm-bulkimport-btn" href="/admin/tool/uploaduser/index.php">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M5 20h14"/>' +
+          '</svg>' +
+          'Bulk import users</a>';
+      row.appendChild(item);
+    })();
+  }
+
   if (!body || body.id !== "page-mod-quiz-attempt") {
     return;
   }

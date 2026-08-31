@@ -3008,6 +3008,450 @@ a.itm-admin-card-head:hover .itm-admin-card-title {
 .itm-desc-more:hover { text-decoration: underline; }
 
 // =================================================================
+//  PARTICIPANTS  (/user/index.php)  --  modern list + filters
+//  Scoped to the participants page body id. Styles Moodle's own
+//  markup: .tertiary-navigation selector, the .filter-group panel,
+//  the A-Z .initialbar, #participants table, bulk-actions + pager.
+// =================================================================
+body#page-course-view-participants,
+body#page-user-index {
+
+  // ---- "Enrolled users" tertiary selector ----
+  .tertiary-navigation { padding: 0; margin: 0 0 1rem; border: 0; }
+  .tertiary-navigation .row { align-items: center; }
+  .tertiary-navigation .navitem:not(.itm-bulkimport) > *:first-child,
+  .tertiary-navigation .dropdown-toggle {
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--itm-maroon-900);
+  }
+
+  // ---- injected "Bulk import users" action (exam-ui.js) ----
+  .itm-bulkimport {
+    margin-left: auto;
+    padding-right: .25rem;
+  }
+  .itm-bulkimport-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .55rem 1.2rem;
+    border-radius: 999px;
+    font-family: var(--itm-sans);
+    font-weight: 700;
+    font-size: .87rem;
+    color: #fdf7ea;
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%);
+    border: 1px solid var(--itm-maroon-900);
+    box-shadow: 0 12px 24px -12px rgba(138, 27, 44, .7), inset 0 1px 0 rgba(255, 255, 255, .14);
+    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  }
+  .itm-bulkimport-btn:hover {
+    color: #fff;
+    transform: translateY(-1px);
+    filter: brightness(1.07);
+    box-shadow: 0 18px 30px -12px rgba(138, 27, 44, .8), inset 0 1px 0 rgba(255, 255, 255, .18);
+  }
+  .itm-bulkimport-btn svg {
+    width: 15px; height: 15px;
+    fill: none; stroke: currentColor;
+    stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  // ---- filter panel ----
+  .filter-group {
+    background: linear-gradient(180deg, #fdfaf7 0%, #f8f1ec 100%) !important;
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    padding: 1rem 1.1rem !important;
+    box-shadow: 0 14px 34px -26px rgba(74, 13, 23, .42);
+  }
+  .filter-group select,
+  .filter-group .custom-select,
+  .filter-group input[type="text"],
+  .filter-group input[type="search"] {
+    border: 1.5px solid #dccfd0 !important;
+    border-radius: 9px;
+    background-color: #fff;
+    padding: .44rem .75rem;
+    font-size: .875rem;
+    min-height: 0;
+    height: auto;
+    box-shadow: 0 2px 6px -4px rgba(74, 13, 23, .3);
+  }
+  .filter-group select:focus,
+  .filter-group input:focus {
+    border-color: var(--itm-maroon);
+    box-shadow: 0 0 0 3px rgba(138, 27, 44, .13);
+    outline: none;
+  }
+  .filter-group [data-filterregion="add-row"] a,
+  .filter-group [data-filterregion="add-row"] .btn,
+  .filter-group a.btn-link {
+    color: var(--itm-maroon-700) !important;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .filter-group [data-filterregion="add-row"] a:hover { text-decoration: underline; }
+
+  [data-filteraction="apply"].btn,
+  .filter-group .btn-primary {
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%);
+    border: 1px solid var(--itm-maroon-900);
+    border-radius: 999px;
+    font-weight: 600;
+    padding: .5rem 1.35rem;
+    box-shadow: 0 12px 22px -12px rgba(138, 27, 44, .7);
+  }
+  [data-filteraction="reset"].btn,
+  .filter-group .btn-secondary {
+    background: #fff;
+    border: 1.5px solid var(--itm-line);
+    color: var(--itm-slate);
+    border-radius: 999px;
+    font-weight: 600;
+    padding: .5rem 1.2rem;
+  }
+  [data-filteraction="reset"].btn:hover {
+    border-color: var(--itm-maroon);
+    color: var(--itm-maroon-900);
+  }
+  .filter-group [data-filterregion="filter"] .btn-close,
+  .filter-group [data-filterfield] [role="button"],
+  .filter-group .filterrow > .btn {
+    color: var(--itm-slate);
+  }
+
+  // ---- "N participants found" ----
+  [data-region="participant-count"],
+  .userlist > p:first-of-type {
+    font-weight: 600;
+    color: var(--itm-ink);
+    margin: 1rem 0 .35rem;
+  }
+
+  // ---- A-Z initials bar ----
+  .initialbar {
+    align-items: center;
+    gap: .3rem .55rem;
+    margin: .55rem 0 1.1rem;
+    padding: .55rem 1rem .6rem 1.5rem;
+    overflow: visible;
+  }
+  .initialbarlabel {
+    flex: 0 0 auto;
+    min-width: 92px;
+    padding-left: 0;
+    margin-right: 1.1rem;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--itm-maroon-900);
+    overflow: visible;
+    white-space: nowrap;
+  }
+  .initialbar .pagination { gap: 3px; margin: 0; flex-wrap: wrap; }
+  .initialbar .pagination .page-item .page-link {
+    min-width: 27px;
+    height: 27px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    border: 1px solid var(--itm-line);
+    border-radius: 8px;
+    font-size: .78rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--itm-slate);
+    background: #fff;
+  }
+  .initialbar .pagination .page-item .page-link:hover {
+    background: var(--itm-maroon-050);
+    border-color: var(--itm-maroon);
+    color: var(--itm-maroon-900);
+  }
+  .initialbar .pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%);
+    border-color: var(--itm-maroon-900);
+    color: #fbeeca;
+  }
+
+  // ---- the participants table ----
+  .table-dynamic {
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    overflow: hidden;
+    box-shadow: 0 20px 46px -32px rgba(74, 13, 23, .4);
+  }
+  #participants { margin: 0; }
+  #participants thead th,
+  #participants thead .header {
+    background: linear-gradient(180deg, #fbf3f4 0%, #f6eae9 100%);
+    border: 0 !important;
+    border-bottom: 2px solid var(--itm-line) !important;
+    padding: .85rem 1rem;
+    font-family: var(--itm-sans);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--itm-maroon-900);
+    vertical-align: middle;
+  }
+  #participants thead th a,
+  #participants thead .header a { color: var(--itm-maroon-900) !important; }
+  #participants thead th .commands,
+  #participants thead th::after,
+  #participants thead .header::after { display: none !important; }
+
+  // the name column is a <th scope="row"> - target .cell (td AND th)
+  #participants tbody .cell {
+    padding: .7rem 1rem;
+    border-color: var(--itm-line) !important;
+    vertical-align: middle;
+    font-size: .875rem;
+    font-weight: 400;
+  }
+  #participants.table-striped tbody tr:nth-of-type(odd) > * { background: #fff; }
+  #participants.table-striped tbody tr:nth-of-type(even) > * { background: #fdf8f6; }
+  #participants.table-hover tbody tr:hover > * { background: var(--itm-maroon-050) !important; }
+
+  #participants .userinitials {
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%) !important;
+    color: #f3e6c7 !important;
+    font-weight: 700;
+    box-shadow: 0 4px 10px -5px rgba(138, 27, 44, .6);
+  }
+  #participants .userpicture { border-radius: 50%; }
+  #participants tbody .c1 a {
+    color: var(--itm-maroon-900);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  #participants tbody .c1 a:hover { color: var(--itm-maroon); }
+  #participants tbody .cell .icon { color: var(--itm-maroon-700); }
+  #participants tbody td.c3,
+  #participants tbody td.c4 { color: var(--itm-slate); }
+  #participants td.c0,
+  #participants th.c0 { width: 44px; text-align: center; }
+
+  // ---- bulk-actions select + bottom pager ----
+  select#formactionid,
+  .userlist select.custom-select {
+    border: 1.5px solid var(--itm-line);
+    border-radius: 9px;
+    padding: .42rem .7rem;
+    font-size: .86rem;
+  }
+  [data-region="paging-bar"] .page-link,
+  .pagingbar .page-link,
+  .paging .page-link {
+    border-radius: 8px;
+    border: 1px solid var(--itm-line);
+    color: var(--itm-maroon-700);
+    margin: 0 2px;
+    font-weight: 600;
+  }
+  [data-region="paging-bar"] .page-item.active .page-link,
+  .pagingbar .page-item.active .page-link {
+    background: var(--itm-maroon);
+    border-color: var(--itm-maroon-700);
+    color: #fff;
+  }
+}
+
+// =================================================================
+//  BULK USER IMPORT  (/admin/tool/uploaduser/*)  --  a friendly,
+//  modern CSV upload flow. Styles Moodle's own uploaduser mform.
+// =================================================================
+body#page-admin-tool-uploaduser-index,
+body#page-admin-tool-uploaduser-preview {
+
+  #region-main .mform {
+    max-width: 860px;
+    margin-inline: auto;
+    background: linear-gradient(180deg, #ffffff 0%, #fdfaf8 100%);
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius-lg);
+    box-shadow: 0 34px 80px -46px rgba(31, 7, 13, .5);
+    padding: 1.6rem 1.8rem 1.9rem;
+  }
+
+  // friendly intro line under the "Upload users" heading
+  #region-main > h2:first-of-type::after,
+  .page-context-header + *::after { content: none; }
+  #region-main .mform::before {
+    content: "Import many accounts at once from a CSV file \2014 one row per user, with columns like username, password, firstname, lastname and email.";
+    display: block;
+    margin: 0 0 1.4rem;
+    padding: .85rem 1rem;
+    background: var(--itm-maroon-050);
+    border-left: 3px solid var(--itm-gold);
+    border-radius: 8px;
+    font-size: .88rem;
+    line-height: 1.55;
+    color: var(--itm-ink);
+  }
+
+  fieldset.collapsible legend a,
+  .fheader .ftoggler {
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    color: var(--itm-maroon-900);
+  }
+
+  // ---- the drag-and-drop zone ----
+  // Moodle nests an absolutely-positioned .filepicker-container (the real
+  // drop rectangle) inside .filepicker-filelist. Give the dashed border to
+  // that one element only, and let the message be plain centred text so we
+  // don't get a second dashed box floating over the arrow.
+  .filemanager,
+  .fp-content {
+    border-radius: var(--itm-radius) !important;
+  }
+  .filepicker-filelist {
+    border: 0 !important;
+    border-radius: var(--itm-radius) !important;
+    min-height: 150px !important;
+    background: #fff;
+  }
+  .filepicker-filelist .filepicker-container,
+  .filemanager .dndupload-target,
+  .filepicker .dndupload-target {
+    inset: 0 !important;
+    border: 2px dashed color-mix(in srgb, var(--itm-maroon) 42%, var(--itm-line)) !important;
+    border-radius: var(--itm-radius) !important;
+    background: linear-gradient(180deg, #fdfaf7, #f8f1ec) !important;
+    padding: 72px 1.25rem 1.5rem !important;
+    color: var(--itm-slate);
+  }
+  // arrow: a fixed band pinned near the top; icon centred inside it
+  .dndupload-arrow {
+    top: 14px !important;
+    bottom: auto !important;
+    height: 44px !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  .dndupload-arrow .fa,
+  .dndupload-arrow i,
+  .dndupload-arrow .icon {
+    font-size: 2rem !important;
+    color: var(--itm-maroon) !important;
+    fill: var(--itm-maroon) !important;
+  }
+  .dndupload-message {
+    border: 0 !important;
+    background: none !important;
+    padding: 0 !important;
+    font-size: .9rem;
+    line-height: 1.5;
+    color: var(--itm-slate);
+  }
+  .dndupload-message .fa,
+  .dndupload-message .icon {
+    color: var(--itm-maroon) !important;
+    fill: var(--itm-maroon) !important;
+  }
+  .fp-btn-choose,
+  .fp-btn-add {
+    border-radius: 999px !important;
+    border: 1.5px solid var(--itm-line) !important;
+    background: #fff !important;
+    color: var(--itm-maroon-900) !important;
+    font-weight: 600;
+    padding: .45rem 1.1rem !important;
+  }
+  .fp-btn-choose:hover,
+  .fp-btn-add:hover {
+    border-color: var(--itm-maroon) !important;
+    background: var(--itm-maroon-050) !important;
+  }
+
+  // "Example text file -> example.csv" link -> a little download chip
+  .fitem [id*="example"] a,
+  a[href*="example.csv"] {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .3rem .75rem;
+    border-radius: 999px;
+    background: var(--itm-maroon-050);
+    border: 1px solid var(--itm-line);
+    font-weight: 600;
+    font-size: .85rem;
+    color: var(--itm-maroon-700);
+    text-decoration: none;
+  }
+  .fitem [id*="example"] a:hover,
+  a[href*="example.csv"]:hover { border-color: var(--itm-maroon); }
+
+  // selects (CSV separator / encoding / upload type ...)
+  #region-main select,
+  #region-main .custom-select {
+    border: 1.5px solid #dccfd0;
+    border-radius: 9px;
+    background-color: #fff;
+    padding: .44rem .75rem;
+    min-height: 0;
+    height: auto;
+    font-size: .9rem;
+  }
+  #region-main select:focus,
+  #region-main .custom-select:focus {
+    border-color: var(--itm-maroon);
+    box-shadow: 0 0 0 3px rgba(138, 27, 44, .13);
+    outline: none;
+  }
+
+  // labels
+  #region-main .col-form-label,
+  #region-main .fitemtitle label {
+    font-weight: 600;
+    color: var(--itm-ink);
+  }
+
+  // ---- primary submit ("Upload users" / "Continue") ----
+  #region-main .form-submit,
+  #region-main .btn-primary,
+  #region-main input[type="submit"].btn-primary {
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%) !important;
+    border: 1px solid var(--itm-maroon-900) !important;
+    border-radius: 999px !important;
+    font-weight: 700;
+    padding: .62rem 1.8rem !important;
+    box-shadow: 0 16px 28px -14px rgba(138, 27, 44, .7);
+  }
+  #region-main .btn-secondary {
+    border-radius: 999px !important;
+    border: 1.5px solid var(--itm-line) !important;
+    background: #fff !important;
+    color: var(--itm-slate) !important;
+    font-weight: 600;
+  }
+
+  // preview results table (step 2)
+  #region-main table.generaltable {
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    overflow: hidden;
+  }
+  #region-main table.generaltable thead th {
+    background: linear-gradient(180deg, #fbf3f4, #f6eae9);
+    color: var(--itm-maroon-900);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: .05em;
+    border: 0;
+    border-bottom: 2px solid var(--itm-line);
+  }
+}
+
+// =================================================================
 //  DARK MODE  (light touch)
 // =================================================================
 @media (prefers-color-scheme: dark) {
