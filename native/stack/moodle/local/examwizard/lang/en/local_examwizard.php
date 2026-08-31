@@ -5,6 +5,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Exam Wizard';
 $string['examwizard:use'] = 'Use the Exam Wizard to build exams and upload questions';
+$string['examwizard:control'] = 'Run live exam control (pause, extend a student, force-submit, resume) during an ongoing exam';
 
 // Landing.
 $string['landingintro'] = 'Build exams and bulk-upload questions without wrestling with Moodle\'s full quiz form.';

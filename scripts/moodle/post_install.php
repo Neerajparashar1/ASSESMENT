@@ -126,12 +126,13 @@ if (!$DB->record_exists('role', ['shortname' => 'invigilator'])) {
     set_role_contextlevels($rid, [CONTEXT_COURSE, CONTEXT_MODULE]);
     $sys = context_system::instance();
     $caps = [
+        'local/examwizard:use', 'local/examwizard:control',
         'mod/quiz:manage', 'mod/quiz:preview', 'mod/quiz:grade', 'mod/quiz:regrade',
         'mod/quiz:viewreports', 'mod/quiz:deleteattempts',
         'moodle/question:add', 'moodle/question:editall', 'moodle/question:useall',
         'quizaccess/seb:manage_seb_requiresafeexambrowser',
         'quizaccess/proctoring:viewreport', 'quizaccess/proctoring:sendnotification',
-        'report/proctoring:view',
+        'report/proctoring:view', 'moodle/course:view',
     ];
     foreach ($caps as $cap) {
         if (get_capability_info($cap)) {
@@ -142,6 +143,42 @@ if (!$DB->record_exists('role', ['shortname' => 'invigilator'])) {
     $changed++;
 } else {
     eap_out("Role 'invigilator' already present.");
+}
+
+// ---------------------------------------------------------------
+// 5b. RBAC -- "Exam Hall Invigilator" (watch + intervene only)
+//     A live proctor: monitor + proctoring feed + the Exam Control
+//     pause/reopen/extend/submit/resume actions. NO exam editing,
+//     questions, grading, attempt deletion, or site administration.
+//     Full/idempotent management lives in native\Setup-InvigilatorRoles.php.
+// ---------------------------------------------------------------
+if (!$DB->record_exists('role', ['shortname' => 'examinvigilator'])) {
+    $rid = create_role(
+        'Exam Hall Invigilator',
+        'examinvigilator',
+        'Exam-hall staff: watches a live exam and can pause / reopen / extend a student / '
+            . 'force-submit / resume attempts. Cannot create or edit exams, edit questions, '
+            . 'grade, delete attempts, or access site administration.',
+        'teacher'
+    );
+    set_role_contextlevels($rid, [CONTEXT_SYSTEM, CONTEXT_COURSE, CONTEXT_MODULE]);
+    $sys = context_system::instance();
+    $caps = [
+        'local/examwizard:use', 'local/examwizard:control',
+        'mod/quiz:view', 'mod/quiz:viewreports', 'mod/quiz:preview',
+        'quizaccess/proctoring:viewreport', 'report/proctoring:view',
+        'moodle/course:view', 'moodle/course:viewhiddenactivities',
+        'moodle/course:viewhiddencourses', 'moodle/user:viewdetails',
+    ];
+    foreach ($caps as $cap) {
+        if (get_capability_info($cap)) {
+            assign_capability($cap, CAP_ALLOW, $rid, $sys->id, true);
+        }
+    }
+    eap_out("Created role 'examinvigilator' (id $rid) - hall proctor, watch + intervene only.");
+    $changed++;
+} else {
+    eap_out("Role 'examinvigilator' already present.");
 }
 
 // ---------------------------------------------------------------

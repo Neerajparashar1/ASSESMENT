@@ -130,13 +130,23 @@ class quiz_builder {
         // replace it wholesale so our quit-link / quit settings win.
         $DB->delete_records('quizaccess_seb_quizsettings', ['quizid' => $quiz->id]);
         $now = time();
+
+        // Prefer the hardened "EAP Kiosk Lockdown" template (createNewDesktop,
+        // killExplorerShell, hotkeys off - the SEB task-bar Quit button is then
+        // the only way out and it hits local/sebkiosk/finish.php). The template
+        // is created by native\Setup-SebLockdownTemplate.php; if it is missing
+        // we fall back to plain manual config (still enforced, just less locked).
+        $lockdowntpl = $DB->get_record('quizaccess_seb_template',
+            ['name' => 'EAP Kiosk Lockdown', 'enabled' => 1], 'id', IGNORE_MULTIPLE);
+        $usetemplate = (bool) $lockdowntpl;
+
         $row = (object) [
             'quizid' => $quiz->id,
             'cmid' => $cm->id,
-            'templateid' => 0,
-            'requiresafeexambrowser' => 1,        // USE_SEB_CONFIG_MANUALLY - the quiz page's
-                                                 // "Launch SEB" button serves the current config
-                                                 // live, so nothing is ever re-sent by hand.
+            'templateid' => $usetemplate ? (int) $lockdowntpl->id : 0,
+            // 2 = USE_SEB_TEMPLATE, 1 = USE_SEB_CONFIG_MANUALLY. Either way the
+            // quiz page's "Launch SEB" button serves the current config live.
+            'requiresafeexambrowser' => $usetemplate ? 2 : 1,
             'showsebtaskbar' => 1,
             'showwificontrol' => 0,
             'showreloadbutton' => 1,

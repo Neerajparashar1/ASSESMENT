@@ -12,7 +12,15 @@ $cmid = required_param('cmid', PARAM_INT);
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
-require_capability('mod/quiz:manage', $context);
+// Seeing the control screen needs the quiz reports capability; steering the
+// running exam needs either mod/quiz:manage (teachers/managers) or the
+// dedicated local/examwizard:control (hall invigilators - no settings/grades).
+require_capability('mod/quiz:viewreports', $context);
+$canmanage  = has_capability('mod/quiz:manage', $context);
+$cancontrol = $canmanage || has_capability('local/examwizard:control', $context);
+if (!$cancontrol) {
+    require_capability('local/examwizard:control', $context);
+}
 
 $quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
 $baseurl = new moodle_url('/local/examwizard/control.php', ['cmid' => $cmid]);
@@ -130,6 +138,9 @@ if ($action && confirm_sesskey() && data_submitted()) {
             break;
 
         case 'delete':
+            // Destructive and unrecoverable - teachers/managers only, never a
+            // plain hall invigilator.
+            require_capability('mod/quiz:manage', $context);
             if ($attemptid) {
                 $att = $DB->get_record('quiz_attempts', ['id' => $attemptid, 'quiz' => $quiz->id], '*', MUST_EXIST);
                 quiz_delete_attempt($att, $quiz);
@@ -233,8 +244,10 @@ if (!$attempts) {
             $acts .= $actionform('resume', $s('lc_resume'), 'btn-outline-primary',
                 $s('lc_confirm_resume', fullname($a)), ['attempt' => $a->id]) . ' ';
         }
-        $acts .= $actionform('delete', $s('lc_delete'), 'btn-outline-danger',
-            $s('lc_confirm_delete', fullname($a)), ['attempt' => $a->id]);
+        if ($canmanage) {
+            $acts .= $actionform('delete', $s('lc_delete'), 'btn-outline-danger',
+                $s('lc_confirm_delete', fullname($a)), ['attempt' => $a->id]);
+        }
 
         echo html_writer::tag('tr',
             html_writer::tag('td',

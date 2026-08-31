@@ -45,6 +45,25 @@ if (is_siteadmin()) {
     }
 }
 
+// Hall invigilators aren't enrolled and can't edit, but must still see every
+// exam they may monitor / run live control on.
+$caneditexams = is_siteadmin();
+foreach ($courses as $c) {
+    if (has_capability('mod/quiz:addinstance', context_course::instance($c->id))) {
+        $caneditexams = true;
+        break;
+    }
+}
+if (!is_siteadmin()) {
+    foreach (['local/examwizard:control', 'mod/quiz:viewreports'] as $cap) {
+        foreach ((array) get_user_capability_course($cap, $USER->id, true, 'fullname,shortname') as $c) {
+            if ($c->id != SITEID) {
+                $courses[$c->id] = $c;
+            }
+        }
+    }
+}
+
 if (!$courses) {
     echo $OUTPUT->header();
     echo $OUTPUT->notification(get_string('nocourses', 'local_examwizard'),
@@ -216,8 +235,8 @@ if ($liveexams) {
     echo html_writer::end_div();
 }
 
-// ---- CARD 1 : getting started ----
-if (!get_user_preferences('local_examwizard_hidechecklist')) {
+// ---- CARD 1 : getting started ----  (setup checklist - editors only)
+if ($caneditexams && !get_user_preferences('local_examwizard_hidechecklist')) {
     $items = [
         ['branding', $s('chk_branding'), new moodle_url('/admin/settings.php', ['section' => 'themesettingboost_union'])],
         ['students', $s('chk_students'), new moodle_url('/local/examwizard/students.php', ['courseid' => $firstcourseid])],
@@ -251,22 +270,29 @@ if (!get_user_preferences('local_examwizard_hidechecklist')) {
 }
 
 // ---- CARD 2 : quick actions ----
-echo html_writer::start_div('ew-card');
-echo html_writer::tag('h3', $s('qa_title'), ['class' => 'ew-card-h']);
-echo html_writer::start_div('ew-actions');
-$actions = [
-    ['t/add', $s('qa_createexam'), new moodle_url('/local/examwizard/wizard.php', ['courseid' => $firstcourseid]), 'primary'],
-    ['i/import', $s('qa_upload'), new moodle_url('/local/examwizard/questions.php', ['courseid' => $firstcourseid]), 'secondary'],
-    ['i/users', $s('qa_students'), new moodle_url('/local/examwizard/students.php', ['courseid' => $firstcourseid]), 'secondary'],
-    ['i/down', $s('qa_seb'), new moodle_url('/local/examwizard/seb.php'), 'secondary'],
-];
-foreach ($actions as [$icon, $label, $url, $style]) {
-    echo html_writer::link($url,
-        $OUTPUT->pix_icon($icon, '') . html_writer::tag('span', $label),
-        ['class' => 'ew-action ew-action-' . $style]);
+// Building/uploading needs edit rights; SEB settings need site config. A hall
+// invigilator has neither, so only render the actions they can actually use.
+$actions = [];
+if ($caneditexams) {
+    $actions[] = ['t/add', $s('qa_createexam'), new moodle_url('/local/examwizard/wizard.php', ['courseid' => $firstcourseid]), 'primary'];
+    $actions[] = ['i/import', $s('qa_upload'), new moodle_url('/local/examwizard/questions.php', ['courseid' => $firstcourseid]), 'secondary'];
+    $actions[] = ['i/users', $s('qa_students'), new moodle_url('/local/examwizard/students.php', ['courseid' => $firstcourseid]), 'secondary'];
 }
-echo html_writer::end_div();
-echo html_writer::end_div();
+if (has_capability('moodle/site:config', context_system::instance())) {
+    $actions[] = ['i/down', $s('qa_seb'), new moodle_url('/local/examwizard/seb.php'), 'secondary'];
+}
+if ($actions) {
+    echo html_writer::start_div('ew-card');
+    echo html_writer::tag('h3', $s('qa_title'), ['class' => 'ew-card-h']);
+    echo html_writer::start_div('ew-actions');
+    foreach ($actions as [$icon, $label, $url, $style]) {
+        echo html_writer::link($url,
+            $OUTPUT->pix_icon($icon, '') . html_writer::tag('span', $label),
+            ['class' => 'ew-action ew-action-' . $style]);
+    }
+    echo html_writer::end_div();
+    echo html_writer::end_div();
+}
 
 // ---- CARD 3 : your exams ----
 echo html_writer::start_div('ew-card');
