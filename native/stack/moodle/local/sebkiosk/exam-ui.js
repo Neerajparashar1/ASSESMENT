@@ -70,16 +70,21 @@
           '<div class="itm-hero-slides">' + slides + '</div>' +
           '<div class="itm-hero-shade"></div>' +
           '<div class="itm-hero-body">' +
+            '<div class="itm-lh-mark"><img src="' + base + 'itm-logo-mark.png" alt="ITM Group of Institutions, Gwalior"></div>' +
             '<div class="itm-hero-kicker">Online Examination Portal</div>' +
-            '<h2>ITM Group of Institutions,<br>Gwalior</h2>' +
+            '<h2>Sit your exams,<br><em>secured.</em></h2>' +
+            '<p class="itm-lh-sub">ITM Group of Institutions, Gwalior &mdash; ' +
+            'AICTE&#8209;approved &middot; RGPV&#8209;affiliated</p>' +
             '<div class="itm-tagline">' +
               '<span class="itm-tl-rule"></span>' +
               '<span class="itm-tl-text">Think Big &middot; Think Beyond</span>' +
               '<span class="itm-tl-rule itm-tl-rule-r"></span>' +
             '</div>' +
-            '<p>AICTE-approved &middot; RGPV-affiliated<br>' +
-            'NH-75, opp. NRI College, Gwalior, Madhya Pradesh</p>' +
-            '<div class="itm-hero-assure">Secure &middot; AI-proctored &middot; Examination Cell</div>' +
+            '<ul class="itm-lh-points">' +
+              '<li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Locked-down Safe Exam Browser</li>' +
+              '<li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/></svg>Continuous AI proctoring</li>' +
+              '<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Instant auto-graded results</li>' +
+            '</ul>' +
           '</div>';
         page.insertBefore(hero, page.firstChild);
 
@@ -97,23 +102,19 @@
         }
       }
 
-      // RIGHT : fill the space around the card - feature chips + support bar
+      // RIGHT : a minimal footer line under the card (no contact details)
       var content = document.getElementById("page-content");
       if (content && !document.querySelector(".itm-loginaside")) {
         var aside = document.createElement("div");
         aside.className = "itm-loginaside";
         aside.innerHTML =
-          '<div class="itm-chips">' +
-            '<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Locked-down browser</span>' +
-            '<span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M17 10l4-2v8l-4-2"/></svg>AI proctoring</span>' +
-            '<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Instant result</span>' +
-          '</div>' +
-          '<div class="itm-support">' +
-            'Examination Cell &nbsp;&middot;&nbsp; examcell@itmgoi.in &nbsp;&middot;&nbsp; +91&nbsp;751&nbsp;244&nbsp;0058' +
-            '<span class="itm-copy">&copy; ITM Group of Institutions, Gwalior</span>' +
-          '</div>';
+          '<span class="itm-help">Trouble signing in? Contact your invigilator or department office.</span>' +
+          '<span class="itm-copy">&copy; ' + new Date().getFullYear() +
+          ' ITM Group of Institutions, Gwalior</span>';
         content.appendChild(aside);
       }
+      // NOTE: password show/hide is Moodle's own .toggle-sensitive-wrapper /
+      // .toggle-sensitive-btn (styled in custom.scss) - no custom toggle here.
     })();
   }
 
@@ -203,9 +204,14 @@
                / pagelayout-frontpage /.test(" " + body.className + " ") ||
                / path-course-index /.test(" " + body.className + " "))) {
 
-    /* site home only: a branded full-bleed hero + a 3-point assurance
-       strip above the "Available courses" grid. */
+    /* site home : the branded landing page. The hero (+ stat strip),
+       "Available courses" and the footer show for everyone. The marketing
+       blocks - "Candidate sign in" CTA, "Exam integrity", "How it works"
+       and the FAQ - are for LOGGED-OUT visitors only; a signed-in student
+       or admin lands on a leaner home page without them. */
     if (body.id === "page-site-index") {
+      var itmGuest = / notloggedin /.test(" " + body.className + " ");
+
       (function buildHomeHero() {
         if (document.querySelector(".itm-homehero")) { return; }
         var main = document.querySelector('[role="main"]') ||
@@ -246,9 +252,10 @@
                 '<a class="btn itm-cta-primary" href="/my/">' +
                   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>' +
                   'Go to my exams</a>' +
-                '<a class="btn itm-cta-ghost" href="/login/index.php">' +
-                  '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
-                  'Candidate sign in</a>' +
+                (itmGuest ?
+                  '<a class="btn itm-cta-ghost" href="/login/index.php">' +
+                    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+                    'Candidate sign in</a>' : '') +
               '</div>' +
             '</div>' +
             '<div class="itm-dashhero-badge" aria-hidden="true">' +
@@ -264,15 +271,28 @@
           '</div>';
         main.insertBefore(hero, main.firstChild);
 
-        // section header, then the numbered assurance cards
-        var sec = document.createElement("div");
-        sec.className = "itm-sec-head";
-        sec.innerHTML =
-          '<div class="itm-sec-kicker">Exam Integrity</div>' +
-          '<h2>Built to keep every exam <em>fair</em>.</h2>' +
-          '<p>Every attempt runs under the same three safeguards &mdash; ' +
-          'no exceptions, no advantage.</p>';
-        hero.parentNode.insertBefore(sec, hero.nextSibling);
+        // "Exam integrity" section + numbered cards - logged-out visitors only
+        if (itmGuest) {
+          var sec = document.createElement("div");
+          sec.className = "itm-sec-head";
+          sec.innerHTML =
+            '<div class="itm-sec-kicker">Exam Integrity</div>' +
+            '<h2>Built to keep every exam <em>fair</em>.</h2>' +
+            '<p>Every attempt runs under the same three safeguards &mdash; ' +
+            'no exceptions, no advantage.</p>';
+          hero.parentNode.insertBefore(sec, hero.nextSibling);
+
+          var assur = document.createElement("div");
+          assur.className = "itm-home-assurance";
+          assur.innerHTML =
+            chip("01", '<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+                 "Locked-down browser", "Safe Exam Browser kiosk mode blocks every other app, tab and shortcut.") +
+            chip("02", '<circle cx="12" cy="12" r="3.2"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>',
+                 "AI proctoring", "The webcam feed is monitored continuously for the whole attempt.") +
+            chip("03", '<path d="M4 12l5 5L20 6"/>',
+                 "Instant results", "Answers are auto-graded the moment you submit &mdash; no waiting.");
+          sec.parentNode.insertBefore(assur, sec.nextSibling);
+        }
 
         function chip(n, svg, t, s) {
           return '<div class="itm-assur">' +
@@ -280,16 +300,6 @@
                  '<svg viewBox="0 0 24 24" aria-hidden="true">' + svg + '</svg>' +
                  '<div><strong>' + t + '</strong><span>' + s + '</span></div></div>';
         }
-        var assur = document.createElement("div");
-        assur.className = "itm-home-assurance";
-        assur.innerHTML =
-          chip("01", '<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
-               "Locked-down browser", "Safe Exam Browser kiosk mode blocks every other app, tab and shortcut.") +
-          chip("02", '<circle cx="12" cy="12" r="3.2"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>',
-               "AI proctoring", "The webcam feed is monitored continuously for the whole attempt.") +
-          chip("03", '<path d="M4 12l5 5L20 6"/>',
-               "Instant results", "Answers are auto-graded the moment you submit &mdash; no waiting.");
-        sec.parentNode.insertBefore(assur, sec.nextSibling);
 
         var reduce = window.matchMedia &&
                      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -358,8 +368,9 @@
         main.appendChild(f);
       })();
 
-      /* home page: "How it works" 3-step timeline on a tinted band */
+      /* home page: "How it works" 3-step timeline (logged-out visitors only) */
       (function buildHowItWorks() {
+        if (!itmGuest) { return; }
         var assur = document.querySelector(".itm-home-assurance");
         if (!assur || document.querySelector(".itm-howitworks")) { return; }
         function step(t, d) {
@@ -383,8 +394,9 @@
         assur.parentNode.insertBefore(band, assur.nextSibling);
       })();
 
-      /* home page: FAQ accordion on a tinted band, after the course grid */
+      /* home page: FAQ accordion (logged-out visitors only) */
       (function buildFaq() {
+        if (!itmGuest) { return; }
         var list = document.getElementById("frontpage-available-course-list");
         var main = document.querySelector('[role="main"]') ||
                    document.getElementById("region-main");

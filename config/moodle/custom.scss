@@ -12,8 +12,9 @@
 // Moodle's SCSS compiler.
 
 :root {
-  // Fraunces = the display serif (big headings only). Source Serif 4 stays
-  // the workhorse serif; Inter carries all UI / body text.
+  // Fraunces = the display serif for big headings across the site. The
+  // login brand panel overrides this with Playfair Display (see LOGIN PAGE).
+  // Source Serif 4 stays the workhorse serif; Inter carries all UI / body.
   --itm-display: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
   --itm-serif:  "Source Serif 4", Georgia, "Times New Roman", serif;
   --itm-sans:   "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -407,11 +408,86 @@ body:not(.pagelayout-login) .drawer { top: var(--itm-navbar-h) !important; }
 }
 
 // ---------- Page header ------------------------------------------
-#page-header .page-context-header,
-.secondary-navigation .navigation {
+#page-header .page-context-header {
   border-bottom: 2px solid var(--itm-line);
 }
 #page-header h1 { color: var(--itm-maroon-900); }
+
+// ---------- Secondary navigation (course / front-page tab bar) ----
+//  Moodle's flat Bootstrap .nav-tabs  ->  a modern segmented pill bar.
+//  The panel look sits on the OUTER .secondary-navigation so the inner
+//  <ul> keeps its natural width (Moodle's moremenu JS measures that to
+//  decide which items collapse into "More" - restyling the <ul> itself
+//  with borders/padding confuses that and dumps everything into "More").
+.secondary-navigation {
+  margin-bottom: 1.35rem;
+  padding: .4rem;
+  background: linear-gradient(180deg, #fbf5f0 0%, #f6ede7 100%);
+  border: 1px solid var(--itm-line);
+  border-radius: var(--itm-radius);
+  box-shadow: inset 0 1px 0 #fff;
+
+  .navigation { border-bottom: 0; }
+
+  .moremenu > .nav.more-nav,
+  .nav-tabs {
+    border-bottom: 0 !important;
+    gap: .25rem;
+  }
+  .nav-item { margin: 0; }
+
+  .nav-tabs .nav-link,
+  .more-nav .nav-link,
+  .moremenu .nav-link {
+    border: 0 !important;
+    border-radius: 999px !important;
+    margin: 0 !important;
+    padding: .5rem 1.05rem;
+    font-family: var(--itm-sans);
+    font-weight: 600;
+    font-size: .875rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--itm-slate);
+    background: transparent;
+    transition: background-color .13s ease, color .13s ease, box-shadow .13s ease;
+  }
+  .nav-link:hover,
+  .nav-link:focus {
+    color: var(--itm-maroon-900);
+    background: #fff;
+    box-shadow: 0 6px 14px -9px rgba(74, 13, 23, .4);
+  }
+  .nav-link.active,
+  .nav-link.active_tree_node,
+  .nav-link[aria-current="page"] {
+    color: #fbeeca !important;
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%) !important;
+    box-shadow: 0 12px 24px -12px rgba(138, 27, 44, .7);
+  }
+
+  .dropdownmoremenu > .dropdown-toggle::after { margin-left: .4rem; }
+
+  .dropdown-menu {
+    border: 1px solid var(--itm-line);
+    border-radius: 12px;
+    box-shadow: 0 18px 44px -16px rgba(74, 13, 23, .3);
+    padding: .35rem;
+    margin-top: .5rem;
+  }
+  .dropdown-menu .dropdown-item {
+    border-radius: 8px;
+    padding: .5rem .8rem;
+    font-size: .86rem;
+    font-weight: 500;
+    color: var(--itm-ink);
+  }
+  .dropdown-menu .dropdown-item:hover,
+  .dropdown-menu .dropdown-item:focus {
+    background: var(--itm-maroon-050);
+    color: var(--itm-maroon-900);
+  }
+}
 
 // ---------- Cards (gentle) --------------------------------------
 .card { border-radius: var(--itm-radius); }
@@ -543,7 +619,7 @@ body.pagelayout-login {
 
   #page-header, #page-footer { display: none !important; }
 
-  // ===== SPLIT VIEW : campus photo + college info (left) | login (right) =====
+  // ===== SPLIT VIEW : brand panel (left) | sign-in card (right) =====
   // .itm-loginhero is injected as #page's first child by exam-ui.js
   #page {
     min-height: 100vh;
@@ -552,19 +628,18 @@ body.pagelayout-login {
     flex-wrap: nowrap;
     align-items: stretch;
     padding: 0 !important;
-    background: #f3edee !important;   // neutral ground for the right column
+    background: #f6efec !important;   // neutral ground for the right column
   }
 
-  // LEFT panel : auto-advancing itmgoi.in campus slideshow + college info
+  // ---------------- LEFT : brand panel ----------------
   .itm-loginhero {
     flex: 0 0 65%;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 3.5rem 3rem;
+    padding: 3.5rem clamp(2.5rem, 4.5vw, 4.5rem);
     color: #f6ecd8;
-    border-right: 5px solid var(--itm-gold);
     overflow: hidden;
     background: var(--itm-maroon-900);
   }
@@ -577,54 +652,110 @@ body.pagelayout-login {
     background-size: cover;
     background-repeat: no-repeat;
     opacity: 0;
-    transform: scale(1.04);
-    transition: opacity 1.4s ease, transform 7s ease;
+    transform: scale(1.05);
+    transition: opacity 1.5s ease, transform 9s ease;
   }
   .itm-loginhero .itm-hero-slide.is-active { opacity: 1; transform: scale(1); }
+  // LIGHT scrim: a soft wash only in the bottom-left corner (behind the
+  // text) - the rest of the campus photo stays clean, no black overlay.
   .itm-loginhero .itm-hero-shade {
-    // near-neutral dark wash: heavy only at the bottom (behind the text),
-    // almost clear over the upper photo so the campus colours read true
-    // (was a maroon-tinted gradient that cast the whole image mauve).
-    background: linear-gradient(
-      0deg,
-      rgba(18, 12, 14, .90) 0%,
-      rgba(18, 12, 14, .60) 24%,
-      rgba(18, 12, 14, .22) 52%,
-      rgba(18, 12, 14, .05) 100%
-    );
+    background:
+      linear-gradient(0deg,
+        rgba(12, 6, 8, .86) 0%,
+        rgba(12, 6, 8, .44) 20%,
+        rgba(12, 6, 8, .12) 40%,
+        rgba(12, 6, 8, 0) 62%),
+      linear-gradient(90deg,
+        rgba(12, 6, 8, .46) 0%,
+        rgba(12, 6, 8, .14) 28%,
+        rgba(12, 6, 8, 0) 46%);
     z-index: 1;
   }
-  .itm-loginhero .itm-hero-body { position: relative; z-index: 2; }
+  .itm-loginhero .itm-hero-body {
+    position: relative;
+    z-index: 2;
+    max-width: 520px;
+  }
+  .itm-lh-mark { display: none; }   // the card carries the full logo now
   .itm-loginhero .itm-hero-kicker {
-    font-size: 12px;
-    letter-spacing: 3px;
+    font-family: var(--itm-sans);
+    font-weight: 900;
+    font-size: 11.5px;
+    letter-spacing: .3em;
     text-transform: uppercase;
-    font-weight: 700;
-    color: var(--itm-gold);
+    color: var(--itm-gold-hi);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .5);
   }
   .itm-loginhero h2 {
-    font-family: var(--itm-serif);
+    font-family: "Playfair Display", var(--itm-display);
+    font-optical-sizing: auto;
     font-weight: 700;
-    font-size: 2rem;
-    line-height: 1.22;
-    margin: .55rem 0 0;
-    color: #ffffff;
-  }
-  .itm-loginhero .itm-hero-rule {
-    width: 54px;
-    height: 3px;
-    background: var(--itm-gold);
-    margin: 1rem 0;
-  }
-  .itm-loginhero p { margin: 0; font-size: 13.5px; line-height: 1.7; color: #eaddc8; }
-  .itm-loginhero .itm-hero-assure { margin-top: 1.15rem; font-size: 12px; color: #cdbfa8; }
+    font-size: clamp(1.95rem, 2.9vw, 2.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: .6rem 0 .5rem;
+    color: #fff;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, .62);
 
-  // the "Think Big - Think Beyond" motto sits between the name and address
-  .itm-loginhero .itm-tagline { margin: .1rem 0 1rem; }
-  .itm-loginhero .itm-hero-rule { display: none; }   // the tagline replaces the plain gold bar
+    em {
+      font-style: normal;
+      font-weight: 700;
+      background: linear-gradient(94deg, #ffe1a4 0%, #f4c074 48%, #e79d8a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  .itm-loginhero .itm-lh-sub {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.6;
+    color: #fbf1e1;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, .6);
+  }
+  .itm-loginhero .itm-tagline { margin: 1rem 0 1.55rem; }
+  .itm-loginhero .itm-tagline .itm-tl-text {
+    font-size: 11px;
+    color: var(--itm-gold-hi);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .5);
+  }
+  .itm-loginhero .itm-hero-rule { display: none; }
 
-  // RIGHT column : holds the card, vertically centred, with a soft
-  // branded ground + a faint crest watermark + a support bar (injected)
+  // three trust points (moved off the right column)
+  .itm-lh-points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+  }
+  .itm-lh-points li {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fdf5e8;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, .65);
+  }
+  .itm-lh-points svg {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    padding: 8px;
+    border-radius: 50%;
+    background: rgba(240, 196, 99, .16);
+    border: 1px solid rgba(240, 196, 99, .4);
+    fill: none;
+    stroke: var(--itm-gold-hi);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  // ---------------- RIGHT : sign-in card ----------------
   #page-content,
   #page-content.row {
     flex: 1 1 35%;
@@ -635,123 +766,69 @@ body.pagelayout-login {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem 1.5rem 5.5rem;
+    padding: 2rem 1.75rem 3.75rem;
     background:
-      radial-gradient(680px 420px at 82% 8%, rgba(201, 162, 75, .10), transparent 60%),
-      linear-gradient(158deg, #fdfaf9 0%, #f4eaec 60%, #efe2e5 100%);
+      radial-gradient(640px 420px at 88% 4%, rgba(207, 159, 63, .09), transparent 62%),
+      linear-gradient(165deg, #fdfcfa 0%, #f7f2ed 60%, #f2ebe5 100%);
     overflow: hidden;
   }
-  // big faint crest watermark, bottom-right
+  // oversized faint Fraunces monogram, bottom-right (echoes the site footer)
   #page-content::before {
-    content: "";
+    content: "ITM";
     position: absolute;
-    right: -70px;
-    bottom: -70px;
-    width: 380px;
-    height: 380px;
-    background: url("#{$itm-crest}") center / contain no-repeat;
-    opacity: .06;
+    right: -1.5rem;
+    bottom: -3.75rem;
+    font-family: var(--itm-display);
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: 12rem;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: rgba(74, 13, 23, .05);
     pointer-events: none;
+    user-select: none;
   }
   #region-main, #region-main-box, [role="main"] { width: auto; z-index: 1; }
   .login-wrapper { width: auto; padding: 0 !important; z-index: 1; }
 
-  // ---- injected support block under the card --------------------
-  .itm-loginaside {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1rem 1.5rem 1.25rem;
-    text-align: center;
-  }
-  .itm-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .5rem;
-    justify-content: center;
-    margin-bottom: .85rem;
-
-    span {
-      display: inline-flex;
-      align-items: center;
-      gap: .4rem;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--itm-maroon-900);
-      background: #fff;
-      border: 1px solid var(--itm-line);
-      border-radius: 999px;
-      padding: .32rem .7rem;
-      box-shadow: 0 4px 12px -8px rgba(74, 13, 23, .3);
-    }
-    svg {
-      width: 13px;
-      height: 13px;
-      fill: none;
-      stroke: var(--itm-gold-600);
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-  }
-  .itm-support {
-    font-size: 11.5px;
-    line-height: 1.6;
-    color: var(--itm-slate);
-
-    .itm-copy { display: block; margin-top: 2px; color: #8a7f81; font-size: 11px; }
-  }
-
-  // stack on narrow screens
-  @media (max-width: 900px) {
-    #page { flex-direction: column !important; }
-    .itm-loginhero {
-      flex: 0 0 auto;
-      min-height: 210px;
-      padding: 2rem 1.5rem;
-      border-right: 0;
-      border-bottom: 5px solid var(--itm-gold);
-    }
-    .itm-loginhero h2 { font-size: 1.5rem; }
-    #page-content, #page-content.row { flex: 1 1 auto; padding-bottom: 8.5rem; }
-    #page-content::before { width: 240px; height: 240px; right: -50px; bottom: -50px; }
-  }
-
-  // ---- the white card --------------------------------------------
+  // ---- the card (kept close to the earlier design) ----
   .login-container {
     width: 100%;
-    max-width: 404px;
-    padding: 0 2.125rem 0 !important;
-    border: 1px solid rgba(255, 255, 255, .06);
+    max-width: 406px;
+    padding: 0 2.2rem 0 !important;
+    background: #fff;
+    border: 1px solid rgba(255, 255, 255, .5);
     border-radius: var(--itm-radius-lg);
-    box-shadow: 0 44px 96px -36px rgba(0, 0, 0, .6);
+    box-shadow:
+      0 50px 100px -40px rgba(31, 7, 13, .55),
+      0 12px 32px -18px rgba(31, 7, 13, .28);
     overflow: hidden;
   }
 
-  // maroon ribbon (spans full width over the card's side padding)
+  // maroon ribbon across the top (bleeds over the card's side padding)
   .login-container::before {
     content: "Online Examination Portal";
     display: block;
-    margin: 0 -2.125rem;
-    padding: 15px 16px;
+    margin: 0 -2.2rem;
+    padding: 11px 16px;
     text-align: center;
     color: #f3e6c7;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 3px;
+    font-family: var(--itm-sans);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .28em;
     text-transform: uppercase;
     background: linear-gradient(120deg, var(--itm-maroon-900), var(--itm-maroon-700));
     border-bottom: 3px solid var(--itm-gold);
   }
 
-  // official ITM GOI logo (itmgoi.in) - it already carries the name + tagline
+  // FULL official ITM GOI logo (carries the name + "Think Big... Think Beyond")
   .loginform::before {
     content: "";
     display: block;
-    width: 232px;
-    height: 122px;
-    margin: 1.9rem auto .4rem;
+    width: 202px;
+    height: 106px;
+    margin: 1.35rem auto .35rem;
     background: url("/local/sebkiosk/itm-logo.png") center / contain no-repeat;
   }
 
@@ -760,75 +837,141 @@ body.pagelayout-login {
     font-size: 0;
     height: 2px;
     width: 44px;
-    margin: .35rem auto 1rem;
+    margin: .25rem auto .85rem;
     background: var(--itm-gold);
   }
+  h1.login-heading::before { content: none; }
   h1.login-heading::after { content: none; }
 
-  // sub-line sits directly above the first field
+  // sub-line above the first field
   #login-method-local::before {
     content: "Sign in with your ITM GOI account";
     display: block;
     text-align: center;
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--itm-slate);
-    margin: .75rem 0 1.4rem;
+    margin: .5rem 0 1.05rem;
   }
 
-  // ---- form fields (reveal the sr-only labels) -------------------
-  .login-form-username, .login-form-password { margin-bottom: 14px !important; }
-  .login-form-username label, .login-form-password label {
+  // ---- form fields ----
+  .login-form-username,
+  .login-form-password {
+    margin-bottom: .8rem !important;
+    position: relative;
+  }
+  .login-form-username label,
+  .login-form-password label {
     position: static;
     width: auto;
     height: auto;
-    margin: 0 0 6px;
+    margin: 0 0 .4rem;
     padding: 0;
     clip: auto;
     overflow: visible;
     white-space: normal;
     display: block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-family: var(--itm-sans);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .12em;
     text-transform: uppercase;
-    color: var(--itm-ink);
+    color: var(--itm-maroon-900);
   }
-  #login .form-control, #login .form-control-lg {
+  #login .form-control,
+  #login .form-control-lg {
     height: auto;
-    border-radius: 10px;
-    border: 1px solid var(--itm-line);
-    padding: 11px 13px;
+    width: 100%;
+    border-radius: 12px;
+    border: 1.5px solid var(--itm-line);
+    background: #fdfbfa;
+    padding: 12px 14px;
     font-size: 14px;
+    transition: border-color .14s ease, box-shadow .14s ease, background-color .14s ease;
   }
-  #login .form-control:focus {
+  #login .form-control:focus,
+  #login .form-control-lg:focus {
     border-color: var(--itm-maroon);
-    box-shadow: 0 0 0 3px rgba(138, 27, 44, .15);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(138, 27, 44, .13);
+    outline: none;
   }
 
-  .login-form-forgotpassword { text-align: right; margin: 8px 0 18px !important; }
-  .login-form-forgotpassword a { font-size: 12.5px; font-weight: 500; color: var(--itm-maroon-700); }
+  // password show / hide : restyle Moodle's native .toggle-sensitive-wrapper
+  // (a Bootstrap input-group) into an icon button sitting inside the field
+  .toggle-sensitive-wrapper {
+    position: relative;
+    display: block;
+  }
+  .toggle-sensitive-wrapper .form-control,
+  .toggle-sensitive-wrapper .form-control-lg {
+    width: 100%;
+    padding-right: 44px;
+    border-radius: 12px !important;
+  }
+  .toggle-sensitive-wrapper .input-group-append {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    z-index: 3;
+    display: flex !important;
+  }
+  .toggle-sensitive-btn.btn,
+  .toggle-sensitive-btn.btn.btn-secondary {
+    width: 34px;
+    height: 34px;
+    min-height: 0;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    color: var(--itm-slate);
+    box-shadow: none;
+    transition: background-color .13s ease, color .13s ease;
+  }
+  .toggle-sensitive-btn.btn:hover,
+  .toggle-sensitive-btn.btn:focus,
+  .toggle-sensitive-btn.btn.btn-secondary:hover,
+  .toggle-sensitive-btn.btn.btn-secondary:focus {
+    background: var(--itm-maroon-050);
+    color: var(--itm-maroon-700);
+    box-shadow: none;
+  }
+  .toggle-sensitive-btn .icon { margin: 0; font-size: 15px; width: 15px; height: 15px; }
 
-  // ---- primary button (with lock icon) -------------------------
-  .login-form-submit { margin-bottom: 0 !important; }
+  // ---- primary button ----
+  .login-form-submit { margin: .5rem 0 0 !important; }
   .login-form-submit .btn {
     width: 100%;
-    padding: 12px 16px;
-    border: 0;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--itm-maroon), var(--itm-maroon-700));
+    padding: 13px 18px;
+    border: 1px solid var(--itm-maroon-900);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #9c2233 0%, var(--itm-maroon) 46%, var(--itm-maroon-700) 100%);
     color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: .3px;
-    box-shadow: 0 12px 22px -12px rgba(138, 27, 44, .9);
+    font-family: var(--itm-sans);
+    font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: .01em;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: .55rem;
+    box-shadow:
+      0 18px 32px -14px rgba(138, 27, 44, .75),
+      inset 0 1px 0 rgba(255, 255, 255, .2);
+    transition: transform .13s ease, box-shadow .13s ease, filter .13s ease;
   }
   .login-form-submit .btn:hover {
-    background: linear-gradient(135deg, var(--itm-maroon-700), var(--itm-maroon-900));
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow:
+      0 24px 42px -14px rgba(138, 27, 44, .85),
+      inset 0 1px 0 rgba(255, 255, 255, .26);
   }
+  .login-form-submit .btn:active { transform: translateY(0); filter: brightness(.97); }
   .login-form-submit .btn::before {
     content: "";
     width: 15px;
@@ -836,23 +979,36 @@ body.pagelayout-login {
     background: url("#{$itm-lock}") center / contain no-repeat;
   }
 
-  // ---- hide guest login, dividers, footer ----------------------
+  // ---- forgot password ----
+  .login-form-forgotpassword {
+    text-align: right;
+    margin: 10px 0 4px !important;
+  }
+  .login-form-forgotpassword a {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--itm-maroon-700);
+    text-decoration: none;
+  }
+  .login-form-forgotpassword a:hover { text-decoration: underline; }
+
+  // ---- hide guest login, dividers, footer ----
   #login-method-guest, .login-divider, .logininfo, #page-footer, .footer { display: none; }
-  .loginform > .d-flex { justify-content: center; margin-top: .35rem; }
+  .loginform > .d-flex { justify-content: center; margin-top: .3rem; }
   .loginform > .d-flex .btn {
     background: transparent;
     border: 0;
-    color: var(--itm-slate);
-    font-size: 11px;
+    color: #9a8f91;
+    font-size: 10.5px;
     text-decoration: underline;
     padding: 2px 6px;
   }
 
-  // ---- assurance strip ---------------------------------------
+  // ---- card footer : secure line ----
   .login-container::after {
-    content: url("#{$itm-shield}") " Secure \00b7 AI-proctored \00b7 Examination Cell";
+    content: url("#{$itm-shield}") " Secure \00b7 AI-proctored";
     display: block;
-    margin: 1.5rem -2.125rem 0;
+    margin: 1.5rem -2.2rem 0;
     padding: 12px 16px;
     text-align: center;
     font-size: 11px;
@@ -860,6 +1016,41 @@ body.pagelayout-login {
     color: #7a6d6f;
     background: var(--itm-maroon-050);
     border-top: 1px dashed var(--itm-line);
+  }
+
+  // ---- injected minimal footer under the card ----
+  .itm-loginaside {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1rem 1.5rem 1.4rem;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #92868a;
+    z-index: 1;
+
+    .itm-help { color: var(--itm-slate); }
+    .itm-copy { display: block; margin-top: 3px; color: #a89ca0; }
+  }
+
+  // ---- stack on narrow screens ----
+  @media (max-width: 900px) {
+    #page { flex-direction: column !important; }
+    .itm-loginhero {
+      flex: 0 0 auto;
+      justify-content: flex-start;
+      padding: 2.6rem 1.7rem;
+    }
+    .itm-loginhero .itm-hero-body { max-width: none; }
+    .itm-loginhero h2 { font-size: 1.95rem; }
+    .itm-lh-points { display: none; }
+    .itm-lh-mark { margin-bottom: 1.1rem; }
+    .itm-loginhero .itm-tagline { margin: .9rem 0 0; }
+    #page-content,
+    #page-content.row { flex: 1 1 auto; padding: 2.6rem 1.25rem 4.5rem; }
+    #page-content::before { font-size: 8rem; bottom: -2rem; }
   }
 }
 
@@ -2342,24 +2533,8 @@ body.pagelayout-admin {
   #page-header h1,
   .page-context-header .page-header-headings h1 { color: var(--itm-maroon-900); }
 
-  // ---- secondary / category nav as a branded strip ----
-  .secondary-navigation .nav-tabs { border-bottom: 2px solid var(--itm-line); gap: .15rem; }
-  .secondary-navigation .nav-tabs .nav-link {
-    border: 0;
-    border-radius: 8px 8px 0 0;
-    font-weight: 600;
-    color: var(--itm-slate);
-    padding: .55rem .95rem;
-  }
-  .secondary-navigation .nav-tabs .nav-link:hover {
-    background: var(--itm-maroon-050);
-    color: var(--itm-maroon-900);
-  }
-  .secondary-navigation .nav-tabs .nav-link.active {
-    color: var(--itm-maroon-900);
-    background: #fff;
-    box-shadow: inset 0 -3px 0 var(--itm-maroon);
-  }
+  // secondary / category nav -> the shared modern pill bar (see the
+  // "Secondary navigation" block near the top of this file).
 
   // ---- admin search box (header action + on-page) ----
   .adminsearchform input[type="text"],
@@ -2724,9 +2899,9 @@ a.itm-admin-card-head:hover .itm-admin-card-title {
   .itm-tagline .itm-tl-rule { width: 22px; }
   .itm-tagline .itm-tl-text { font-size: 9px; letter-spacing: .22em; white-space: normal; }
 
-  // login hero: a bit shorter so the card isn't pushed way down
-  body.pagelayout-login .itm-loginhero { min-height: 180px; padding: 1.6rem 1.25rem; }
-  body.pagelayout-login .itm-loginhero h2 { font-size: 1.35rem; }
+  // login brand panel: compact on phones (full rules in the LOGIN PAGE block)
+  body.pagelayout-login .itm-loginhero { padding: 2.1rem 1.35rem; }
+  body.pagelayout-login .itm-loginhero h2 { font-size: 1.75rem; }
 
   // home page: widen card to full width, resize hero + stat strip
   body#page-site-index #page.drawers .main-inner {
