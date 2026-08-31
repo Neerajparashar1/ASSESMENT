@@ -50,12 +50,17 @@ function Purge-MoodleCaches {
 $publicHost = $Domain -replace '^https?://', '' -replace '/.*$', ''
 $publicUrl  = "https://$publicHost"
 
-# --- 1. is the local stack up? ---
+# --- 1. is Apache listening on the port? (any HTTP reply counts - during a
+#        re-point the portal is up but wwwroot points elsewhere, so a 200 is
+#        not guaranteed; a raw TCP connect is the right check) ---
+$up = $false
 try {
-    Invoke-WebRequest "http://localhost:$Port/login/index.php" -TimeoutSec 8 -UseBasicParsing | Out-Null
-} catch {
+    $c = New-Object System.Net.Sockets.TcpClient
+    $c.Connect('127.0.0.1', $Port); $up = $c.Connected; $c.Close()
+} catch { $up = $false }
+if (-not $up) {
     Write-Host ""
-    Write-Host "  Portal is not answering on http://localhost:$Port" -ForegroundColor Red
+    Write-Host "  Nothing is listening on http://localhost:$Port" -ForegroundColor Red
     Write-Host "  Start it first:  .\start.bat" -ForegroundColor Yellow
     exit 1
 }

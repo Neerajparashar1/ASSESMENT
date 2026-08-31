@@ -16,5 +16,6 @@ native/stack/Apache24/logs/
 native/stack/logs/
 native/stack/tmp/
 
-# demo.ps1 leaves this while a tunnel demo is live (demo-stop.ps1 removes it)
+# demo scripts leave these while a tunnel demo is live (the *-stop scripts remove them)
 *.demobak
+demo-url.txt
