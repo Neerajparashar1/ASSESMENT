@@ -59,7 +59,7 @@
       // LEFT : auto-advancing ITM GOI campus slideshow + college info
       if (!document.querySelector(".itm-loginhero")) {
         var base = ((window.M && M.cfg && M.cfg.wwwroot) || "") + "/local/sebkiosk/";
-        var pics = ["campus.jpg", "campus2.jpg"];   // the two itmgoi.in sliders
+        var pics = ["campus3.jpg", "campus.jpg", "campus2.jpg"];   // Sandipani block + the two itmgoi.in sliders
         var slides = pics.map(function (f, i) {
           return '<div class="itm-hero-slide' + (i === 0 ? " is-active" : "") +
                  '" style="background-image:url(' + base + f + ')"></div>';
@@ -73,7 +73,11 @@
           '<div class="itm-hero-body">' +
             '<div class="itm-hero-kicker">Online Examination Portal</div>' +
             '<h2>ITM Group of Institutions,<br>Gwalior</h2>' +
-            '<div class="itm-hero-rule"></div>' +
+            '<div class="itm-tagline">' +
+              '<span class="itm-tl-rule"></span>' +
+              '<span class="itm-tl-text">Think Big &middot; Think Beyond</span>' +
+              '<span class="itm-tl-rule itm-tl-rule-r"></span>' +
+            '</div>' +
             '<p>AICTE-approved &middot; RGPV-affiliated<br>' +
             'NH-75, opp. NRI College, Gwalior, Madhya Pradesh</p>' +
             '<div class="itm-hero-assure">Secure &middot; AI-proctored &middot; Examination Cell</div>' +
@@ -187,6 +191,125 @@
           els[cur].classList.add("is-active");
         }, 6000);
       }
+    })();
+  }
+
+  /* -----------------------------------------------------------------
+   * 0c. FRONT PAGE : "Available courses" list -> clickable accent cards.
+   *     CSS (custom.scss #frontpage-available-course-list) turns the
+   *     plain .coursebox list into a grid; this adds the per-card accent,
+   *     an initial-letter chip, and a whole-card overlay link.
+   * --------------------------------------------------------------- */
+  if (body && (body.id === "page-site-index" ||
+               / pagelayout-frontpage /.test(" " + body.className + " ") ||
+               / path-course-index /.test(" " + body.className + " "))) {
+
+    /* site home only: a branded full-bleed hero + a 3-point assurance
+       strip above the "Available courses" grid. */
+    if (body.id === "page-site-index") {
+      (function buildHomeHero() {
+        if (document.querySelector(".itm-homehero")) { return; }
+        var main = document.querySelector('[role="main"]') ||
+                   document.getElementById("region-main") ||
+                   document.querySelector(".region-main-content");
+        if (!main) { return; }
+
+        var wwwroot = (window.M && M.cfg && M.cfg.wwwroot) || "";
+        var base = wwwroot + "/local/sebkiosk/";
+        // Sandipani Prakhand academic block leads the home-page slideshow.
+        var pics = ["campus3.jpg", "campus.jpg", "campus2.jpg"];
+        var slides = pics.map(function (f, i) {
+          return '<div class="itm-hero-slide' + (i === 0 ? " is-active" : "") +
+                 '" style="background-image:url(' + base + f + ')"></div>';
+        }).join("");
+
+        var hero = document.createElement("section");
+        hero.className = "itm-dashhero itm-homehero";
+        hero.innerHTML =
+          '<div class="itm-hero-slides">' + slides + '</div>' +
+          '<div class="itm-hero-shade"></div>' +
+          '<div class="itm-dashhero-in">' +
+            '<div class="itm-dashhero-logo"><img src="' + base + 'itm-logo.png" alt="ITM Group of Institutions, Gwalior"></div>' +
+            '<div class="itm-dashhero-text">' +
+              '<div class="itm-dashhero-kicker">Online Examination Portal</div>' +
+              '<h2>ITM Group of Institutions, Gwalior</h2>' +
+              '<div class="itm-tagline">' +
+                '<span class="itm-tl-rule"></span>' +
+                '<span class="itm-tl-text">Think Big &middot; Think Beyond</span>' +
+                '<span class="itm-tl-rule itm-tl-rule-r"></span>' +
+              '</div>' +
+              '<p>Secure, AI&#8209;proctored online examinations &nbsp;&middot;&nbsp; Gwalior, Madhya Pradesh</p>' +
+              '<div class="itm-hero-cta">' +
+                '<a class="btn" href="' + wwwroot + '/my/">' +
+                  '<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>' +
+                  'Go to my exams</a>' +
+              '</div>' +
+            '</div>' +
+            '<div class="itm-dashhero-badge" aria-hidden="true">' +
+              '<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>' +
+              '<span>Secure &middot; AI-proctored</span>' +
+            '</div>' +
+          '</div>';
+        main.insertBefore(hero, main.firstChild);
+
+        function chip(svg, t, s) {
+          return '<div class="itm-assur"><svg viewBox="0 0 24 24">' + svg + '</svg>' +
+                 '<div><strong>' + t + '</strong><span>' + s + '</span></div></div>';
+        }
+        var assur = document.createElement("div");
+        assur.className = "itm-home-assurance";
+        assur.innerHTML =
+          chip('<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+               "Locked-down browser", "Safe Exam Browser kiosk mode") +
+          chip('<circle cx="12" cy="12" r="3.2"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>',
+               "AI proctoring", "Continuous webcam monitoring") +
+          chip('<path d="M4 12l5 5L20 6"/>',
+               "Instant results", "Auto-graded the moment you submit");
+        hero.parentNode.insertBefore(assur, hero.nextSibling);
+
+        var reduce = window.matchMedia &&
+                     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var els = hero.querySelectorAll(".itm-hero-slide");
+        if (els.length > 1 && !reduce) {
+          var cur = 0;
+          setInterval(function () {
+            els[cur].classList.remove("is-active");
+            cur = (cur + 1) % els.length;
+            els[cur].classList.add("is-active");
+          }, 6000);
+        }
+      })();
+    }
+
+    (function decorateCourseBoxes() {
+      var boxes = document.querySelectorAll(
+        "#frontpage-available-course-list .coursebox, .course_category_tree .coursebox");
+      Array.prototype.forEach.call(boxes, function (box, i) {
+        if (box.hasAttribute("data-itm-cbox")) { return; }
+        var link = box.querySelector("h3.coursename a, .coursename a, a.aalink");
+        if (!link) { return; }
+        box.setAttribute("data-itm-cbox", "1");
+        box.setAttribute("data-accent", String((i % 8) + 1));
+
+        var name = (link.textContent || "").trim();
+        var info = box.querySelector(".info");
+        if (info && name && !info.querySelector(".itm-cbox-chip")) {
+          var chip = document.createElement("span");
+          chip.className = "itm-cbox-chip";
+          chip.setAttribute("aria-hidden", "true");
+          chip.textContent = name.charAt(0).toUpperCase();
+          info.insertBefore(chip, info.firstChild);
+        }
+
+        if (!box.querySelector(".itm-cbox-link")) {
+          var a = document.createElement("a");
+          a.className = "itm-cbox-link";
+          a.href = link.href;
+          a.setAttribute("aria-label", name);
+          a.tabIndex = -1;            // the visible course-name link stays the focus target
+          box.appendChild(a);
+        }
+      });
     })();
   }
 

@@ -31,6 +31,20 @@
   --itm-radius-lg:   20px;
 }
 
+// Accent palette for card grids (front-page courses + admin landing).
+// data-accent 1..8, cycled by exam-ui.js. Muted jewel/earth tones that
+// sit with maroon + gold: (base, tint, dark).
+$itm-card-accents: (
+  1: (#8a1b2c, #fbf3f4, #6d1422),   // maroon (identity)
+  2: (#1f7a6f, #ecf5f3, #175f56),   // teal
+  3: (#42509b, #eef0f9, #333f7d),   // indigo
+  4: (#7c3b6c, #f6eef3, #612e55),   // plum
+  5: (#3f7a45, #edf5ee, #315f36),   // forest
+  6: (#b5652d, #fbf1e8, #8f4f22),   // terracotta
+  7: (#3a6ea5, #edf3f9, #2d5782),   // steel blue
+  8: (#a9822f, #f8f1e1, #856625),   // ochre
+);
+
 // ---------- Selection (was rendering text invisible) ------------------
 ::selection      { background: var(--itm-gold); color: #1a0c10; }
 ::-moz-selection { background: var(--itm-gold); color: #1a0c10; }
@@ -333,6 +347,39 @@ $itm-crest: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20vi
 $itm-lock:  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='15'%20height='15'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23ffffff'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='4'%20y='11'%20width='16'%20height='10'%20rx='2'/%3E%3Cpath%20d='M8%2011V8a4%204%200%200%201%208%200v3'/%3E%3C/svg%3E";
 $itm-shield: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='13'%20height='13'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23a9822f'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M12%203l7%203v5c0%204.5-3%208-7%2010-4-2-7-5.5-7-10V6l7-3z'/%3E%3Cpath%20d='M9%2012l2%202%204-4'/%3E%3C/svg%3E";
 
+// =================================================================
+//  "THINK BIG - THINK BEYOND" motto  --  itmgoi.in "kicker" treatment
+//  (their pattern: a short maroon->amber gradient rule, then black 900
+//  uppercase text tracked at .3em, then a mirrored rule). On our dark
+//  hero photos the text goes warm-gold instead of black. Used in the
+//  login hero + the home hero (exam-ui.js injects .itm-tagline).
+// =================================================================
+.itm-tagline {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  line-height: 1;
+}
+.itm-tagline .itm-tl-rule {
+  width: 30px;
+  height: 3px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--itm-maroon), var(--itm-gold));
+}
+.itm-tagline .itm-tl-rule-r {
+  background: linear-gradient(90deg, var(--itm-gold), var(--itm-maroon));
+}
+.itm-tagline .itm-tl-text {
+  font-family: var(--itm-sans);
+  font-weight: 900;
+  font-size: 10.5px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--itm-gold);
+  white-space: nowrap;
+}
+
 body.pagelayout-login {
   overflow-x: hidden;
 
@@ -352,7 +399,7 @@ body.pagelayout-login {
 
   // LEFT panel : auto-advancing itmgoi.in campus slideshow + college info
   .itm-loginhero {
-    flex: 0 0 60%;
+    flex: 0 0 65%;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -377,7 +424,16 @@ body.pagelayout-login {
   }
   .itm-loginhero .itm-hero-slide.is-active { opacity: 1; transform: scale(1); }
   .itm-loginhero .itm-hero-shade {
-    background: linear-gradient(0deg, rgba(31, 7, 13, .93) 0%, rgba(58, 10, 20, .50) 46%, rgba(74, 13, 23, .12) 100%);
+    // near-neutral dark wash: heavy only at the bottom (behind the text),
+    // almost clear over the upper photo so the campus colours read true
+    // (was a maroon-tinted gradient that cast the whole image mauve).
+    background: linear-gradient(
+      0deg,
+      rgba(18, 12, 14, .90) 0%,
+      rgba(18, 12, 14, .60) 24%,
+      rgba(18, 12, 14, .22) 52%,
+      rgba(18, 12, 14, .05) 100%
+    );
     z-index: 1;
   }
   .itm-loginhero .itm-hero-body { position: relative; z-index: 2; }
@@ -405,11 +461,15 @@ body.pagelayout-login {
   .itm-loginhero p { margin: 0; font-size: 13.5px; line-height: 1.7; color: #eaddc8; }
   .itm-loginhero .itm-hero-assure { margin-top: 1.15rem; font-size: 12px; color: #cdbfa8; }
 
+  // the "Think Big - Think Beyond" motto sits between the name and address
+  .itm-loginhero .itm-tagline { margin: .1rem 0 1rem; }
+  .itm-loginhero .itm-hero-rule { display: none; }   // the tagline replaces the plain gold bar
+
   // RIGHT column : holds the card, vertically centred, with a soft
   // branded ground + a faint crest watermark + a support bar (injected)
   #page-content,
   #page-content.row {
-    flex: 1 1 40%;
+    flex: 1 1 35%;
     min-width: 0;
     margin: 0 !important;
     position: relative;
@@ -1037,11 +1097,13 @@ body#page-mod-quiz-review {
 }
 
 // =================================================================
-//  STUDENT DASHBOARD  ( /my/ )  --  modern, exam-portal focused
-//  .itm-dashhero is injected above the blocks by exam-ui.js
+//  STUDENT DASHBOARD ( /my/ ) + SITE HOME ( / )  --  modern, exam-portal
+//  .itm-dashhero is injected above the content by exam-ui.js. The site
+//  home adds its own widen + hero-CTA + assurance strip block below.
 // =================================================================
 body#page-my-index,
-body.pagelayout-mydashboard {
+body.pagelayout-mydashboard,
+body#page-site-index {
   background: #efe6e8 !important;
 
   // ITM GOI campus, full-bleed, fixed. A viewport-locked pseudo-element
@@ -1226,6 +1288,258 @@ body.pagelayout-mydashboard {
 
   // dropdowns / "Add" buttons on the dashboard -> brand
   .btn-primary { background: var(--itm-maroon); border-color: var(--itm-maroon-700); }
+}
+
+// =================================================================
+//  SITE HOME ( / )  --  widen + full-bleed hero + assurance strip
+//  Fixes the "narrow column, big empty margins" look. The 830px Boost
+//  cap is lifted to ~1160px for this page only (admin forms stay narrow);
+//  the campus photo (inherited ::before above) fills the remaining
+//  gutters instead of blank white. exam-ui.js injects .itm-dashhero
+//  (with a CTA) + .itm-home-assurance.
+// =================================================================
+body#page-site-index {
+
+  // home-page backdrop = Sandipani Prakhand block (overrides the shared
+  // campus.jpg rule inherited from the dashboard selector above)
+  &::before {
+    background:
+      linear-gradient(180deg, rgba(31, 7, 13, .14) 0%, rgba(31, 7, 13, .26) 100%),
+      url("http://localhost:8080/local/sebkiosk/campus3.jpg") center center / cover no-repeat;
+  }
+
+  // wider readable container - just for the home page
+  #page.drawers .main-inner { max-width: 1160px; }
+
+  // the default "Home / <site name>" heading -> the hero replaces it
+  #page-header .page-context-header,
+  #page-header h1,
+  #region-main > h2:first-child { display: none; }
+  #page-header { margin-bottom: 0; }
+
+  // hero bleeds to the edges of the white .main-inner card
+  .itm-dashhero {
+    margin: -1.5rem -0.5rem 1.4rem;
+    border-radius: var(--itm-radius-lg) var(--itm-radius-lg) 0 0;
+  }
+  .itm-dashhero-in { padding: 1.9rem 2.1rem; flex-wrap: wrap; }
+  .itm-dashhero h2 { font-size: 1.95rem; }
+  .itm-dashhero p  { font-size: 13.5px; }
+  .itm-dashhero .itm-tagline { margin: .5rem 0 .15rem; }
+
+  // primary call-to-action inside the hero
+  .itm-hero-cta { margin-top: .95rem; width: 100%; }
+  .itm-hero-cta .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .6rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .92rem;
+    background: var(--itm-gold);
+    border: 1px solid var(--itm-gold-600);
+    color: #241206;
+    text-decoration: none;
+    box-shadow: 0 12px 24px -12px rgba(201, 162, 75, .6);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .itm-hero-cta .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 30px -12px rgba(201, 162, 75, .7); }
+  .itm-hero-cta .btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  // ---- assurance strip: 3 promises, injected under the hero ----
+  .itm-home-assurance {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .9rem;
+    margin: 0 0 1.6rem;
+  }
+  .itm-assur {
+    display: flex;
+    align-items: flex-start;
+    gap: .7rem;
+    padding: .95rem 1.05rem;
+    background: #fff;
+    border: 1px solid var(--itm-line);
+    border-left: 3px solid var(--itm-gold);
+    border-radius: var(--itm-radius);
+    box-shadow: 0 10px 26px -22px rgba(74, 13, 23, .4);
+  }
+  .itm-assur svg {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    fill: none; stroke: var(--itm-maroon);
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .itm-assur strong { display: block; font-size: .9rem; color: var(--itm-ink); }
+  .itm-assur span   { font-size: .78rem; color: var(--itm-slate); }
+
+  @media (max-width: 720px) {
+    .itm-home-assurance { grid-template-columns: 1fr; }
+    .itm-dashhero-in { padding: 1.4rem 1.3rem; }
+    .itm-dashhero h2 { font-size: 1.55rem; }
+  }
+}
+
+// =================================================================
+//  FRONT PAGE  --  "Available courses" list  ->  card grid
+//  Moodle renders a plain vertical list of `.coursebox` inside
+//  `#frontpage-available-course-list`. Same `.coursebox` markup is
+//  used on /course/index.php (category browse). exam-ui.js (frontpage
+//  branch) adds `data-accent`, an initial chip, and whole-card click.
+// =================================================================
+#frontpage-available-course-list,
+body.path-course-index .course_category_tree,
+body.pagelayout-coursecategory .course_category_tree {
+
+  > h2,
+  .categoryname {
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    color: var(--itm-maroon-900);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 2px solid var(--itm-line);
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: -2px;
+      width: 54px; height: 2px;
+      background: var(--itm-gold);
+    }
+  }
+
+  .courses.frontpage-course-list-all,
+  .courses.category-browse {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.1rem;
+    margin: 0;
+  }
+
+  .coursebox {
+    --acc:      var(--itm-maroon);
+    --acc-tint: var(--itm-maroon-050);
+    --acc-dark: var(--itm-maroon-900);
+
+    position: relative;
+    margin: 0;
+    padding: 1.15rem 1.2rem 1.2rem;
+    background: #fff;
+    border: 1px solid var(--itm-line);
+    border-top: 3px solid var(--acc);
+    border-radius: var(--itm-radius);
+    box-shadow: 0 10px 30px -24px rgba(74, 13, 23, .4);
+    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+
+    // kill the default zebra / border-bottom-only list look
+    &.even, &.odd { background: #fff; }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 42px -22px rgba(74, 13, 23, .5);
+      border-color: var(--acc);
+    }
+    // whole card is clickable (JS adds .itm-cbox-link overlay)
+    &:has(.itm-cbox-link) { cursor: pointer; }
+  }
+
+  @each $n, $c in $itm-card-accents {
+    .coursebox[data-accent="#{$n}"] {
+      --acc:      #{nth($c, 1)};
+      --acc-tint: #{nth($c, 2)};
+      --acc-dark: #{nth($c, 3)};
+    }
+  }
+
+  .coursebox .info {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    margin: 0 0 .5rem;
+  }
+  // initial-letter chip injected by exam-ui.js
+  .itm-cbox-chip {
+    flex: 0 0 auto;
+    width: 34px; height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--acc), var(--acc-dark));
+    color: #fdf7ec;
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 1.05rem;
+    box-shadow: 0 5px 12px -6px var(--acc);
+  }
+  .coursebox h3.coursename {
+    margin: 0;
+    font-size: 1.02rem;
+    line-height: 1.35;
+  }
+  .coursebox h3.coursename a {
+    color: var(--itm-maroon-900);
+    font-weight: 700;
+    text-decoration: none;
+    // sit above the whole-card overlay link so it stays focusable
+    position: relative;
+    z-index: 2;
+  }
+  .coursebox:hover h3.coursename a { color: var(--acc-dark); }
+
+  .coursebox .content { font-size: .84rem; color: var(--itm-slate); }
+  .coursebox .teachers { margin: 0; padding: 0; list-style: none; }
+  .coursebox .teachers li { display: inline; }
+  .coursebox .teachers li + li::before { content: " \00b7 "; }
+  .coursebox .teachers .font-weight-bold { font-weight: 600; color: var(--itm-ink); }
+  .coursebox .summary .no-overflow {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: .35rem;
+  }
+  .coursebox .moreinfo { display: none; }        // empty on this build
+
+  // "Open course" cue on hover (bottom-right)
+  .coursebox::after {
+    content: "Open course \2192";
+    position: absolute;
+    right: 1.2rem; bottom: .9rem;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--acc-dark);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity .14s ease, transform .14s ease;
+  }
+  .coursebox:hover::after { opacity: .9; transform: translateX(0); }
+
+  // the transparent overlay link exam-ui.js lays over the card
+  .itm-cbox-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: var(--itm-radius);
+    text-indent: -9999px;
+    overflow: hidden;
+  }
+  .itm-cbox-link:focus-visible {
+    outline: 3px solid var(--itm-gold);
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 640px) {
+  #frontpage-available-course-list .courses.frontpage-course-list-all,
+  .course_category_tree .courses.category-browse {
+    grid-template-columns: 1fr;
+  }
 }
 
 // =================================================================
@@ -1495,19 +1809,7 @@ body.pagelayout-admin #region-main [role="main"] > h2 {
 }
 
 // ---- landing / category : card grid (built by exam-ui.js) ----
-//  Each card carries an accent colour (data-accent 1..8, set by the JS)
-//  from a muted jewel/earth palette chosen to sit with maroon + gold.
-$itm-card-accents: (
-  1: (#8a1b2c, #fbf3f4, #6d1422),   // maroon (identity)
-  2: (#1f7a6f, #ecf5f3, #175f56),   // teal
-  3: (#42509b, #eef0f9, #333f7d),   // indigo
-  4: (#7c3b6c, #f6eef3, #612e55),   // plum
-  5: (#3f7a45, #edf5ee, #315f36),   // forest
-  6: (#b5652d, #fbf1e8, #8f4f22),   // terracotta
-  7: (#3a6ea5, #edf3f9, #2d5782),   // steel blue
-  8: (#a9822f, #f8f1e1, #856625),   // ochre
-);
-
+//  (accent palette $itm-card-accents is defined near the top of the file)
 .itm-admin-cardgrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
