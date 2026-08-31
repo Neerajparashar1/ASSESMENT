@@ -19,18 +19,25 @@ from one Windows machine with no cloud hosting.
 
 ## 1. Setup
 
-Everything the platform needs — PHP, Apache, MariaDB, Moodle — ships inside this
-repository. Setup is a clone plus one script; the script derives every path from the
-folder it sits in, so the project can live on any drive.
+Everything the platform needs — PHP, Apache, MariaDB, Moodle — ships **extracted**
+inside this repository. Setup is a clone plus one script; the script derives every path
+from the folder it sits in, so the project can live on any drive. No internet is needed
+for the server tier — only for the Visual C++ 2015–2022 x64 runtime, and only if it is
+not already installed (a small, reliable Microsoft download; most machines already have
+it).
 
-**You need:** Windows 10 (1809+) or 11 · local administrator · Windows PowerShell 5.1 ·
-Git for Windows · ~2 GB free disk · port 8080 free (or use `-Port`).
+**You need:** Windows 10 (1809+) or 11, 64-bit · local administrator · Windows
+PowerShell 5.1 · Git for Windows · ~2 GB free disk · port 8080 free (or use `-Port`).
+
+> **The project path must contain no spaces** and should be short and not OneDrive-synced.
+> `C:\exam\ASSESMENT` is fine; `C:\Users\John Doe\...` is not (the cron-task registration
+> and service paths do not survive a space).
 
 ```powershell
-# 1. get the code (long paths + a short, non-OneDrive folder)
+# 1. get the code (long paths + a short, non-OneDrive, space-free folder)
 git config --global core.longpaths true
-git clone https://github.com/Neerajparashar1/ASSESMENT.git
-cd ASSESMENT
+git clone https://github.com/Neerajparashar1/ASSESMENT.git C:\exam\ASSESMENT
+cd C:\exam\ASSESMENT
 
 # 2. add the folder to your antivirus exclusions
 #    Windows Security -> Virus & threat protection -> Exclusions -> Add -> Folder
@@ -83,7 +90,7 @@ document, §3.10.
 
 | Layer | Component | Notes |
 |---|---|---|
-| Application | Moodle 4.5 LTS | `native/stack/moodle` |
+| Application | Moodle 4.5 LTS | `native/stack/moodle` (bundled, extracted) |
 | Web server | Apache 2.4 + `mod_php` | service `eap-apache` · port 8080 |
 | Language | PHP 8.3, Thread-Safe | OPcache, 512 MB limit, 100 MB uploads |
 | Database | MariaDB 11.4 LTS | service `eap-mariadb` · `utf8mb4_unicode_ci` |

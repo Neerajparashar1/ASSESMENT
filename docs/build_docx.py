@@ -250,9 +250,11 @@ body("Application data lives at `E:\\ASSESMENT\\moodledata`; all secrets and sit
 # =====================================================================
 h1("\u00a73", "Setup & daily operation (no Docker)")
 body("The platform is a self-contained folder. Everything it needs \u2014 PHP, Apache, MariaDB and "
-     "Moodle \u2014 travels inside the repository, so setup is a `git clone` plus one script. There is "
-     "no Docker, no separate installers, and no download step during setup. The script derives every "
-     "path from the folder it sits in, so the project can live on any drive or directory.")
+     "Moodle \u2014 ships *extracted* inside the repository, so setup is a `git clone` plus one "
+     "script. There is no Docker and no separate installers. The server tier needs no internet "
+     "during setup \u2014 only the Visual C++ 2015\u20132022 x64 runtime is fetched, and only if it "
+     "is not already installed. The script derives every path from the folder it sits in, so the "
+     "project can live on any drive.")
 
 h2("3.1  What you need")
 bullets([
@@ -266,11 +268,13 @@ bullets([
 
 h2("3.2  Get the code")
 code_block(["git config --global core.longpaths true",
-            "git clone https://github.com/Neerajparashar1/ASSESMENT.git",
-            "cd ASSESMENT"])
-body("It can be cloned anywhere \u2014 `C:\\exam`, `D:\\ASSESMENT`, an external drive. *Avoid* a "
-     "OneDrive-synced folder or a very deep path; file-locking and the 260-character path limit "
-     "cause confusing failures. A short path such as `C:\\exam\\ASSESMENT` is safest.")
+            "git clone https://github.com/Neerajparashar1/ASSESMENT.git C:\\exam\\ASSESMENT",
+            "cd C:\\exam\\ASSESMENT"])
+note("The project path must contain no spaces \u2014",
+     "and should be short and not OneDrive-synced. `C:\\exam\\ASSESMENT` is fine; "
+     "`C:\\Users\\John Doe\\...` is not \u2014 the cron-task registration and the Windows service "
+     "paths do not survive a space. Deep paths also hit the 260-character limit; OneDrive folders "
+     "cause file-lock failures.")
 
 h2("3.3  Exclude the folder from antivirus")
 body("Windows Defender and other antivirus tools occasionally quarantine part of the bundled server "
@@ -311,9 +315,10 @@ note("On a different PC \u2014",
      "*this* machine. On the machine the repository was built on, run it *without* `-Reinstall`.")
 body("The script performs, in order:")
 numbered([
-    "Installs the Visual C++ 2015\u20132022 runtime if it is missing.",
-    "Verifies the bundled PHP 8.3, Apache 2.4, MariaDB 11.4 and Moodle 4.5 are present "
-    "(they ship in the repo; it only downloads if one is missing).",
+    "Installs the Visual C++ 2015\u20132022 runtime if it is missing (the one step that may need internet).",
+    "Detects the bundled PHP 8.3, Apache 2.4, MariaDB 11.4 and Moodle 4.5 under `native\\stack\\` "
+    "and uses them as-is \u2014 it downloads a component only if it is genuinely missing (or you "
+    "pass `-RefreshBinaries`).",
     "Generates `php.ini`, the Apache virtual host and `my.ini` \u2014 with *this machine's* paths.",
     "Initialises MariaDB, registers the `eap-mariadb` service, creates the `moodle` database and its user.",
     "Runs Moodle's non-interactive installer against `<project>\\moodledata`.",
@@ -371,6 +376,8 @@ bullets([
     "`-Reinstall` \u2014 drop and rebuild the database, config and data directory (required on a new machine).",
     "`-Port 8888` \u2014 serve on a different port; also updates the portal URL.",
     "`-PhpSeries 8.2` \u2014 use PHP 8.2 instead of 8.3.",
+    "`-RefreshBinaries` \u2014 force a clean re-download and re-extract of PHP / Apache / MariaDB / "
+    "Moodle (normally the bundled copies are used as-is).",
     "`-SkipPlugins` \u2014 do not (re)install the contrib plugins.",
     "`-ApacheZip / -PhpZip / -MariaDbZip / -MoodleZip <path>` \u2014 use a hand-downloaded build "
     "if a bundled one is missing or blocked.",

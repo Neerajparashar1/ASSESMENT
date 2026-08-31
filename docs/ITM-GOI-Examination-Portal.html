@@ -553,10 +553,11 @@
         <h2 class="title">Setup &amp; daily operation (no Docker)</h2>
       </div>
       <p class="lead">The platform is a self-contained folder. Everything it needs — PHP, Apache,
-        MariaDB and Moodle — travels inside the repository, so setup is a <span class="mono">git clone</span>
-        plus one script. No Docker, no separate installers, no download step during setup. The script
-        derives every path from the folder it sits in, so the project can live on any drive or
-        directory.</p>
+        MariaDB and Moodle — ships <strong>extracted</strong> inside the repository, so setup is a
+        <span class="mono">git clone</span> plus one script. No Docker, no separate installers. The
+        server tier needs no internet during setup — only the Visual&nbsp;C++ 2015&ndash;2022 x64
+        runtime is fetched, and only if it is not already installed. The script derives every path
+        from the folder it sits in, so the project can live on any drive.</p>
 
       <h3>3.1&nbsp;&nbsp;What you need</h3>
       <ul class="list">
@@ -572,13 +573,15 @@
 
       <h3>3.2&nbsp;&nbsp;Get the code</h3>
 <pre><code>git config --global core.longpaths true
-git clone https://github.com/Neerajparashar1/ASSESMENT.git
-cd ASSESMENT</code></pre>
-      <p>It can be cloned anywhere — <span class="mono">C:\exam</span>,
-        <span class="mono">D:\ASSESMENT</span>, an external drive. <strong>Avoid</strong> a
-        OneDrive-synced folder or a very deep path; file-locking and the 260-character path limit
-        cause confusing failures. A short path such as <span class="mono">C:\exam\ASSESMENT</span> is
-        safest.</p>
+git clone https://github.com/Neerajparashar1/ASSESMENT.git C:\exam\ASSESMENT
+cd C:\exam\ASSESMENT</code></pre>
+      <div class="callout">
+        <p><strong>The project path must contain no spaces</strong>, and should be short and not
+          OneDrive-synced. <span class="mono">C:\exam\ASSESMENT</span> is fine;
+          <span class="mono">C:\Users\John&nbsp;Doe\&hellip;</span> is not — the cron-task
+          registration and the Windows service paths do not survive a space. Deep paths also hit
+          the 260-character limit; OneDrive folders cause file-lock failures.</p>
+      </div>
 
       <h3>3.3&nbsp;&nbsp;Exclude the folder from antivirus</h3>
       <p>Windows Defender and other antivirus tools occasionally quarantine part of the bundled
@@ -632,9 +635,12 @@ notepad .env</code></pre>
       </div>
       <p>The script performs, in order:</p>
       <ol class="inner">
-        <li>Installs the Visual&nbsp;C++ 2015&ndash;2022 runtime if it is missing.</li>
-        <li>Verifies the bundled PHP&nbsp;8.3, Apache&nbsp;2.4, MariaDB&nbsp;11.4 and Moodle&nbsp;4.5
-          are present (they ship in the repo; it only downloads if one is missing).</li>
+        <li>Installs the Visual&nbsp;C++ 2015&ndash;2022 runtime if it is missing (the one step that
+          may need internet).</li>
+        <li>Detects the bundled PHP&nbsp;8.3, Apache&nbsp;2.4, MariaDB&nbsp;11.4 and Moodle&nbsp;4.5
+          under <span class="mono">native\stack\</span> and uses them as-is — it downloads a
+          component only if it is genuinely missing (or you pass
+          <span class="mono">-RefreshBinaries</span>).</li>
         <li>Generates <span class="mono">php.ini</span>, the Apache virtual host and
           <span class="mono">my.ini</span> — with <em>this machine's</em> paths.</li>
         <li>Initialises MariaDB, registers the <span class="mono">eap-mariadb</span> service, creates
@@ -711,6 +717,8 @@ notepad .env</code></pre>
           directory (required on a new machine).</li>
         <li><span class="mono">-Port 8888</span> — serve on a different port; also updates the portal URL.</li>
         <li><span class="mono">-PhpSeries 8.2</span> — use PHP 8.2 instead of 8.3.</li>
+        <li><span class="mono">-RefreshBinaries</span> — force a clean re-download and re-extract of
+          PHP / Apache / MariaDB / Moodle (normally the bundled copies are used as-is).</li>
         <li><span class="mono">-SkipPlugins</span> — do not (re)install the contrib plugins.</li>
         <li><span class="mono">-ApacheZip / -PhpZip / -MariaDbZip / -MoodleZip &lt;path&gt;</span> —
           use a hand-downloaded build if a bundled one is missing or blocked.</li>

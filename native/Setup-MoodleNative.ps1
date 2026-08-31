@@ -46,6 +46,7 @@ param(
     [switch]$SkipPlugins,
     [switch]$SkipServices,
     [switch]$Reinstall,
+    [switch]$RefreshBinaries,
     [string]$ApacheZip,
     [string]$PhpZip,
     [string]$MariaDbZip,
@@ -262,13 +263,26 @@ $mariaZipPath = if ($MariaDbZip) { $MariaDbZip } else { Join-Path $EapDlDir "mar
 $moodleZipPath = if ($MoodleZip) { $MoodleZip }  else { Join-Path $EapDlDir 'moodle-latest-405.zip' }
 $cacertPath   = Join-Path $EapPhpDir 'extras\ssl\cacert.pem'
 
+# The repository ships the EXTRACTED stack under native\stack\. When a component
+# is already present we neither download nor require its archive - so a fresh
+# clone installs with no internet for the server tier (the VC++ runtime, if it
+# is missing, is the only component still fetched). Pass -RefreshBinaries to
+# force a clean re-download + re-extract of every component.
+$havePhp    = (Test-Path (Join-Path $EapPhpDir    'php.exe'))          -and -not $RefreshBinaries
+$haveApache = (Test-Path (Join-Path $EapApacheDir 'bin\httpd.exe'))    -and -not $RefreshBinaries
+$haveMaria  = (Test-Path (Join-Path $EapMariaDir  'bin\mysqld.exe'))   -and -not $RefreshBinaries
+$haveMoodle = (Test-Path (Join-Path $EapMoodleDir 'version.php'))      -and -not $RefreshBinaries
+if ($havePhp -and $haveApache -and $haveMaria -and $haveMoodle) {
+    Write-EapOk 'Bundled stack detected (php / Apache / MariaDB / Moodle) - no downloads needed'
+}
+
 if (-not $SkipDownloads) {
-    if (-not $PhpZip)     { $phpUrl = "$($URL.PhpBase)/$(Split-Path -Leaf $phpZipPath)"
+    if (-not $havePhp -and -not $PhpZip) { $phpUrl = "$($URL.PhpBase)/$(Split-Path -Leaf $phpZipPath)"
         if (-not (Get-File -Url $phpUrl -OutFile $phpZipPath -Optional)) {
             Get-File -Url "$($URL.PhpBase)/archives/$(Split-Path -Leaf $phpZipPath)" -OutFile $phpZipPath | Out-Null } }
-    if (-not $MariaDbZip) { Get-File -Url $URL.Maria  -OutFile $mariaZipPath | Out-Null }
-    if (-not $MoodleZip)  { Get-File -Url $URL.Moodle -OutFile $moodleZipPath | Out-Null }
-    if (-not $ApacheZip) {
+    if (-not $haveMaria  -and -not $MariaDbZip) { Get-File -Url $URL.Maria  -OutFile $mariaZipPath | Out-Null }
+    if (-not $haveMoodle -and -not $MoodleZip)  { Get-File -Url $URL.Moodle -OutFile $moodleZipPath | Out-Null }
+    if (-not $haveApache -and -not $ApacheZip) {
         if (-not (Get-File -Url $URL.Apache -OutFile $apacheZipPath -Optional)) {
             Write-EapErr @"
 Apache Lounge download was blocked (Cloudflare). Do this once, by hand:
@@ -280,28 +294,37 @@ Apache Lounge download was blocked (Cloudflare). Do this once, by hand:
         }
     }
 } else {
-    Write-EapWarn '-SkipDownloads: expecting archives to already be in _downloads\'
+    Write-EapWarn '-SkipDownloads: expecting archives to already be in _downloads\ (or the extracted stack to be present)'
 }
-foreach ($z in @($phpZipPath, $apacheZipPath, $mariaZipPath, $moodleZipPath)) {
+# Only require an archive for a component that is NOT already extracted.
+$needZips = @()
+if (-not $havePhp)    { $needZips += $phpZipPath }
+if (-not $haveApache) { $needZips += $apacheZipPath }
+if (-not $haveMaria)  { $needZips += $mariaZipPath }
+if (-not $haveMoodle) { $needZips += $moodleZipPath }
+foreach ($z in $needZips) {
     if (-not (Test-Path -LiteralPath $z)) { throw "Required archive not found: $z" }
 }
 
 # =====================================================================
 #  2. extract
 # =====================================================================
-if ($Reinstall -or -not (Test-Path (Join-Path $EapPhpDir 'php.exe'))) {
+# Extract only what is missing (or everything, with -RefreshBinaries). A plain
+# -Reinstall keeps the bundled/extracted stack and rebuilds just the database,
+# config.php and moodledata further down.
+if (-not $havePhp) {
     Write-EapInfo 'Extracting PHP...';    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $EapPhpDir
     Expand-Into -Zip $phpZipPath -Dest $EapPhpDir
 }
-if ($Reinstall -or -not (Test-Path (Join-Path $EapApacheDir 'bin\httpd.exe'))) {
+if (-not $haveApache) {
     Write-EapInfo 'Extracting Apache...'; Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $EapApacheDir
     Expand-Into -Zip $apacheZipPath -Dest $EapApacheDir -Flatten
 }
-if ($Reinstall -or -not (Test-Path (Join-Path $EapMariaDir 'bin\mysqld.exe'))) {
+if (-not $haveMaria) {
     Write-EapInfo 'Extracting MariaDB...'; Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $EapMariaDir
     Expand-Into -Zip $mariaZipPath -Dest $EapMariaDir -Flatten
 }
-if ($Reinstall -or -not (Test-Path (Join-Path $EapMoodleDir 'version.php'))) {
+if (-not $haveMoodle) {
     Write-EapInfo 'Extracting Moodle 4.5 (this takes a minute)...'
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $EapMoodleDir
     Expand-Into -Zip $moodleZipPath -Dest $EapMoodleDir -Flatten
