@@ -330,23 +330,31 @@
         var f = document.createElement("footer");
         f.className = "itm-sitefoot";
         f.innerHTML =
+          '<div class="itm-foot-cta">' +
+            '<div>' +
+              '<span class="itm-foot-cta-k">Ready when you are</span>' +
+              '<strong>Head straight to your exams</strong>' +
+            '</div>' +
+            '<a class="btn" href="/my/">Go to my exams' +
+              '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>' +
+            '</a>' +
+          '</div>' +
           '<div class="itm-sitefoot-in">' +
             '<div class="itm-foot-brand">' +
               '<img src="' + base + 'itm-logo.png" alt="">' +
               '<div><strong>ITM Group of Institutions, Gwalior</strong>' +
               '<span>Online Examination Portal</span></div>' +
             '</div>' +
+            '<p class="itm-foot-tag">Think Big.<br><em>Think Beyond.</em></p>' +
             '<ul class="itm-foot-accred">' +
               '<li>NAAC &lsquo;A&rsquo;</li><li>NBA</li><li>AICTE</li><li>RGPV</li>' +
             '</ul>' +
-            '<div class="itm-foot-meta">' +
-              'AICTE&#8209;approved &middot; RGPV&#8209;affiliated' +
-              ' &nbsp;&middot;&nbsp; Gwalior, Madhya Pradesh' +
-              ' &nbsp;&middot;&nbsp; Think Big &middot; Think Beyond' +
-            '</div>' +
           '</div>' +
-          '<div class="itm-foot-copy">&copy; ' + year +
-          ' ITM Group of Institutions, Gwalior. All rights reserved.</div>';
+          '<div class="itm-foot-copy">' +
+            '<span>&copy; ' + year + ' ITM Group of Institutions, Gwalior. All rights reserved.</span>' +
+            '<span>AICTE&#8209;approved &middot; RGPV&#8209;affiliated &middot; Gwalior, Madhya Pradesh</span>' +
+          '</div>' +
+          '<span class="itm-foot-watermark" aria-hidden="true">ITM</span>';
         main.appendChild(f);
       })();
 
@@ -414,7 +422,7 @@
                      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         var nodes = [].slice.call(document.querySelectorAll(
           ".itm-sec-head, .itm-home-assurance, .itm-steps, " +
-          "#frontpage-available-course-list .courses, .itm-faq-list, .itm-sitefoot-in"));
+          "#frontpage-available-course-list .courses, .itm-faq-list, .itm-sitefoot"));
         if (!nodes.length || reduce || !("IntersectionObserver" in window)) { return; }
         nodes.forEach(function (n) { n.classList.add("itm-reveal"); });
         var io = new IntersectionObserver(function (ents) {
