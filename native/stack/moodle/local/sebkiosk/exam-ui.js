@@ -58,7 +58,7 @@
 
       // LEFT : auto-advancing ITM GOI campus slideshow + college info
       if (!document.querySelector(".itm-loginhero")) {
-        var base = ((window.M && M.cfg && M.cfg.wwwroot) || "") + "/local/sebkiosk/";
+        var base = "/local/sebkiosk/";   // root-relative: works on localhost or a tunnel host
         var pics = ["campus3.jpg", "campus.jpg", "campus2.jpg"];   // Sandipani block + the two itmgoi.in sliders
         var slides = pics.map(function (f, i) {
           return '<div class="itm-hero-slide' + (i === 0 ? " is-active" : "") +
@@ -154,7 +154,7 @@
       var dateStr = days[now.getDay()] + ", " + now.getDate() + " " +
         months[now.getMonth()] + " " + now.getFullYear();
 
-      var base = ((window.M && M.cfg && M.cfg.wwwroot) || "") + "/local/sebkiosk/";
+      var base = "/local/sebkiosk/";   // root-relative: works on localhost or a tunnel host
       var pics = ["campus.jpg", "campus2.jpg"];
       var slides = pics.map(function (f, i) {
         return '<div class="itm-hero-slide' + (i === 0 ? " is-active" : "") +
@@ -214,8 +214,7 @@
                    document.querySelector(".region-main-content");
         if (!main) { return; }
 
-        var wwwroot = (window.M && M.cfg && M.cfg.wwwroot) || "";
-        var base = wwwroot + "/local/sebkiosk/";
+        var base = "/local/sebkiosk/";   // root-relative: works on localhost or a tunnel host
         // Sandipani Prakhand academic block leads the home-page slideshow.
         var pics = ["campus3.jpg", "campus.jpg", "campus2.jpg"];
         var slides = pics.map(function (f, i) {
@@ -240,7 +239,7 @@
               '</div>' +
               '<p>Secure, AI&#8209;proctored online examinations &nbsp;&middot;&nbsp; Gwalior, Madhya Pradesh</p>' +
               '<div class="itm-hero-cta">' +
-                '<a class="btn" href="' + wwwroot + '/my/">' +
+                '<a class="btn" href="/my/">' +
                   '<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>' +
                   'Go to my exams</a>' +
               '</div>' +
@@ -616,7 +615,7 @@
     var attempt = qs.get("attempt") || "";
     var cmid = qs.get("cmid") ||
       ((form.querySelector && form.querySelector("input[name=cmid]") || {}).value) || "";
-    var endpoint = (cfg.wwwroot || "") + "/local/sebkiosk/finish.php";
+    var endpoint = "/local/sebkiosk/finish.php";   // root-relative
 
     var internal = false;
     var mark = function () { internal = true; };

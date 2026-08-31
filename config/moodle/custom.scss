@@ -594,7 +594,7 @@ body.pagelayout-login {
     width: 232px;
     height: 122px;
     margin: 1.9rem auto .4rem;
-    background: url("http://localhost:8080/local/sebkiosk/itm-logo.png") center / contain no-repeat;
+    background: url("/local/sebkiosk/itm-logo.png") center / contain no-repeat;
   }
 
   // heading text is redundant with the logo -> keep only a slim gold rule
@@ -1116,7 +1116,7 @@ body#page-site-index {
     z-index: -1;
     background:
       linear-gradient(180deg, rgba(31, 7, 13, .12) 0%, rgba(31, 7, 13, .22) 100%),
-      url("http://localhost:8080/local/sebkiosk/campus.jpg") center center / cover no-repeat;
+      url("/local/sebkiosk/campus.jpg") center center / cover no-repeat;
   }
 
   // the plain "Dashboard" title is replaced by the welcome banner
@@ -1305,7 +1305,7 @@ body#page-site-index {
   &::before {
     background:
       linear-gradient(180deg, rgba(31, 7, 13, .14) 0%, rgba(31, 7, 13, .26) 100%),
-      url("http://localhost:8080/local/sebkiosk/campus3.jpg") center center / cover no-repeat;
+      url("/local/sebkiosk/campus3.jpg") center center / cover no-repeat;
   }
 
   // wider readable container - just for the home page
