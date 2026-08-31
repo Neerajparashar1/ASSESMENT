@@ -1919,6 +1919,41 @@ a.itm-admin-card-head:hover .itm-admin-card-title {
   .itm-admin-save:hover { background: var(--itm-maroon-700); }
 }
 
+// =================================================================
+//  MOBILE  --  stack the hero banners, shrink the motto, tidy cards.
+//  Covers the /my/ dashboard hero + the site-home hero + login-hero
+//  tagline. Comes after every base + per-page rule so it wins <=700px.
+// =================================================================
+@media (max-width: 700px) {
+
+  // welcome / home hero: logo, text, badge stack vertically
+  .itm-dashhero-in {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .85rem;
+    padding: 1.35rem 1.2rem;
+  }
+  .itm-dashhero-logo img { height: 42px; }
+  .itm-dashhero-badge { margin-left: 0; }
+  .itm-dashhero h2 { font-size: 1.4rem; }
+  .itm-dashhero p  { font-size: 12.5px; }
+  .itm-hero-cta { width: 100%; }
+  .itm-hero-cta .btn { width: 100%; justify-content: center; }
+
+  // "Think Big - Think Beyond" motto: allow wrap, no horizontal overflow
+  .itm-tagline { gap: .5rem; flex-wrap: wrap; }
+  .itm-tagline .itm-tl-rule { width: 22px; }
+  .itm-tagline .itm-tl-text { font-size: 9px; letter-spacing: .22em; white-space: normal; }
+
+  // login hero: a bit shorter so the card isn't pushed way down
+  body.pagelayout-login .itm-loginhero { min-height: 180px; padding: 1.6rem 1.25rem; }
+  body.pagelayout-login .itm-loginhero h2 { font-size: 1.35rem; }
+
+  // front-page course cards: drop the hover-only "Open course" cue
+  #frontpage-available-course-list .coursebox::after,
+  .course_category_tree .coursebox::after { display: none; }
+}
+
 // section jump-nav (fixed right rail, wide screens only)
 .itm-admin-jump { display: none; }
 @media (min-width: 1400px) {
