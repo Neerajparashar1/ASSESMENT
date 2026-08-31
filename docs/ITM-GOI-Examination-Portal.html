@@ -1,0 +1,1086 @@
+<title>ITM GOI Examination Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* ============================================================
+     ITM Group of Institutions — Online Examination Portal
+     Reference document. Palette + type taken from the portal's
+     own visual identity (deep maroon #8a1b2c + academic gold).
+     ============================================================ */
+
+  :root {
+    /* light — the default, un-stamped state */
+    --paper:      #faf6f2;
+    --paper-sub:  #f2e9e3;
+    --card:       #ffffff;
+    --ink:        #241a1c;
+    --slate:      #6c6064;
+    --faint:      #8b7f82;
+    --line:       #e8ded9;
+    --line-soft:  #f0e7e2;
+
+    --maroon:      #8a1b2c;   /* identity accent */
+    --maroon-ink:  #7a1626;   /* maroon as readable text on paper */
+    --maroon-deep: #46101a;   /* hero / footer band */
+    --gold:        #b6862f;   /* gold as readable text on paper */
+    --gold-bright: #c9a24b;   /* gold for rules / graphics */
+
+    --ok:   #3f7a45;
+    --plan: #a9822f;
+    --risk: #a4482a;
+
+    --ok-bg:   #eef4ee;
+    --plan-bg: #f7efdd;
+    --risk-bg: #f7ebe4;
+    --maroon-bg: #f8eef0;
+
+    --shadow: 0 18px 40px -30px rgba(70, 16, 26, .55);
+    --radius: 12px;
+    --maxw: 66rem;
+
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono:  "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #17110f;
+      --paper-sub:  #1e1714;
+      --card:       #221a18;
+      --ink:        #f1e8e3;
+      --slate:      #b4a6a1;
+      --faint:      #90827d;
+      --line:       #372c28;
+      --line-soft:  #2c2320;
+
+      --maroon:      #e0899b;
+      --maroon-ink:  #e79aa9;
+      --maroon-deep: #250b10;
+      --gold:        #d9ba76;
+      --gold-bright: #d9ba76;
+
+      --ok:   #79c682;
+      --plan: #e0bd77;
+      --risk: #e59a78;
+
+      --ok-bg:   #1a241a;
+      --plan-bg: #2a2213;
+      --risk-bg: #2a1c16;
+      --maroon-bg: #2a171b;
+
+      --shadow: 0 18px 40px -28px rgba(0, 0, 0, .7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:      #17110f;
+    --paper-sub:  #1e1714;
+    --card:       #221a18;
+    --ink:        #f1e8e3;
+    --slate:      #b4a6a1;
+    --faint:      #90827d;
+    --line:       #372c28;
+    --line-soft:  #2c2320;
+
+    --maroon:      #e0899b;
+    --maroon-ink:  #e79aa9;
+    --maroon-deep: #250b10;
+    --gold:        #d9ba76;
+    --gold-bright: #d9ba76;
+
+    --ok:   #79c682;
+    --plan: #e0bd77;
+    --risk: #e59a78;
+
+    --ok-bg:   #1a241a;
+    --plan-bg: #2a2213;
+    --risk-bg: #2a1c16;
+    --maroon-bg: #2a171b;
+
+    --shadow: 0 18px 40px -28px rgba(0, 0, 0, .7);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    background:
+      radial-gradient(120% 140% at 88% -20%, rgba(201, 162, 75, .16), transparent 60%),
+      linear-gradient(160deg, var(--maroon-deep) 0%, #5c1420 62%, #6d1826 100%);
+    color: #f4e7d6;
+    border-bottom: 3px solid var(--gold-bright);
+  }
+  .masthead .wrap { padding-top: 3.4rem; padding-bottom: 2.6rem; }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    font-weight: 800;
+    font-size: .7rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+  }
+  .kicker::before {
+    content: "";
+    width: 34px; height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #d7a94f, #8a1b2c);
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(2.1rem, 5vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -.015em;
+    text-wrap: balance;
+    margin: 1rem 0 .6rem;
+    color: #fff;
+  }
+  .masthead p.lede {
+    max-width: 40rem;
+    margin: 0;
+    font-size: 1.06rem;
+    color: #ecdcc6;
+  }
+
+  .facts {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px;
+    background: rgba(244, 231, 214, .16);
+    border: 1px solid rgba(244, 231, 214, .16);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .facts div {
+    background: linear-gradient(160deg, rgba(70,16,26,.5), rgba(40,10,16,.5));
+    padding: .85rem 1rem;
+  }
+  .facts dt {
+    font-size: .66rem;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+  }
+  .facts dd {
+    margin: .2rem 0 0;
+    font-size: .92rem;
+    color: #f4e7d6;
+    font-family: var(--mono);
+  }
+
+  /* ---------- table of contents ---------- */
+  nav.toc {
+    margin: 2.6rem auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    padding: 1.4rem 1.6rem;
+  }
+  nav.toc h2 {
+    font-family: var(--sans);
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin: 0 0 .9rem;
+  }
+  nav.toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: 2.2rem;
+  }
+  nav.toc li {
+    break-inside: avoid;
+    margin: .18rem 0;
+  }
+  nav.toc a {
+    display: flex;
+    gap: .6rem;
+    text-decoration: none;
+    color: var(--ink);
+    padding: .28rem .2rem;
+    border-radius: 6px;
+  }
+  nav.toc a .num {
+    font-family: var(--mono);
+    color: var(--gold);
+    font-size: .82rem;
+    flex: 0 0 auto;
+  }
+  nav.toc a:hover { color: var(--maroon-ink); }
+  nav.toc a:hover .num { color: var(--maroon-ink); }
+
+  /* ---------- sections ---------- */
+  main { padding-bottom: 1rem; }
+  section { margin: 3.4rem 0; scroll-margin-top: 1.5rem; }
+
+  .sec-head { margin-bottom: 1.4rem; }
+  .sec-head .clause {
+    font-family: var(--mono);
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .04em;
+    color: var(--gold);
+  }
+  h2.title {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3.2vw, 1.95rem);
+    line-height: 1.15;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+    margin: .3rem 0 0;
+  }
+  h2.title::after {
+    content: "";
+    display: block;
+    width: 46px; height: 3px;
+    margin-top: .7rem;
+    border-radius: 999px;
+    background: var(--gold-bright);
+  }
+
+  h3 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.02rem;
+    margin: 1.8rem 0 .5rem;
+    color: var(--ink);
+  }
+
+  p { margin: .7rem 0; max-width: 64ch; }
+  a { color: var(--maroon-ink); text-underline-offset: 2px; }
+
+  .lead {
+    font-size: 1.08rem;
+    color: var(--ink);
+    max-width: 62ch;
+  }
+
+  ul.list { margin: .6rem 0; padding-left: 1.1rem; max-width: 64ch; }
+  ul.list li { margin: .38rem 0; }
+  ul.list li::marker { color: var(--gold); }
+
+  ol.steps { max-width: 64ch; padding-left: 1.4rem; margin: 1rem 0; }
+  ol.steps > li { margin: 1.1rem 0; padding-left: .3rem; }
+  ol.steps > li::marker { color: var(--maroon-ink); font-weight: 700; }
+  ol.steps > li > strong { display: block; margin-bottom: .3rem; }
+  ol.inner { margin: .5rem 0; padding-left: 1.2rem; font-size: .92rem; color: var(--slate); }
+  ol.inner li { margin: .28rem 0; }
+
+  pre {
+    margin: .8rem 0;
+    background: var(--paper-sub);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gold-bright);
+    border-radius: 8px;
+    padding: .85rem 1.05rem;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: .82rem;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  pre code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
+  pre .c { color: var(--faint); }
+
+  strong { font-weight: 700; }
+  code, .mono {
+    font-family: var(--mono);
+    font-size: .86em;
+    background: var(--paper-sub);
+    border: 1px solid var(--line-soft);
+    border-radius: 5px;
+    padding: .08em .4em;
+    word-break: break-word;
+  }
+
+  /* ---------- callout ---------- */
+  .callout {
+    margin: 1.4rem 0;
+    border-left: 3px solid var(--maroon);
+    background: var(--maroon-bg);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1rem 1.2rem;
+  }
+  .callout p { margin: .3rem 0; max-width: 60ch; }
+  .callout.risk { border-left-color: var(--risk); background: var(--risk-bg); }
+
+  /* ---------- feature cards ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+  .cardf {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--maroon);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--shadow);
+  }
+  .cardf h4 {
+    font-family: var(--sans);
+    font-size: .96rem;
+    font-weight: 700;
+    margin: 0 0 .4rem;
+  }
+  .cardf p { margin: 0; font-size: .9rem; color: var(--slate); max-width: none; }
+  .cardf .mono { font-size: .78rem; display: inline-block; margin-top: .55rem; }
+
+  /* ---------- chips ---------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .2rem .5rem;
+    border-radius: 999px;
+    border: 1px solid;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+  .chip-prod { color: var(--maroon-ink); background: var(--maroon-bg); border-color: color-mix(in srgb, var(--maroon-ink) 30%, transparent); }
+  .chip-built { color: var(--ok); background: var(--ok-bg); border-color: color-mix(in srgb, var(--ok) 34%, transparent); }
+  .chip-plan { color: var(--plan); background: var(--plan-bg); border-color: color-mix(in srgb, var(--plan) 36%, transparent); }
+  .chip-risk { color: var(--risk); background: var(--risk-bg); border-color: color-mix(in srgb, var(--risk) 36%, transparent); }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: .3rem 0 1rem; }
+
+  /* ---------- tables ---------- */
+  .tablewrap {
+    margin: 1.2rem 0;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+    font-variant-numeric: tabular-nums;
+  }
+  thead th {
+    text-align: left;
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--slate);
+    background: var(--paper-sub);
+    padding: .7rem .9rem;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: .7rem .9rem;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover td { background: var(--paper-sub); }
+  td .mono { background: none; border: 0; padding: 0; color: var(--maroon-ink); }
+  td.k { font-weight: 600; white-space: nowrap; }
+
+  /* ---------- footer ---------- */
+  footer {
+    margin-top: 4rem;
+    background: linear-gradient(160deg, var(--maroon-deep), #3a0d16);
+    color: #e8d8c4;
+    border-top: 3px solid var(--gold-bright);
+  }
+  footer .wrap { padding: 2.4rem 1.5rem; }
+  footer .kicker { color: var(--gold-bright); }
+  footer p { color: #e8d8c4; max-width: 52ch; font-size: .92rem; }
+  footer a { color: #f2e2c9; }
+  footer .repo { font-family: var(--mono); font-size: .85rem; }
+
+  /* ---------- focus ---------- */
+  a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 640px) {
+    nav.toc ol { columns: 1; }
+    .masthead .wrap { padding-top: 2.6rem; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="kicker">ITM Group of Institutions &nbsp;&middot;&nbsp; Gwalior</span>
+    <h1>Online Examination Portal</h1>
+    <p class="lede">A self-hosted, AI-proctored assessment platform built on Moodle 4.5 LTS — with a
+      custom exam-cell toolkit, Safe Exam Browser kiosk lockdown, live invigilation, and the
+      institute's own visual identity. Runs from a single Windows machine, no cloud hosting.</p>
+
+    <dl class="facts">
+      <div><dt>Platform</dt><dd>Moodle 4.5 LTS</dd></div>
+      <div><dt>Stack</dt><dd>Apache · PHP 8.3 · MariaDB</dd></div>
+      <div><dt>Runtime</dt><dd>Native Windows (no Docker)</dd></div>
+      <div><dt>Portal</dt><dd>http://localhost:8080</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#overview"><span class="num">§1</span><span>Overview</span></a></li>
+      <li><a href="#architecture"><span class="num">§2</span><span>Architecture &amp; technology</span></a></li>
+      <li><a href="#operations"><span class="num">§3</span><span>Setup &amp; daily operation</span></a></li>
+      <li><a href="#wizard"><span class="num">§4</span><span>Exam Wizard toolkit</span></a></li>
+      <li><a href="#seb"><span class="num">§5</span><span>Safe Exam Browser lockdown</span></a></li>
+      <li><a href="#proctoring"><span class="num">§6</span><span>AI proctoring</span></a></li>
+      <li><a href="#roles"><span class="num">§7</span><span>Roles &amp; access control</span></a></li>
+      <li><a href="#integrity"><span class="num">§8</span><span>Exam integrity &amp; anti-cheat</span></a></li>
+      <li><a href="#interface"><span class="num">§9</span><span>Interface &amp; branding</span></a></li>
+      <li><a href="#demo"><span class="num">§10</span><span>Sharing a live demo</span></a></li>
+      <li><a href="#security"><span class="num">§11</span><span>Security posture &amp; open items</span></a></li>
+      <li><a href="#reference"><span class="num">§12</span><span>Reference — files &amp; accounts</span></a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- 1 -->
+    <section id="overview">
+      <div class="sec-head">
+        <span class="clause">§1</span>
+        <h2 class="title">Overview</h2>
+      </div>
+      <p class="lead">The portal lets the examination cell run secured, invigilated online exams for
+        students — creating question banks, building exams, locking the candidate's machine with Safe
+        Exam Browser, watching every attempt live, and exporting results — all from one server on
+        campus.</p>
+      <p>It is a standard <strong>Moodle 4.5 LTS</strong> installation, hardened for exams and
+        extended with two purpose-built plugins:</p>
+      <ul class="list">
+        <li><strong>local_examwizard</strong> — the exam cell's control centre: question uploader,
+          a four-step exam builder, the Exam Control hub, live exam control, results export, bulk
+          student onboarding, and the SEB quit-password manager.</li>
+        <li><strong>local_sebkiosk</strong> — makes leaving Safe Exam Browser finalise the attempt,
+          and carries the front-end theme runtime.</li>
+      </ul>
+      <p>Contributed modules add webcam proctoring (<code>quizaccess_proctoring</code>), the SEB
+        access rule (<code>quizaccess_seb</code>), and the Boost Union theme, which is skinned in the
+        ITM Group of Institutions identity.</p>
+      <div class="callout">
+        <p><strong>Design intent.</strong> Every exam is one attempt, one question per page, shuffled,
+          time-limited, copy-protected, and — where required — only openable inside a locked-down
+          browser with the webcam on. If a candidate's machine fails or they leave the browser, the
+          attempt is submitted automatically and cannot be resumed.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="architecture">
+      <div class="sec-head">
+        <span class="clause">§2</span>
+        <h2 class="title">Architecture &amp; technology</h2>
+      </div>
+      <p>The platform runs directly on Windows as three Windows services plus a scheduled task — no
+        containers. Docker was evaluated but its Linux engine does not start on the host machine, so
+        the stack was ported to run natively.</p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Layer</th><th>Component</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="k">Application</td><td>Moodle 4.5 LTS <span class="mono">(MOODLE_405_STABLE)</span></td><td>Web root at <span class="mono">native/stack/moodle</span></td></tr>
+            <tr><td class="k">Web server</td><td>Apache 2.4 with <span class="mono">mod_php</span></td><td>Service <span class="mono">eap-apache</span> · port 8080</td></tr>
+            <tr><td class="k">Language</td><td>PHP 8.3 (Thread-Safe)</td><td>OPcache, 512 MB limit, 100 MB uploads</td></tr>
+            <tr><td class="k">Database</td><td>MariaDB 11.4 LTS</td><td>Service <span class="mono">eap-mariadb</span> · <span class="mono">utf8mb4_unicode_ci</span></td></tr>
+            <tr><td class="k">Scheduler</td><td>Windows Task <span class="mono">EAP-Moodle-Cron</span></td><td>Runs Moodle cron every minute as SYSTEM</td></tr>
+            <tr><td class="k">Theme</td><td>Boost Union + custom Raw SCSS</td><td>Compiled from <span class="mono">config/moodle/custom.scss</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Application data lives at <span class="mono">E:\ASSESMENT\moodledata</span>; all secrets and
+        site settings are read from <span class="mono">E:\ASSESMENT\.env</span>. The database data
+        directory and downloadable installers are excluded from source control.</p>
+    </section>
+
+    <!-- 3 -->
+    <section id="operations">
+      <div class="sec-head">
+        <span class="clause">§3</span>
+        <h2 class="title">Setup &amp; daily operation (no Docker)</h2>
+      </div>
+      <p class="lead">The platform is a self-contained folder. Everything it needs — PHP, Apache,
+        MariaDB and Moodle — travels inside the repository, so setup is a <span class="mono">git clone</span>
+        plus one script. No Docker, no separate installers, no download step during setup. The script
+        derives every path from the folder it sits in, so the project can live on any drive or
+        directory.</p>
+
+      <h3>3.1&nbsp;&nbsp;What you need</h3>
+      <ul class="list">
+        <li>Windows 10 (build 1809 or later) or Windows 11, 64-bit.</li>
+        <li>An account with <strong>local administrator</strong> rights — the setup script
+          self-elevates via UAC.</li>
+        <li><strong>Windows PowerShell 5.1</strong> (ships with Windows); PowerShell 7 also works.</li>
+        <li><strong>Git for Windows</strong>.</li>
+        <li>About <strong>2&nbsp;GB</strong> of free disk space — the repository carries the whole
+          server stack.</li>
+        <li>Port <strong>8080</strong> free, or choose another with <span class="mono">-Port</span>.</li>
+      </ul>
+
+      <h3>3.2&nbsp;&nbsp;Get the code</h3>
+<pre><code>git config --global core.longpaths true
+git clone https://github.com/Neerajparashar1/ASSESMENT.git
+cd ASSESMENT</code></pre>
+      <p>It can be cloned anywhere — <span class="mono">C:\exam</span>,
+        <span class="mono">D:\ASSESMENT</span>, an external drive. <strong>Avoid</strong> a
+        OneDrive-synced folder or a very deep path; file-locking and the 260-character path limit
+        cause confusing failures. A short path such as <span class="mono">C:\exam\ASSESMENT</span> is
+        safest.</p>
+
+      <h3>3.3&nbsp;&nbsp;Exclude the folder from antivirus</h3>
+      <p>Windows Defender and other antivirus tools occasionally quarantine part of the bundled
+        server (a MariaDB or PHP executable) during the clone or during setup, which then fails in
+        ways that are hard to diagnose. Before running setup, add the project folder as an
+        exclusion:</p>
+      <p><span class="mono">Windows Security &rarr; Virus &amp; threat protection &rarr; Manage
+        settings &rarr; Exclusions &rarr; Add an exclusion &rarr; Folder</span> — select the
+        ASSESMENT folder.</p>
+      <p>If something was already quarantined, restore it from
+        <span class="mono">Windows Security &rarr; Protection history</span>, add the exclusion, and
+        clone again.</p>
+
+      <h3>3.4&nbsp;&nbsp;Create the settings file</h3>
+      <p><span class="mono">.env</span> holds every secret and is deliberately not in the repository.
+        Copy the template and edit it:</p>
+<pre><code>copy .env.example .env
+notepad .env</code></pre>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Key</th><th>Set to</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">HTTP_PORT</span></td><td>8080, or your chosen port</td></tr>
+            <tr><td><span class="mono">MOODLE_WWWROOT</span></td><td><span class="mono">http://localhost:8080</span> — must match the port</td></tr>
+            <tr><td><span class="mono">MOODLE_ADMIN_USER</span></td><td>the site administrator login</td></tr>
+            <tr><td><span class="mono">MOODLE_ADMIN_PASS</span></td><td>a strong password: 8+ chars, upper + lower + digit + symbol</td></tr>
+            <tr><td><span class="mono">MOODLE_ADMIN_EMAIL</span></td><td>a real address</td></tr>
+            <tr><td><span class="mono">DB_ROOT_PASS</span></td><td>a new, strong MariaDB root password</td></tr>
+            <tr><td><span class="mono">DB_PASS</span></td><td>a new, strong password for the <span class="mono">moodle</span> database user</td></tr>
+            <tr><td><span class="mono">SEB_QUIT_PASSWORD</span></td><td>the Safe Exam Browser quit password</td></tr>
+            <tr><td><span class="mono">MOODLE_SITE_FULLNAME</span> / <span class="mono">_SHORTNAME</span></td><td>shown across the portal</td></tr>
+            <tr><td><span class="mono">INNODB_BUFFER_POOL_SIZE</span></td><td><span class="mono">1G</span> on a 4&nbsp;GB machine; <span class="mono">2G</span>+ on 8&nbsp;GB</td></tr>
+            <tr><td><span class="mono">TZ</span></td><td>your timezone, e.g. <span class="mono">Asia/Kolkata</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Leave <span class="mono">DB_HOST</span>, <span class="mono">DB_NAME</span>,
+        <span class="mono">DB_USER</span> and <span class="mono">MOODLE_BRANCH</span> at their
+        defaults.</p>
+
+      <h3>3.5&nbsp;&nbsp;Run the installer</h3>
+      <p>Open PowerShell <strong>in the project folder</strong> and run:</p>
+<pre><code>powershell -ExecutionPolicy Bypass -File .\native\Setup-MoodleNative.ps1 -Reinstall</code></pre>
+      <div class="callout">
+        <p><strong>On a different PC — always include <span class="mono">-Reinstall</span>.</strong>
+          The repository carries a <span class="mono">config.php</span> and generated Apache / MariaDB
+          configuration files with the <em>original</em> machine's paths and a machine-specific
+          database. <span class="mono">-Reinstall</span> drops those and rebuilds every path, the
+          database and the config for <em>this</em> machine. On the machine the repository was built
+          on, run it <em>without</em> <span class="mono">-Reinstall</span>.</p>
+      </div>
+      <p>The script performs, in order:</p>
+      <ol class="inner">
+        <li>Installs the Visual&nbsp;C++ 2015&ndash;2022 runtime if it is missing.</li>
+        <li>Verifies the bundled PHP&nbsp;8.3, Apache&nbsp;2.4, MariaDB&nbsp;11.4 and Moodle&nbsp;4.5
+          are present (they ship in the repo; it only downloads if one is missing).</li>
+        <li>Generates <span class="mono">php.ini</span>, the Apache virtual host and
+          <span class="mono">my.ini</span> — with <em>this machine's</em> paths.</li>
+        <li>Initialises MariaDB, registers the <span class="mono">eap-mariadb</span> service, creates
+          the <span class="mono">moodle</span> database and its user.</li>
+        <li>Runs Moodle's non-interactive installer against
+          <span class="mono">&lt;project&gt;\moodledata</span>.</li>
+        <li>Installs the contrib plugins — Boost&nbsp;Union theme, proctoring, VPL.</li>
+        <li>Writes the exam-hardening block into <span class="mono">config.php</span> (anti-cheat
+          footer, autosave, proxied-SSL handling, the path to PHP).</li>
+        <li>Runs <span class="mono">post_install.php</span> — theme and custom SCSS, SEB and
+          proctoring defaults, quiz hardening, the Invigilator and Exam Hall Invigilator roles.</li>
+        <li>Registers the <span class="mono">eap-apache</span> service, the one-minute
+          <span class="mono">EAP-Moodle-Cron</span> task and a firewall rule for the port.</li>
+        <li>Generates a starter <span class="mono">.seb</span> file from
+          <span class="mono">.env</span>.</li>
+      </ol>
+      <p>It prints the portal URL and the admin login when done, and is safe to re-run.</p>
+      <div class="callout">
+        <p><strong>If you move the folder later,</strong> the generated Apache and MariaDB configs
+          still point at the old location. Re-run
+          <span class="mono">Setup-MoodleNative.ps1 -Reinstall</span> from the new location (this
+          rebuilds the database), or hand-edit <span class="mono">my.ini</span>,
+          <span class="mono">Apache24\conf\httpd.conf</span>,
+          <span class="mono">Apache24\conf\extra\httpd-eap.conf</span> and
+          <span class="mono">native\stack\moodle\config.php</span>, then re-register the services.</p>
+      </div>
+
+      <h3>3.6&nbsp;&nbsp;Apply the exam-specific configuration</h3>
+      <p>These create the kiosk SEB template, ensure both invigilation roles, and compile the ITM
+        theme. A <span class="mono">-Reinstall</span> already covers the roles and theme through
+        <span class="mono">post_install.php</span>; run the SEB template script on every fresh
+        machine, and re-run any of them after a related change.</p>
+<pre><code>set PHP=native\stack\php\php.exe
+%PHP% native\Setup-SebLockdownTemplate.php --all
+%PHP% native\Setup-InvigilatorRoles.php
+%PHP% native\apply_itm_theme.php</code></pre>
+
+      <h3>3.7&nbsp;&nbsp;Verify the installation</h3>
+      <ul class="list">
+        <li><span class="mono">native\Manage-Moodle.ps1 status</span> — both services
+          <span class="mono">Running</span>, the cron task present, and an
+          <span class="mono">HTTP :8080&nbsp;&nbsp;200 OK</span> line.</li>
+        <li>Open <span class="mono">http://localhost:8080</span> — the branded split-view login page
+          appears.</li>
+        <li>Sign in as the admin. <em>Site administration &rarr; Notifications</em> should report no
+          problems.</li>
+        <li><em>Site administration &rarr; Server &rarr; Environment</em> — every row should pass.</li>
+      </ul>
+
+      <h3>3.8&nbsp;&nbsp;Daily operation</h3>
+      <p>Both services are set to start automatically, so after a reboot the portal is already
+        running. Double-click <span class="mono">start.bat</span> to bring the stack up manually and
+        <span class="mono">stop.bat</span> to take it down. The PowerShell wrapper
+        <span class="mono">native\Manage-Moodle.ps1</span> covers the rest:</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Command</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">status</span></td><td>Service state and an HTTP probe</td></tr>
+            <tr><td><span class="mono">start</span> / <span class="mono">stop</span> / <span class="mono">restart</span></td><td>Control the two services (needs an elevated shell)</td></tr>
+            <tr><td><span class="mono">cron</span></td><td>Run one Moodle cron cycle now</td></tr>
+            <tr><td><span class="mono">purge</span></td><td>Purge all Moodle caches</td></tr>
+            <tr><td><span class="mono">upgrade</span></td><td>Run the Moodle upgrade after adding or updating plugins</td></tr>
+            <tr><td><span class="mono">import &lt;csv&gt;</span></td><td>Bulk-import students from a roster</td></tr>
+            <tr><td><span class="mono">backup</span></td><td>Database dump + moodledata archive to <span class="mono">backups\</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Grade export to ODS, XLS, TXT and XML is enabled site-wide from the gradebook.</p>
+
+      <h3>3.9&nbsp;&nbsp;Useful installer switches</h3>
+      <ul class="list">
+        <li><span class="mono">-Reinstall</span> — drop and rebuild the database, config and data
+          directory (required on a new machine).</li>
+        <li><span class="mono">-Port 8888</span> — serve on a different port; also updates the portal URL.</li>
+        <li><span class="mono">-PhpSeries 8.2</span> — use PHP 8.2 instead of 8.3.</li>
+        <li><span class="mono">-SkipPlugins</span> — do not (re)install the contrib plugins.</li>
+        <li><span class="mono">-ApacheZip / -PhpZip / -MariaDbZip / -MoodleZip &lt;path&gt;</span> —
+          use a hand-downloaded build if a bundled one is missing or blocked.</li>
+        <li><span class="mono">-InstallRoot / -DataRoot &lt;path&gt;</span> — place the stack or the
+          data directory elsewhere.</li>
+      </ul>
+
+      <h3>3.10&nbsp;&nbsp;Troubleshooting</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Setup stops on the Apache download</td><td>Only if the bundled binary is missing. Apache Lounge sits behind Cloudflare and sometimes blocks scripted downloads — fetch the VS17 <span class="mono">httpd</span> zip by hand and pass <span class="mono">-ApacheZip &lt;path&gt;</span>.</td></tr>
+            <tr><td class="k"><span class="mono">php8apache2_4.dll</span> missing / Apache will not start</td><td>A non-thread-safe PHP build was used. Re-run with <span class="mono">-PhpZip &lt;thread-safe zip&gt; -Reinstall</span>.</td></tr>
+            <tr><td class="k">Port 8080 already in use</td><td><span class="mono">netstat -ano | findstr :8080</span> to find the owner; stop it, or run setup with <span class="mono">-Port 8888</span>.</td></tr>
+            <tr><td class="k"><span class="mono">Error: Database connection failed</span></td><td>MariaDB did not start, or the passwords in <span class="mono">config.php</span> do not match <span class="mono">.env</span>. Check <span class="mono">native\stack\logs\</span> and re-run with <span class="mono">-Reinstall</span>.</td></tr>
+            <tr><td class="k">Blank page or HTTP 500</td><td>Read <span class="mono">native\stack\logs\php_error.log</span> and <span class="mono">native\stack\Apache24\logs\error.log</span>. Usually a missing PHP extension or a <span class="mono">config.php</span> carried over from another machine — re-run with <span class="mono">-Reinstall</span>.</td></tr>
+            <tr><td class="k">&ldquo;This server may be accessible only via&hellip;&rdquo;</td><td><span class="mono">$CFG-&gt;wwwroot</span> points elsewhere — a demo tunnel (§10) was left on. Run <span class="mono">demo-stop.ps1</span> or <span class="mono">demo-cf-stop.bat</span>.</td></tr>
+            <tr><td class="k">Services will not start after a reboot</td><td>An antivirus quarantined a stack binary. Restore it from Protection history, add the folder exclusion (3.3), then re-run with <span class="mono">-Reinstall</span>.</td></tr>
+            <tr><td class="k"><span class="mono">git clone</span> fails with &ldquo;Filename too long&rdquo;</td><td><span class="mono">git config --global core.longpaths true</span>, then clone into a shorter path.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--faint);font-size:.88rem;">If you would rather not use the script at all,
+        <span class="mono">native\README-NATIVE.md</span> §4 has the full manual sequence.</p>
+    </section>
+
+    <!-- 4 -->
+    <section id="wizard">
+      <div class="sec-head">
+        <span class="clause">§4</span>
+        <h2 class="title">Exam Wizard toolkit <span class="chip chip-prod">In use</span></h2>
+      </div>
+      <p><code>local_examwizard</code> is a custom plugin built entirely on Moodle's supported APIs —
+        the quiz engine and question bank are unmodified. Staff reach everything from one landing
+        page, the <strong>Exam Control</strong> hub.</p>
+
+      <h3>Question uploader</h3>
+      <p>Upload questions as CSV, XLSX, GIFT, XML or plain text. Column headers are matched
+        synonym-tolerantly. Before anything is imported, a visual preview renders every question as a
+        card — green when valid, red with the specific error when not, correct options highlighted,
+        with summary counts. Supports single-answer MCQ, multiple-response, true/false and short
+        answer; GIFT and XML are handed to Moodle's own importers. Optional negative marking sets
+        wrong options on single-answer MCQs to &minus;&#8531;.</p>
+
+      <h3>Four-step Create-Exam wizard</h3>
+      <p>Basics &rarr; Questions &rarr; Rules &rarr; Review. It applies exam-sensible defaults —
+        a time limit, automatic submission when time expires, deferred feedback, free navigation,
+        results released only after the exam closes — forces a single attempt, and wires up Safe Exam
+        Browser and proctoring in the same flow.</p>
+
+      <h3>Exam Control hub</h3>
+      <p>The operations home page:</p>
+      <ul class="list">
+        <li>At-a-glance counts — exams, students, subjects, and how many exams are live now.</li>
+        <li>An auto-detected getting-started checklist (branding, students, an exam, the SEB
+          password, a test run).</li>
+        <li>Quick actions and a <strong>Your exams</strong> table with a status badge
+          (live / open / scheduled / closed), an "in progress / submitted" count, and Monitor,
+          Grades and "Get&nbsp;.seb" links per exam.</li>
+        <li>A <strong>Live-now spotlight</strong> — for each running exam: in-progress, submitted and
+          not-started counts with a progress bar; the page refreshes itself every 30 seconds while an
+          exam is live.</li>
+      </ul>
+
+      <h3>Live exam control</h3>
+      <p>Steer an exam while it runs, without editing it:</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Scope</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Whole exam</td><td>Pause (close now) · Reopen for two hours · End &amp; submit everyone</td></tr>
+            <tr><td class="k">Per candidate</td><td>End &amp; submit now · Give +15 minutes (per-user override) · Resume an abandoned attempt · Delete attempt <span class="chip chip-plan">teachers only</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Results &amp; export</h3>
+      <p>A per-candidate table — score, percentage, pass/fail, time taken, attempt state — with
+        summary chips for attempted-vs-enrolled, average percentage and pass rate, and a one-click
+        CSV download.</p>
+
+      <h3>Bulk student onboarding</h3>
+      <p>Upload a roster (CSV or XLSX). A validated preview shows which rows will create a new user
+        and which already exist; on confirm it creates the missing accounts and enrols every valid
+        row as a student. A default password field fills blank cells.</p>
+
+      <h3>SEB quit-password manager</h3>
+      <p>View or change the master Safe Exam Browser quit password, and optionally push it to every
+        SEB-enabled quiz at once. The screen warns that changing it invalidates any
+        <span class="mono">.seb</span> files already handed out.</p>
+    </section>
+
+    <!-- 5 -->
+    <section id="seb">
+      <div class="sec-head">
+        <span class="clause">§5</span>
+        <h2 class="title">Safe Exam Browser lockdown</h2>
+      </div>
+      <div class="chip-row">
+        <span class="chip chip-prod">Applied to live exams</span>
+        <span class="chip chip-plan">Real-SEB smoke test pending</span>
+      </div>
+      <p>Exams that require it are opened only inside Safe Exam Browser, configured from the
+        <strong>EAP Kiosk Lockdown</strong> template:</p>
+      <ul class="list">
+        <li><strong>Windows kiosk</strong> — a fresh isolated desktop and the Explorer shell killed,
+          so Task Manager, the Start menu and the taskbar are unreachable.</li>
+        <li><strong>Every escape hotkey disabled</strong> — Alt+Tab, Alt+F4, Alt+Esc, Ctrl+Esc, Esc,
+          F1&ndash;F12 and PrintScreen.</li>
+        <li>No application or user switching; a single display only; screen mirroring, virtual
+          machines and screen sharing blocked.</li>
+        <li>The browser is URL-filtered to the portal host.</li>
+        <li>A Quit button is present and password-protected — the one sanctioned way out.</li>
+      </ul>
+
+      <h3>Leaving the browser submits the exam</h3>
+      <p>The <code>local_sebkiosk</code> plugin turns any exit into a submission. The SEB Quit link
+        and a page-unload beacon both call an endpoint that finalises every in-progress attempt for
+        that student, so it can never be reopened.</p>
+
+      <div class="callout">
+        <p><strong>Backstop for a hard kill.</strong> If a machine is powered off or force-quit
+          mid-exam, the time limit plus automatic overdue submission plus the one-minute cron task
+          submit the attempt when its time expires — nothing is left hanging.</p>
+      </div>
+      <div class="callout risk">
+        <p><strong>Not tunnel-compatible.</strong> A live SEB attempt is bound to the server's real
+          address and cannot run over a temporary demo tunnel (§10). Tunnels are for showing the
+          portal and admin, not for taking a locked exam.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="proctoring">
+      <div class="sec-head">
+        <span class="clause">§6</span>
+        <h2 class="title">AI proctoring</h2>
+      </div>
+      <p>The <code>quizaccess_proctoring</code> module captures a webcam snapshot roughly every 30
+        seconds during an attempt, stores the images, and gives staff a proctoring review report
+        alongside the quiz results. A face-present check runs when the candidate starts. No paid
+        cloud face-matching service is used; review is by a person against the captured images.</p>
+    </section>
+
+    <!-- 7 -->
+    <section id="roles">
+      <div class="sec-head">
+        <span class="clause">§7</span>
+        <h2 class="title">Roles &amp; access control</h2>
+      </div>
+      <p>Access is least-privilege. The site administrator is a single named account; everything else
+        is a role assigned per course, per activity, or site-wide.</p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Can</th><th>Cannot</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="k">Site administrator<br><span class="mono">examadmin</span></td>
+              <td>Everything — the only account with full platform and server settings control.</td>
+              <td>&mdash;</td>
+            </tr>
+            <tr>
+              <td class="k">Invigilator / Proctor <br><span class="chip chip-built">faculty</span></td>
+              <td>Build quizzes and question banks, manage SEB settings, run proctoring review,
+                grade, run live exam control.</td>
+              <td>Site administration.</td>
+            </tr>
+            <tr>
+              <td class="k">Exam Hall Invigilator <br><span class="chip chip-built">hall staff</span></td>
+              <td>Watch the monitor report and the live proctoring feed; run live exam control —
+                pause, reopen, extend a student, force-submit, resume.</td>
+              <td>Create or edit exams, edit questions, grade, delete attempts, reach site
+                administration.</td>
+            </tr>
+            <tr>
+              <td class="k">Student</td>
+              <td>Sit the exams assigned to them.</td>
+              <td>Everything else.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The hall-invigilator role is backed by a dedicated capability,
+        <code>local/examwizard:control</code>, deliberately kept separate from Moodle's
+        <code>mod/quiz:manage</code> so a proctor can steer a running exam without ever gaining
+        editing rights. Assigned at site level, one login can oversee every exam session at once.</p>
+    </section>
+
+    <!-- 8 -->
+    <section id="integrity">
+      <div class="sec-head">
+        <span class="clause">§8</span>
+        <h2 class="title">Exam integrity &amp; anti-cheat</h2>
+      </div>
+      <div class="grid">
+        <div class="cardf"><h4>One attempt</h4><p>Every exam allows a single attempt; once finished it cannot be restarted.</p></div>
+        <div class="cardf"><h4>Shuffled, paged</h4><p>Questions are shuffled and shown one per page, with free navigation between them.</p></div>
+        <div class="cardf"><h4>Clipboard blocked</h4><p>Copy, cut, paste, right-click and drag are disabled on the attempt page; typing into answer fields still works.</p></div>
+        <div class="cardf"><h4>Continuous autosave</h4><p>Answers save every 15 seconds and on every page change, so nothing is lost to a disconnect.</p></div>
+        <div class="cardf"><h4>Time-limit submission</h4><p>When the clock runs out the attempt is submitted automatically, with no grace period.</p></div>
+        <div class="cardf"><h4>Config-key gating</h4><p>For SEB exams, the browser's configuration key is checked on every request — viewing, starting, each page and submitting — not only on quit.</p></div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section id="interface">
+      <div class="sec-head">
+        <span class="clause">§9</span>
+        <h2 class="title">Interface &amp; branding</h2>
+      </div>
+      <p>The portal wears the ITM Group of Institutions identity — deep maroon and academic gold,
+        the Inter and Source Serif typefaces, the official logo, and the
+        <strong>&ldquo;Think Big &middot; Think Beyond&rdquo;</strong> motto set in the institute's
+        own kicker style.</p>
+      <ul class="list">
+        <li><strong>Split-view sign-in</strong> — an auto-advancing campus slideshow with college
+          information on the left, the login card on the right with assurance chips (locked-down
+          browser, AI proctoring, instant result) and a support bar.</li>
+        <li><strong>Home &amp; dashboard</strong> — a branded hero band with the logo, the motto, a
+          &ldquo;Go to my exams&rdquo; call to action and a security badge over a campus slideshow;
+          a campus photograph fills the page margins; content blocks are styled as clean cards.</li>
+        <li><strong>Available courses</strong> render as a responsive, colour-coded card grid with
+          an initial-letter chip and a whole-card link.</li>
+        <li><strong>Exam-taking screen</strong> — a distraction-free shell, a top progress bar, a
+          question-navigator colour legend, a floating countdown that turns amber under five minutes
+          and pulses red under a minute, and whole-option-card selection.</li>
+        <li><strong>Responsive</strong> — the hero banners stack, the motto wraps, and hover-only
+          cues drop on phones.</li>
+      </ul>
+      <p>All static asset links are root-relative, so the site renders identically whether it is
+        served from <span class="mono">localhost</span> or a temporary public address. Styling has
+        one source of truth, <span class="mono">config/moodle/custom.scss</span>, compiled into the
+        theme by <span class="mono">native/apply_itm_theme.php</span>; behaviour lives in
+        <span class="mono">local/sebkiosk/exam-ui.js</span>.</p>
+    </section>
+
+    <!-- 10 -->
+    <section id="demo">
+      <div class="sec-head">
+        <span class="clause">§10</span>
+        <h2 class="title">Sharing a live demo</h2>
+      </div>
+      <p>The portal can be shown to someone off-campus over a temporary tunnel from the host machine,
+        with no cloud hosting. Two paths are wired up:</p>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Method</th><th>Command</th><th>Trade-off</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="k">Cloudflare</td>
+              <td><span class="mono">demo-cf.bat</span> &nbsp;/&nbsp; <span class="mono">demo-cf-stop.bat</span></td>
+              <td>Double-click, no account, no admin rights. Fresh random URL each run; quick tunnels
+                can be flaky.</td>
+            </tr>
+            <tr>
+              <td class="k">ngrok</td>
+              <td><span class="mono">demo.ps1 -Domain &lt;name&gt;.ngrok-free.app</span> &nbsp;/&nbsp; <span class="mono">demo-stop.ps1</span></td>
+              <td>Needs a free ngrok account and a claimed static domain; the URL is then stable and
+                reusable.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Both temporarily repoint the site at the public address and turn on proxied-SSL handling;
+        the stop script restores <span class="mono">localhost</span>. Safe Exam Browser exams do not
+        work over a tunnel (§5).</p>
+    </section>
+
+    <!-- 11 -->
+    <section id="security">
+      <div class="sec-head">
+        <span class="clause">§11</span>
+        <h2 class="title">Security posture &amp; open items</h2>
+      </div>
+      <p>Indicative resistance to a determined candidate: on an institute-managed lab PC the setup is
+        strong; on a student's own laptop it is good, with webcam proctoring carrying much of the
+        weight in practice.</p>
+
+      <h3>Open items</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Item</th><th>Status</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="k">Browser Exam Key check</td>
+              <td><span class="chip chip-plan">Decision pending</span></td>
+              <td>Config-key verification is on, but the SEB application binary itself is not yet
+                pinned. Adding the official build's key to each exam would close the
+                &ldquo;patched SEB&rdquo; gap.</td>
+            </tr>
+            <tr>
+              <td class="k">Kiosk template smoke test</td>
+              <td><span class="chip chip-plan">Pending</span></td>
+              <td>The EAP Kiosk Lockdown template needs one manual launch on the institute's SEB
+                build to confirm the stricter keys are accepted.</td>
+            </tr>
+            <tr>
+              <td class="k">MariaDB loader stub</td>
+              <td><span class="chip chip-risk">Cosmetic</span></td>
+              <td>A 13&nbsp;KB stub file is in a delete-pending state. The running service uses a
+                sibling binary and is unaffected; restore the file after a reboot.</td>
+            </tr>
+            <tr>
+              <td class="k">Front-end polish backlog</td>
+              <td><span class="chip chip-plan">Scoped, not started</span></td>
+              <td>Tables, forms, alerts, buttons, breadcrumbs and empty states have a queued
+                modernisation pass.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section id="reference">
+      <div class="sec-head">
+        <span class="clause">§12</span>
+        <h2 class="title">Reference — files &amp; accounts</h2>
+      </div>
+
+      <h3>Scripts &amp; source of truth</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">start.bat</span> / <span class="mono">stop.bat</span></td><td>Run or stop the stack</td></tr>
+            <tr><td><span class="mono">demo-cf.bat</span> / <span class="mono">demo-cf-stop.bat</span></td><td>Cloudflare demo tunnel</td></tr>
+            <tr><td><span class="mono">demo.ps1</span> / <span class="mono">demo-stop.ps1</span></td><td>ngrok / manual demo tunnel</td></tr>
+            <tr><td><span class="mono">native/Setup-MoodleNative.ps1</span></td><td>Full first-time install</td></tr>
+            <tr><td><span class="mono">native/Manage-Moodle.ps1</span></td><td>Day-to-day operations wrapper</td></tr>
+            <tr><td><span class="mono">native/Setup-SebLockdownTemplate.php</span></td><td>Create / apply the kiosk SEB template</td></tr>
+            <tr><td><span class="mono">native/Setup-InvigilatorRoles.php</span></td><td>Create the two invigilation roles</td></tr>
+            <tr><td><span class="mono">native/Import-Students.ps1</span></td><td>Bulk student import from the command line</td></tr>
+            <tr><td><span class="mono">native/apply_itm_theme.php</span></td><td>Compile <span class="mono">custom.scss</span> into the theme</td></tr>
+            <tr><td><span class="mono">config/moodle/custom.scss</span></td><td>All portal styling</td></tr>
+            <tr><td><span class="mono">native/stack/moodle/local/sebkiosk/exam-ui.js</span></td><td>Front-end runtime behaviour</td></tr>
+            <tr><td><span class="mono">scripts/moodle/post_install.php</span></td><td>First-run configuration — roles, SEB defaults, proctoring, theme</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Accounts</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Account</th><th>Role</th><th>Credentials</th></tr></thead>
+          <tbody>
+            <tr><td class="k"><span class="mono">examadmin</span></td><td>Site administrator</td><td>In <span class="mono">.env</span>, held by the exam cell</td></tr>
+            <tr><td class="k"><span class="mono">invig01</span></td><td>Exam Hall Invigilator (demo)</td><td>Issued separately</td></tr>
+            <tr><td class="k"><span class="mono">s2026&hellip;</span></td><td>Student (test roster)</td><td>Issued separately</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--faint);font-size:.86rem;">Credentials are not printed in this document.
+        Test and demo passwords are issued by the exam cell for the duration of a demo only.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span class="kicker">Think Big &middot; Think Beyond</span>
+    <p style="margin-top:.9rem;">ITM Group of Institutions, Gwalior — Online Examination Portal.
+      Self-hosted, AI-proctored, built on Moodle 4.5 LTS.</p>
+    <p class="repo">github.com/Neerajparashar1/ASSESMENT</p>
+  </div>
+</footer>

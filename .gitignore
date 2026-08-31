@@ -19,3 +19,6 @@ native/stack/tmp/
 # demo scripts leave these while a tunnel demo is live (the *-stop scripts remove them)
 *.demobak
 demo-url.txt
+
+# Office lock / owner files
+~$*
