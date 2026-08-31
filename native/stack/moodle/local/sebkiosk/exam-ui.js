@@ -41,8 +41,7 @@
     itmStrip.id = "itm-topstrip";
     itmStrip.innerHTML =
       '<span class="itm-topstrip-l">Online Examination Portal</span>' +
-      '<span class="itm-topstrip-r">Examination Cell&nbsp;&middot;&nbsp;' +
-      '<a href="mailto:examcell@itmgoi.in">examcell@itmgoi.in</a></span>';
+      '<span class="itm-topstrip-r">Secure&nbsp;&middot;&nbsp;AI&#8209;proctored&nbsp;&middot;&nbsp;Instant results</span>';
     body.insertBefore(itmStrip, body.firstChild);
     body.classList.add("itm-has-topstrip");
   }
@@ -222,6 +221,10 @@
                  '" style="background-image:url(' + base + f + ')"></div>';
         }).join("");
 
+        function stat(v, l) {
+          return '<div class="itm-hstat"><b>' + v + '</b><span>' + l + '</span></div>';
+        }
+
         var hero = document.createElement("section");
         hero.className = "itm-dashhero itm-homehero";
         hero.innerHTML =
@@ -231,40 +234,62 @@
             '<div class="itm-dashhero-logo"><img src="' + base + 'itm-logo.png" alt="ITM Group of Institutions, Gwalior"></div>' +
             '<div class="itm-dashhero-text">' +
               '<div class="itm-dashhero-kicker">Online Examination Portal</div>' +
-              '<h2>ITM Group of Institutions, Gwalior</h2>' +
+              '<h2>ITM Group of Institutions, <em>Gwalior</em></h2>' +
               '<div class="itm-tagline">' +
                 '<span class="itm-tl-rule"></span>' +
                 '<span class="itm-tl-text">Think Big &middot; Think Beyond</span>' +
                 '<span class="itm-tl-rule itm-tl-rule-r"></span>' +
               '</div>' +
-              '<p>Secure, AI&#8209;proctored online examinations &nbsp;&middot;&nbsp; Gwalior, Madhya Pradesh</p>' +
+              '<p>Sit your exams in a locked-down, AI&#8209;proctored environment &mdash; ' +
+              'fair for everyone, graded the moment you submit.</p>' +
               '<div class="itm-hero-cta">' +
-                '<a class="btn" href="/my/">' +
-                  '<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>' +
+                '<a class="btn itm-cta-primary" href="/my/">' +
+                  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>' +
                   'Go to my exams</a>' +
+                '<a class="btn itm-cta-ghost" href="/login/index.php">' +
+                  '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+                  'Candidate sign in</a>' +
               '</div>' +
             '</div>' +
             '<div class="itm-dashhero-badge" aria-hidden="true">' +
               '<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>' +
               '<span>Secure &middot; AI-proctored</span>' +
             '</div>' +
+          '</div>' +
+          '<div class="itm-hero-stats" aria-hidden="true">' +
+            stat("100%", "Sessions proctored") +
+            stat("AI", "Webcam monitoring") +
+            stat("SEB", "Browser lockdown") +
+            stat("Instant", "Auto-graded results") +
           '</div>';
         main.insertBefore(hero, main.firstChild);
 
-        function chip(svg, t, s) {
-          return '<div class="itm-assur"><svg viewBox="0 0 24 24">' + svg + '</svg>' +
+        // section header, then the numbered assurance cards
+        var sec = document.createElement("div");
+        sec.className = "itm-sec-head";
+        sec.innerHTML =
+          '<div class="itm-sec-kicker">Exam Integrity</div>' +
+          '<h2>Built to keep every exam <em>fair</em>.</h2>' +
+          '<p>Every attempt runs under the same three safeguards &mdash; ' +
+          'no exceptions, no advantage.</p>';
+        hero.parentNode.insertBefore(sec, hero.nextSibling);
+
+        function chip(n, svg, t, s) {
+          return '<div class="itm-assur">' +
+                 '<span class="itm-assur-n" aria-hidden="true">' + n + '</span>' +
+                 '<svg viewBox="0 0 24 24" aria-hidden="true">' + svg + '</svg>' +
                  '<div><strong>' + t + '</strong><span>' + s + '</span></div></div>';
         }
         var assur = document.createElement("div");
         assur.className = "itm-home-assurance";
         assur.innerHTML =
-          chip('<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
-               "Locked-down browser", "Safe Exam Browser kiosk mode") +
-          chip('<circle cx="12" cy="12" r="3.2"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>',
-               "AI proctoring", "Continuous webcam monitoring") +
-          chip('<path d="M4 12l5 5L20 6"/>',
-               "Instant results", "Auto-graded the moment you submit");
-        hero.parentNode.insertBefore(assur, hero.nextSibling);
+          chip("01", '<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+               "Locked-down browser", "Safe Exam Browser kiosk mode blocks every other app, tab and shortcut.") +
+          chip("02", '<circle cx="12" cy="12" r="3.2"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>',
+               "AI proctoring", "The webcam feed is monitored continuously for the whole attempt.") +
+          chip("03", '<path d="M4 12l5 5L20 6"/>',
+               "Instant results", "Answers are auto-graded the moment you submit &mdash; no waiting.");
+        sec.parentNode.insertBefore(assur, sec.nextSibling);
 
         var reduce = window.matchMedia &&
                      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -277,6 +302,134 @@
             els[cur].classList.add("is-active");
           }, 6000);
         }
+      })();
+
+      /* home page: give "Available courses" the section-header treatment */
+      (function decorateCoursesHeading() {
+        var list = document.getElementById("frontpage-available-course-list");
+        if (!list || list.querySelector(".itm-courses-head")) { return; }
+        var h = list.querySelector(":scope > h2") || list.querySelector("h2");
+        var label = (h && (h.textContent || "").trim()) || "Available courses";
+        if (h) { h.style.display = "none"; }
+        var head = document.createElement("div");
+        head.className = "itm-sec-head itm-courses-head";
+        head.innerHTML =
+          '<div class="itm-sec-kicker">Your assessments</div>' +
+          '<h2>' + escapeHtml(label) + '</h2>';
+        list.insertBefore(head, list.firstChild);
+      })();
+
+      /* home page: a premium brand footer at the foot of the content card */
+      (function buildSiteFooter() {
+        if (document.querySelector(".itm-sitefoot")) { return; }
+        var main = document.querySelector('[role="main"]') ||
+                   document.getElementById("region-main");
+        if (!main) { return; }
+        var base = "/local/sebkiosk/";
+        var year = new Date().getFullYear();
+        var f = document.createElement("footer");
+        f.className = "itm-sitefoot";
+        f.innerHTML =
+          '<div class="itm-sitefoot-in">' +
+            '<div class="itm-foot-brand">' +
+              '<img src="' + base + 'itm-logo.png" alt="">' +
+              '<div><strong>ITM Group of Institutions, Gwalior</strong>' +
+              '<span>Online Examination Portal</span></div>' +
+            '</div>' +
+            '<ul class="itm-foot-accred">' +
+              '<li>NAAC &lsquo;A&rsquo;</li><li>NBA</li><li>AICTE</li><li>RGPV</li>' +
+            '</ul>' +
+            '<div class="itm-foot-meta">' +
+              'AICTE&#8209;approved &middot; RGPV&#8209;affiliated' +
+              ' &nbsp;&middot;&nbsp; Gwalior, Madhya Pradesh' +
+              ' &nbsp;&middot;&nbsp; Think Big &middot; Think Beyond' +
+            '</div>' +
+          '</div>' +
+          '<div class="itm-foot-copy">&copy; ' + year +
+          ' ITM Group of Institutions, Gwalior. All rights reserved.</div>';
+        main.appendChild(f);
+      })();
+
+      /* home page: "How it works" 3-step timeline on a tinted band */
+      (function buildHowItWorks() {
+        var assur = document.querySelector(".itm-home-assurance");
+        if (!assur || document.querySelector(".itm-howitworks")) { return; }
+        function step(t, d) {
+          return '<li class="itm-step"><h3>' + t + '</h3><p>' + d + '</p></li>';
+        }
+        var band = document.createElement("section");
+        band.className = "itm-band itm-howitworks";
+        band.innerHTML =
+          '<div class="itm-sec-head">' +
+            '<div class="itm-sec-kicker">How it works</div>' +
+            '<h2>From sign&#8209;in to score in <em>three steps</em>.</h2>' +
+          '</div>' +
+          '<ol class="itm-steps">' +
+            step("Sign in",
+                 "Log in with the candidate ID and password issued by your department.") +
+            step("Launch securely",
+                 "Open the exam in Safe Exam Browser &mdash; the screen locks to the test for the whole attempt.") +
+            step("Submit &amp; see your score",
+                 "Objective answers are graded the instant you submit; written answers are released by your teacher.") +
+          '</ol>';
+        assur.parentNode.insertBefore(band, assur.nextSibling);
+      })();
+
+      /* home page: FAQ accordion on a tinted band, after the course grid */
+      (function buildFaq() {
+        var list = document.getElementById("frontpage-available-course-list");
+        var main = document.querySelector('[role="main"]') ||
+                   document.getElementById("region-main");
+        if ((!list && !main) || document.querySelector(".itm-faq")) { return; }
+        function qa(q, a) {
+          return '<details class="itm-faq-item"><summary>' + q + '</summary>' +
+                 '<div class="itm-faq-a">' + a + '</div></details>';
+        }
+        var band = document.createElement("section");
+        band.className = "itm-band itm-faq";
+        band.innerHTML =
+          '<div class="itm-sec-head">' +
+            '<div class="itm-sec-kicker">Good to know</div>' +
+            '<h2>Before you <em>start</em>.</h2>' +
+          '</div>' +
+          '<div class="itm-faq-list">' +
+            qa("What do I need to sit an exam?",
+               "A laptop or desktop with a working webcam, a stable internet connection, and Safe Exam Browser installed &mdash; a download link is shown on the exam page.") +
+            qa("Why does the browser lock down?",
+               "Safe Exam Browser blocks other apps, tabs, screenshots and keyboard shortcuts so every candidate writes under identical conditions.") +
+            qa("Is the webcam recording me?",
+               "The webcam is used for exam-integrity monitoring only, for the length of the attempt. It is not shared outside the examination team.") +
+            qa("When do I get my result?",
+               "Multiple-choice and other objective questions are scored instantly on submission. Manually-marked questions are released by your department.") +
+            qa("I lost connection mid&#8209;exam &mdash; what now?",
+               "Reconnect and reopen the exam; your answers are saved as you go. If you are locked out, contact your invigilator straight away.") +
+          '</div>';
+        if (list && list.parentNode) { list.parentNode.insertBefore(band, list.nextSibling); }
+        else { main.appendChild(band); }
+      })();
+
+      /* home page: gentle scroll-reveal for each section (motion-safe) */
+      (function wireReveal() {
+        var reduce = window.matchMedia &&
+                     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var nodes = [].slice.call(document.querySelectorAll(
+          ".itm-sec-head, .itm-home-assurance, .itm-steps, " +
+          "#frontpage-available-course-list .courses, .itm-faq-list, .itm-sitefoot-in"));
+        if (!nodes.length || reduce || !("IntersectionObserver" in window)) { return; }
+        nodes.forEach(function (n) { n.classList.add("itm-reveal"); });
+        var io = new IntersectionObserver(function (ents) {
+          ents.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-in");
+              io.unobserve(e.target);
+            }
+          });
+        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.04 });
+        nodes.forEach(function (n) { io.observe(n); });
+        // failsafe: never leave a section stuck invisible
+        setTimeout(function () {
+          nodes.forEach(function (n) { n.classList.add("is-in"); });
+        }, 2200);
       })();
     }
 

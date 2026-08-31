@@ -323,6 +323,75 @@ body:not(.pagelayout-login) .drawer { top: var(--itm-navbar-h) !important; }
   }
 }
 
+// ---------- "Log in" call-to-action (logged-out, top-right) ----------
+// Moodle renders a bare <span class="login"><a>Log in</a></span> in the
+// user-nav slot. Promote it to a real maroon pill button with a lock
+// glyph + a chevron that nudges on hover.
+.navbar.fixed-top .login {
+  display: inline-flex;
+  align-items: center;
+  margin-left: .4rem;
+  padding: 0 !important;
+}
+.navbar.fixed-top .login a {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem 1.15rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: .9rem;
+  line-height: 1;
+  letter-spacing: .01em;
+  color: #fdf7ea !important;
+  background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%);
+  border: 1px solid var(--itm-maroon-900);
+  box-shadow:
+    0 10px 22px -12px rgba(74, 13, 23, .65),
+    inset 0 1px 0 rgba(255, 255, 255, .12);
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+.navbar.fixed-top .login a::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fdf7ea' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='11' width='18' height='11' rx='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.navbar.fixed-top .login a::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  margin-right: -.15rem;
+  opacity: .9;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fdf7ea' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='12 5 19 12 12 19'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform .12s ease;
+}
+.navbar.fixed-top .login a:hover,
+.navbar.fixed-top .login a:focus {
+  color: #fff !important;
+  transform: translateY(-1px);
+  filter: brightness(1.07);
+  box-shadow:
+    0 16px 30px -12px rgba(74, 13, 23, .72),
+    inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+.navbar.fixed-top .login a:hover::after,
+.navbar.fixed-top .login a:focus::after { transform: translateX(3px); }
+.navbar.fixed-top .login a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, .55);
+}
+.navbar.fixed-top .login a:active { transform: translateY(0); filter: brightness(.97); }
+
+@media (max-width: 600px) {
+  .navbar.fixed-top .login a { padding: .45rem .85rem; font-size: .84rem; }
+  .navbar.fixed-top .login a::after { display: none; }
+}
+
 // ---------- Page header ------------------------------------------
 #page-header .page-context-header,
 .secondary-navigation .navigation {
@@ -378,6 +447,78 @@ $itm-shield: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20w
   text-transform: uppercase;
   color: var(--itm-gold);
   white-space: nowrap;
+}
+
+// =================================================================
+//  SECTION HEADER  --  itmgoi.in "kicker + two-part heading" pattern
+//  for WHITE sections (home page bands, "Available courses"). The
+//  kicker is maroon 900 uppercase between two short gradient rules;
+//  the heading is display serif with one word in <em> = maroon.
+//  Injected by exam-ui.js as .itm-sec-head.
+// =================================================================
+.itm-sec-head {
+  text-align: center;
+  margin: 2.6rem auto 1.5rem;
+  max-width: 640px;
+}
+.itm-sec-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  font-family: var(--itm-sans);
+  font-weight: 900;
+  font-size: 10.5px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--itm-maroon);
+
+  &::before,
+  &::after {
+    content: "";
+    width: 26px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--itm-maroon), var(--itm-gold));
+  }
+  &::after { background: linear-gradient(90deg, var(--itm-gold), var(--itm-maroon)); }
+}
+.itm-sec-head h2 {
+  position: relative;
+  font-family: var(--itm-serif);
+  font-weight: 700;
+  font-size: 1.9rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--itm-ink);
+  margin: .75rem 0 0;
+  padding-bottom: .8rem;
+
+  em {
+    font-style: normal;
+    background: linear-gradient(96deg, var(--itm-maroon) 0%, #b8433d 55%, var(--itm-gold-600) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%; bottom: 0;
+    transform: translateX(-50%);
+    width: 56px; height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--itm-maroon), var(--itm-gold));
+  }
+}
+.itm-sec-head p {
+  margin: .55rem 0 0;
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--itm-slate);
+}
+@media (max-width: 700px) {
+  .itm-sec-head { margin: 2rem auto 1.2rem; }
+  .itm-sec-head h2 { font-size: 1.45rem; }
 }
 
 body.pagelayout-login {
@@ -1308,8 +1449,22 @@ body#page-site-index {
       url("/local/sebkiosk/campus3.jpg") center center / cover no-repeat;
   }
 
-  // wider readable container - just for the home page
-  #page.drawers .main-inner { max-width: 1160px; }
+  // wider readable container + lift the white content card off the campus
+  // backdrop: full radius, deep soft shadow, hairline edge.
+  #page.drawers .main-inner {
+    max-width: 1200px;
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+    padding-bottom: 2.75rem;
+    background:
+      radial-gradient(1200px 240px at 50% 0%, #fffdfb 0%, #fdfafa 60%, #fff 100%);
+    border: 1px solid rgba(255, 255, 255, .7);
+    border-radius: var(--itm-radius-lg);
+    box-shadow:
+      0 48px 110px -55px rgba(31, 7, 13, .62),
+      0 8px 24px -16px rgba(31, 7, 13, .28);
+    overflow: hidden;
+  }
 
   // the default "Home / <site name>" heading -> the hero replaces it
   #page-header .page-context-header,
@@ -1317,68 +1472,238 @@ body#page-site-index {
   #region-main > h2:first-child { display: none; }
   #page-header { margin-bottom: 0; }
 
-  // hero bleeds to the edges of the white .main-inner card
-  .itm-dashhero {
-    margin: -1.5rem -0.5rem 1.4rem;
-    border-radius: var(--itm-radius-lg) var(--itm-radius-lg) 0 0;
+  // ================= HERO =================
+  .itm-homehero {
+    margin: -1.5rem -1.75rem 0;         // bleed to the (overflow-clipped) card edges
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
-  .itm-dashhero-in { padding: 1.9rem 2.1rem; flex-wrap: wrap; }
-  .itm-dashhero h2 { font-size: 1.95rem; }
-  .itm-dashhero p  { font-size: 13.5px; }
-  .itm-dashhero .itm-tagline { margin: .5rem 0 .15rem; }
+  .itm-homehero .itm-hero-slide { background-position: center 40%; }
+  // layered scrim: warm gold glow (top-right) + corner vignette (bottom-left)
+  // + a diagonal maroon wash that stays light enough to read the campus photo.
+  .itm-homehero .itm-hero-shade {
+    background:
+      radial-gradient(680px 400px at 85% -28%, rgba(224, 183, 104, .42), transparent 68%),
+      radial-gradient(130% 120% at -5% 115%, rgba(18, 4, 8, .62), transparent 55%),
+      linear-gradient(101deg,
+        rgba(40, 6, 12, .94) 0%,
+        rgba(66, 11, 20, .86) 32%,
+        rgba(96, 17, 30, .60) 66%,
+        rgba(122, 27, 41, .30) 100%);
+  }
+  // faint top inner sheen
+  .itm-homehero .itm-hero-shade::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 120px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .10), transparent);
+  }
+  .itm-homehero .itm-dashhero-in {
+    position: relative;
+    padding: 2.9rem 2.9rem 2.1rem;
+    align-items: flex-start;
+    gap: 1.7rem;
+    border-left: 0;
+    flex-wrap: wrap;
+  }
+  // glass logo plate
+  .itm-homehero .itm-dashhero-logo {
+    background: linear-gradient(180deg, #fff 0%, #fbf6f2 100%);
+    border: 1px solid rgba(255, 255, 255, .65);
+    border-radius: 18px;
+    padding: .9rem 1.15rem;
+    box-shadow:
+      0 28px 50px -22px rgba(0, 0, 0, .62),
+      inset 0 1px 0 rgba(255, 255, 255, .9);
 
-  // primary call-to-action inside the hero
-  .itm-hero-cta { margin-top: .95rem; width: 100%; }
-  .itm-hero-cta .btn {
+    img { height: 62px; }
+  }
+  .itm-homehero .itm-dashhero-text { flex: 1 1 430px; min-width: 0; }
+  .itm-homehero .itm-dashhero-kicker {
+    font-size: 11px;
+    letter-spacing: .34em;
+    color: #f0d49a;
+  }
+  .itm-homehero h2 {
+    font-size: 2.6rem;
+    line-height: 1.1;
+    letter-spacing: -0.017em;
+    margin: .7rem 0 .55rem;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, .42);
+
+    em {
+      font-style: normal;
+      background: linear-gradient(92deg, #ffe6ab 0%, #f2c078 46%, #e79d8a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  .itm-homehero p {
+    font-size: 14.5px;
+    line-height: 1.64;
+    max-width: 46ch;
+    margin: .6rem 0 0;
+    color: #f3e6d0;
+  }
+  .itm-homehero .itm-tagline { margin: .2rem 0 .55rem; }
+
+  // dual call-to-action
+  .itm-homehero .itm-hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-top: 1.35rem;
+    width: 100%;
+  }
+  .itm-homehero .itm-hero-cta .btn {
     display: inline-flex;
     align-items: center;
-    gap: .5rem;
-    padding: .6rem 1.4rem;
+    gap: .55rem;
+    padding: .74rem 1.55rem;
     border-radius: 999px;
     font-weight: 700;
-    font-size: .92rem;
-    background: var(--itm-gold);
-    border: 1px solid var(--itm-gold-600);
-    color: #241206;
+    font-size: .93rem;
+    letter-spacing: .01em;
     text-decoration: none;
-    box-shadow: 0 12px 24px -12px rgba(201, 162, 75, .6);
-    transition: transform .12s ease, box-shadow .12s ease;
+    transition: transform .13s ease, box-shadow .13s ease, background-color .13s ease, border-color .13s ease;
   }
-  .itm-hero-cta .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 30px -12px rgba(201, 162, 75, .7); }
-  .itm-hero-cta .btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .itm-homehero .itm-hero-cta .btn svg {
+    width: 16px; height: 16px; fill: none; stroke: currentColor;
+    stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .itm-cta-primary {
+    background: linear-gradient(180deg, #f6d492 0%, var(--itm-gold) 48%, var(--itm-gold-600) 100%);
+    border: 1px solid var(--itm-gold-600);
+    color: #2a1406;
+    box-shadow:
+      0 20px 36px -14px rgba(201, 162, 75, .85),
+      inset 0 1px 0 rgba(255, 255, 255, .6);
+  }
+  .itm-cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 26px 44px -14px rgba(201, 162, 75, .95),
+      inset 0 1px 0 rgba(255, 255, 255, .7);
+  }
+  .itm-cta-ghost {
+    background: rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .42);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16);
+  }
+  .itm-cta-ghost:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, .18);
+    border-color: rgba(255, 255, 255, .65);
+  }
+  .itm-homehero .itm-dashhero-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.7rem;
+    z-index: 3;
+    align-self: auto;
+    background: linear-gradient(135deg, rgba(58, 10, 18, .78), rgba(40, 6, 12, .72));
+    border: 1px solid rgba(247, 232, 200, .35);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .12);
+  }
 
-  // ---- assurance strip: 3 promises, injected under the hero ----
+  // ---- glass stat strip across the hero base (itmgoi.in counter row) ----
+  .itm-hero-stats {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(255, 255, 255, .18);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .07) 0%, rgba(12, 3, 6, .46) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+  }
+  .itm-hstat { padding: 1.15rem 1.4rem; }
+  .itm-hstat + .itm-hstat { border-left: 1px solid rgba(255, 255, 255, .13); }
+  .itm-hstat b {
+    display: block;
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 1.62rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #f8ead0;
+    text-shadow: 0 1px 14px rgba(0, 0, 0, .35);
+  }
+  .itm-hstat span {
+    display: block;
+    margin-top: .34rem;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #e6d4b1;
+  }
+
+  // ---- section header spacing on the home page ----
+  .itm-sec-head { margin-top: 2.5rem; }
+
+  // ---- numbered assurance cards ("Exam integrity") ----
   .itm-home-assurance {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: .9rem;
-    margin: 0 0 1.6rem;
+    gap: 1.1rem;
+    margin: 0;
   }
   .itm-assur {
+    position: relative;
     display: flex;
-    align-items: flex-start;
-    gap: .7rem;
-    padding: .95rem 1.05rem;
-    background: #fff;
+    flex-direction: column;
+    gap: .85rem;
+    padding: 1.6rem 1.5rem 1.5rem;
+    background: linear-gradient(180deg, #ffffff 0%, #fdfbfb 100%);
     border: 1px solid var(--itm-line);
-    border-left: 3px solid var(--itm-gold);
     border-radius: var(--itm-radius);
-    box-shadow: 0 10px 26px -22px rgba(74, 13, 23, .4);
+    box-shadow:
+      0 22px 46px -32px rgba(74, 13, 23, .5),
+      inset 0 1px 0 #ffffff;
+    overflow: hidden;
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  }
+  .itm-assur::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(var(--itm-maroon), var(--itm-gold));
+    transform: scaleY(.32);
+    transform-origin: top;
+    transition: transform .24s ease;
+  }
+  .itm-assur:hover {
+    transform: translateY(-5px);
+    border-color: color-mix(in srgb, var(--itm-maroon) 30%, var(--itm-line));
+    box-shadow: 0 36px 62px -30px rgba(74, 13, 23, .58);
+  }
+  .itm-assur:hover::before { transform: scaleY(1); }
+  .itm-assur-n {
+    position: absolute;
+    top: .5rem; right: 1rem;
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--itm-gold-600);
+    opacity: .22;
   }
   .itm-assur svg {
-    flex: 0 0 auto;
-    width: 22px; height: 22px;
-    fill: none; stroke: var(--itm-maroon);
+    width: 48px; height: 48px;
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%);
+    fill: none; stroke: #f7e8c8;
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    box-shadow: 0 14px 26px -10px rgba(138, 27, 44, .6);
   }
-  .itm-assur strong { display: block; font-size: .9rem; color: var(--itm-ink); }
-  .itm-assur span   { font-size: .78rem; color: var(--itm-slate); }
-
-  @media (max-width: 720px) {
-    .itm-home-assurance { grid-template-columns: 1fr; }
-    .itm-dashhero-in { padding: 1.4rem 1.3rem; }
-    .itm-dashhero h2 { font-size: 1.55rem; }
-  }
+  .itm-assur strong { display: block; font-size: 1.02rem; color: var(--itm-ink); margin-bottom: .12rem; }
+  .itm-assur span   { font-size: .85rem; line-height: 1.52; color: var(--itm-slate); }
 }
 
 // =================================================================
@@ -1415,8 +1740,8 @@ body.pagelayout-coursecategory .course_category_tree {
   .courses.frontpage-course-list-all,
   .courses.category-browse {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.1rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.3rem;
     margin: 0;
   }
 
@@ -1426,24 +1751,37 @@ body.pagelayout-coursecategory .course_category_tree {
     --acc-dark: var(--itm-maroon-900);
 
     position: relative;
+    display: flex;
+    flex-direction: column;
     margin: 0;
-    padding: 1.15rem 1.2rem 1.2rem;
-    background: #fff;
+    padding: 0;
+    min-height: 156px;
+    background: linear-gradient(180deg, #ffffff 0%, #fdfbfb 100%);
     border: 1px solid var(--itm-line);
-    border-top: 3px solid var(--acc);
-    border-radius: var(--itm-radius);
-    box-shadow: 0 10px 30px -24px rgba(74, 13, 23, .4);
-    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+    border-radius: 16px;
+    box-shadow:
+      0 20px 46px -30px rgba(74, 13, 23, .42),
+      inset 0 1px 0 #ffffff;
+    overflow: hidden;
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 
-    // kill the default zebra / border-bottom-only list look
-    &.even, &.odd { background: #fff; }
+    &.even, &.odd { background: linear-gradient(180deg, #ffffff 0%, #fdfbfb 100%); }
+
+    // full-strength accent line along the very top
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--acc), var(--acc-dark));
+      z-index: 2;
+    }
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 22px 42px -22px rgba(74, 13, 23, .5);
-      border-color: var(--acc);
+      transform: translateY(-5px);
+      box-shadow: 0 38px 66px -30px rgba(74, 13, 23, .52);
+      border-color: color-mix(in srgb, var(--acc) 45%, var(--itm-line));
     }
-    // whole card is clickable (JS adds .itm-cbox-link overlay)
     &:has(.itm-cbox-link) { cursor: pointer; }
   }
 
@@ -1456,42 +1794,53 @@ body.pagelayout-coursecategory .course_category_tree {
   }
 
   .coursebox .info {
+    position: relative;
+    z-index: 1;
     display: flex;
-    align-items: flex-start;
-    gap: .65rem;
-    margin: 0 0 .5rem;
+    align-items: center;
+    gap: .8rem;
+    margin: 0;
+    padding: 1.15rem 1.3rem 1rem;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--acc) 12%, #fff) 0%,
+      color-mix(in srgb, var(--acc) 4%, #fff) 100%);
+    border-bottom: 1px solid color-mix(in srgb, var(--acc) 16%, var(--itm-line));
   }
   // initial-letter chip injected by exam-ui.js
   .itm-cbox-chip {
     flex: 0 0 auto;
-    width: 34px; height: 34px;
+    width: 42px; height: 42px;
     display: grid;
     place-items: center;
-    border-radius: 9px;
+    border-radius: 12px;
     background: linear-gradient(135deg, var(--acc), var(--acc-dark));
     color: #fdf7ec;
     font-family: var(--itm-serif);
     font-weight: 700;
-    font-size: 1.05rem;
-    box-shadow: 0 5px 12px -6px var(--acc);
+    font-size: 1.2rem;
+    box-shadow: 0 10px 20px -8px var(--acc);
   }
   .coursebox h3.coursename {
     margin: 0;
-    font-size: 1.02rem;
-    line-height: 1.35;
+    font-size: 1.08rem;
+    line-height: 1.32;
   }
   .coursebox h3.coursename a {
     color: var(--itm-maroon-900);
     font-weight: 700;
     text-decoration: none;
-    // sit above the whole-card overlay link so it stays focusable
     position: relative;
     z-index: 2;
   }
   .coursebox:hover h3.coursename a { color: var(--acc-dark); }
 
-  .coursebox .content { font-size: .84rem; color: var(--itm-slate); }
-  .coursebox .teachers { margin: 0; padding: 0; list-style: none; }
+  .coursebox .content {
+    flex: 1 1 auto;
+    padding: 1rem 3.4rem 1.3rem 1.3rem;   // top gap from the header band; right clears the arrow
+    font-size: .84rem;
+    color: var(--itm-slate);
+  }
+  .coursebox .teachers { margin: 0; padding: 0; list-style: none; font-size: .82rem; }
   .coursebox .teachers li { display: inline; }
   .coursebox .teachers li + li::before { content: " \00b7 "; }
   .coursebox .teachers .font-weight-bold { font-weight: 600; color: var(--itm-ink); }
@@ -1500,34 +1849,39 @@ body.pagelayout-coursecategory .course_category_tree {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    margin-top: .35rem;
+    margin-top: .4rem;
+    line-height: 1.5;
   }
   .coursebox .moreinfo { display: none; }        // empty on this build
 
-  // "Open course" cue on hover (bottom-right)
-  .coursebox::after {
-    content: "Open course \2192";
+  // persistent circular "go" button, bottom-right (itmgoi.in "VIEW →" motif)
+  .coursebox > .itm-cbox-link::after {
+    content: "";
     position: absolute;
-    right: 1.2rem; bottom: .9rem;
-    font-size: .72rem;
-    font-weight: 700;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    color: var(--acc-dark);
-    opacity: 0;
-    transform: translateX(-4px);
-    transition: opacity .14s ease, transform .14s ease;
+    right: 1.15rem; bottom: 1.15rem;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background:
+      var(--acc)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='12 5 19 12 12 19'/%3E%3C/svg%3E")
+      center / 16px 16px no-repeat;
+    box-shadow: 0 12px 22px -10px var(--acc);
+    opacity: .92;
+    transition: transform .16s ease, opacity .16s ease;
   }
-  .coursebox:hover::after { opacity: .9; transform: translateX(0); }
+  .coursebox:hover > .itm-cbox-link::after {
+    transform: translateX(3px) scale(1.06);
+    opacity: 1;
+  }
 
   // the transparent overlay link exam-ui.js lays over the card
   .itm-cbox-link {
     position: absolute;
     inset: 0;
     z-index: 1;
-    border-radius: var(--itm-radius);
+    border-radius: 16px;
     text-indent: -9999px;
-    overflow: hidden;
+    overflow: visible;
   }
   .itm-cbox-link:focus-visible {
     outline: 3px solid var(--itm-gold);
@@ -1540,6 +1894,256 @@ body.pagelayout-coursecategory .course_category_tree {
   .course_category_tree .courses.category-browse {
     grid-template-columns: 1fr;
   }
+}
+
+// =================================================================
+//  SITE FOOTER  --  premium brand sign-off (home page only).
+//  Injected by exam-ui.js as .itm-sitefoot at the end of [role=main],
+//  inside the white card. Deep-maroon ground, accreditation chips,
+//  Examination Cell contact, copyright bar.
+// =================================================================
+body#page-site-index .itm-sitefoot {
+  margin: 2.8rem -1.75rem -2.75rem;     // bleed to the clipped card edges
+  padding: 0;
+  border-top: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--itm-maroon), var(--itm-gold), var(--itm-maroon)) 1;
+  background:
+    radial-gradient(640px 320px at 10% -10%, rgba(201, 162, 75, .22), transparent 68%),
+    radial-gradient(520px 300px at 100% 120%, rgba(201, 162, 75, .12), transparent 66%),
+    linear-gradient(180deg, var(--itm-maroon-900) 0%, #380911 100%);
+  color: #f1e3cd;
+
+  .itm-sitefoot-in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.4rem 2rem;
+    padding: 2rem 2.4rem 1.6rem;
+  }
+  .itm-foot-brand {
+    display: flex;
+    align-items: center;
+    gap: .95rem;
+    flex: 1 1 300px;
+
+    img {
+      height: 46px;
+      width: auto;
+      background: rgba(255, 255, 255, .96);
+      border-radius: 11px;
+      padding: .4rem .55rem;
+    }
+    strong {
+      display: block;
+      font-family: var(--itm-serif);
+      font-weight: 700;
+      font-size: 1.02rem;
+      color: #fff;
+    }
+    span {
+      display: block;
+      margin-top: .15rem;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--itm-gold);
+    }
+  }
+  .itm-foot-accred {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      padding: .32rem .7rem;
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #f4e7cd;
+      background: rgba(255, 255, 255, .05);
+    }
+  }
+  .itm-foot-meta {
+    flex: 1 1 100%;
+    padding-top: 1.2rem;
+    margin-top: .2rem;
+    border-top: 1px solid rgba(255, 255, 255, .14);
+    font-size: 12.5px;
+    color: #dcc7ad;
+
+    a { color: var(--itm-gold); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  }
+  .itm-foot-copy {
+    padding: .85rem 2.4rem;
+    background: rgba(0, 0, 0, .22);
+    font-size: 11.5px;
+    letter-spacing: .03em;
+    color: #c9b191;
+  }
+}
+@media (max-width: 700px) {
+  body#page-site-index .itm-sitefoot {
+    margin: 2.2rem -1.25rem -2.75rem;
+
+    .itm-sitefoot-in { padding: 1.6rem 1.3rem 1.3rem; }
+    .itm-foot-copy { padding: .8rem 1.3rem; }
+  }
+}
+
+// =================================================================
+//  HOME PAGE  --  extra sections: "How it works" step timeline +
+//  FAQ accordion, both on a full-bleed tinted band for section
+//  rhythm. Injected by exam-ui.js. + scroll-reveal for every band.
+// =================================================================
+body#page-site-index {
+
+  // full-bleed tinted band (alternates with the white sections)
+  .itm-band {
+    margin-inline: -1.75rem;
+    padding: 2.7rem 1.75rem 2.5rem;
+    background:
+      radial-gradient(760px 260px at 50% 0%, #fdf6f2 0%, transparent 72%),
+      linear-gradient(180deg, #fbf6f7 0%, #f7f0f1 100%);
+    border-top: 1px solid var(--itm-line);
+    border-bottom: 1px solid var(--itm-line);
+  }
+  .itm-band .itm-sec-head { margin-top: .4rem; }
+
+  // ---- "How it works" : 3-step timeline ----
+  .itm-steps {
+    list-style: none;
+    margin: 1.7rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    counter-reset: itm-step;
+  }
+  .itm-step {
+    position: relative;
+    padding: 1.5rem 1.4rem 1.45rem;
+    background: linear-gradient(180deg, #fff 0%, #fdfbfb 100%);
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    box-shadow: 0 22px 46px -34px rgba(74, 13, 23, .45), inset 0 1px 0 #fff;
+  }
+  .itm-step::before {
+    counter-increment: itm-step;
+    content: counter(itm-step, decimal-leading-zero);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px; height: 46px;
+    margin-bottom: .9rem;
+    border-radius: 14px;
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 1.08rem;
+    color: #f7e8c8;
+    background: linear-gradient(135deg, var(--itm-maroon), var(--itm-maroon-700));
+    box-shadow: 0 14px 26px -10px rgba(138, 27, 44, .6);
+  }
+  // dashed connector between steps
+  .itm-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 2.45rem;
+    right: -1.5rem;
+    width: 1.5rem;
+    border-top: 2px dashed color-mix(in srgb, var(--itm-maroon) 32%, var(--itm-line));
+  }
+  .itm-step h3 {
+    margin: 0 0 .32rem;
+    font-family: var(--itm-serif);
+    font-weight: 700;
+    font-size: 1.08rem;
+    color: var(--itm-maroon-900);
+  }
+  .itm-step p {
+    margin: 0;
+    font-size: .87rem;
+    line-height: 1.56;
+    color: var(--itm-slate);
+  }
+
+  // ---- FAQ accordion ----
+  .itm-faq-list {
+    max-width: 840px;
+    margin: 1.7rem auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+  }
+  .itm-faq-item {
+    background: linear-gradient(180deg, #fff 0%, #fdfbfb 100%);
+    border: 1px solid var(--itm-line);
+    border-radius: 13px;
+    box-shadow: 0 16px 36px -32px rgba(74, 13, 23, .42);
+    overflow: hidden;
+    transition: border-color .16s ease, box-shadow .16s ease;
+  }
+  .itm-faq-item[open] {
+    border-color: color-mix(in srgb, var(--itm-maroon) 28%, var(--itm-line));
+    box-shadow: 0 24px 46px -28px rgba(74, 13, 23, .5);
+  }
+  .itm-faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    font-weight: 700;
+    font-size: .96rem;
+    color: var(--itm-ink);
+  }
+  .itm-faq-item summary::-webkit-details-marker { display: none; }
+  .itm-faq-item summary::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 23px; height: 23px;
+    border-radius: 7px;
+    background: var(--itm-maroon-050)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a1b2c' stroke-width='2.6' stroke-linecap='round'%3E%3Cline x1='12' y1='6' x2='12' y2='18'/%3E%3Cline x1='6' y1='12' x2='18' y2='12'/%3E%3C/svg%3E")
+      center / 13px 13px no-repeat;
+    transition: transform .22s ease, background-color .22s ease;
+  }
+  .itm-faq-item[open] summary::before {
+    transform: rotate(135deg);
+    background-color: color-mix(in srgb, var(--itm-maroon) 14%, #fff);
+  }
+  .itm-faq-item summary:hover { color: var(--itm-maroon-900); }
+  .itm-faq-a {
+    padding: 0 1.25rem 1.15rem 3.15rem;
+    font-size: .89rem;
+    line-height: 1.62;
+    color: var(--itm-slate);
+  }
+
+  // ---- scroll reveal (added by exam-ui.js; only when motion is OK) ----
+  @media (prefers-reduced-motion: no-preference) {
+    .itm-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity .65s cubic-bezier(.22, .61, .36, 1),
+        transform .65s cubic-bezier(.22, .61, .36, 1);
+    }
+    .itm-reveal.is-in { opacity: 1; transform: none; }
+  }
+}
+@media (max-width: 760px) {
+  body#page-site-index .itm-steps { grid-template-columns: 1fr; gap: 1rem; }
+  body#page-site-index .itm-step:not(:last-child)::after { display: none; }
+  body#page-site-index .itm-faq-a { padding-left: 1.25rem; }
 }
 
 // =================================================================
@@ -1949,9 +2553,25 @@ a.itm-admin-card-head:hover .itm-admin-card-title {
   body.pagelayout-login .itm-loginhero { min-height: 180px; padding: 1.6rem 1.25rem; }
   body.pagelayout-login .itm-loginhero h2 { font-size: 1.35rem; }
 
-  // front-page course cards: drop the hover-only "Open course" cue
-  #frontpage-available-course-list .coursebox::after,
-  .course_category_tree .coursebox::after { display: none; }
+  // home page: widen card to full width, resize hero + stat strip
+  body#page-site-index #page.drawers .main-inner {
+    max-width: 100%;
+    border-radius: 16px;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  body#page-site-index .itm-homehero { margin: -1.5rem -1.25rem 0; }
+  body#page-site-index .itm-homehero .itm-dashhero-in { padding: 1.7rem 1.3rem 1.3rem; }
+  body#page-site-index .itm-homehero .itm-dashhero-badge { position: static; margin: 0; }
+  body#page-site-index .itm-homehero h2 { font-size: 1.85rem; }
+  body#page-site-index .itm-hero-stats { grid-template-columns: repeat(2, 1fr); }
+  body#page-site-index .itm-hstat:nth-child(3) { border-left: 0; }
+  body#page-site-index .itm-hstat:nth-child(n+3) { border-top: 1px solid rgba(255, 255, 255, .12); }
+  body#page-site-index .itm-home-assurance { grid-template-columns: 1fr; }
+
+  // front-page course cards: shrink the round "go" button a touch
+  #frontpage-available-course-list .coursebox > .itm-cbox-link::after,
+  .course_category_tree .coursebox > .itm-cbox-link::after { width: 32px; height: 32px; }
 }
 
 // section jump-nav (fixed right rail, wide screens only)
