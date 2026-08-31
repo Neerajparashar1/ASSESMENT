@@ -421,10 +421,10 @@ body:not(.pagelayout-login) .drawer { top: var(--itm-navbar-h) !important; }
 //  with borders/padding confuses that and dumps everything into "More").
 .secondary-navigation {
   margin-bottom: 1.35rem;
-  padding: .4rem;
+  padding: .22rem .3rem;
   background: linear-gradient(180deg, #fbf5f0 0%, #f6ede7 100%);
   border: 1px solid var(--itm-line);
-  border-radius: var(--itm-radius);
+  border-radius: 999px;
   box-shadow: inset 0 1px 0 #fff;
 
   .navigation { border-bottom: 0; }
@@ -442,10 +442,10 @@ body:not(.pagelayout-login) .drawer { top: var(--itm-navbar-h) !important; }
     border: 0 !important;
     border-radius: 999px !important;
     margin: 0 !important;
-    padding: .5rem 1.05rem;
+    padding: .3rem 1rem;
     font-family: var(--itm-sans);
     font-weight: 600;
-    font-size: .875rem;
+    font-size: .84rem;
     line-height: 1.2;
     white-space: nowrap;
     color: var(--itm-slate);
