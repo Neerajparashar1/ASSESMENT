@@ -121,6 +121,10 @@
   font: inherit; font-size: .72rem; border: 1px solid #d8ccbc; background: #fff;
   border-radius: 5px; padding: .1rem .4rem; cursor: pointer; color: #6b5f52;
 }
+.uid-row input.uid-txt {
+  flex: 1; min-width: 0; font: inherit; font-size: .82rem;
+  border: 1px solid #d8ccbc; border-radius: 6px; padding: .28rem .45rem; background: #fff;
+}
 .uid-val { min-width: 3.2rem; text-align: right; font-variant-numeric: tabular-nums; color: #6b5f52; font-size: .78rem; }
 
 .uid-btn {

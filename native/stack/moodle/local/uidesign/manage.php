@@ -124,7 +124,8 @@ if (!$rules) {
         echo html_writer::tag('tr',
             html_writer::tag('td', $kindcell) .
             html_writer::tag('td', html_writer::tag('code', s($target))) .
-            html_writer::tag('td', s($r->pagetype === '*' ? 'everywhere' : $r->pagetype)) .
+            html_writer::tag('td', s($r->pagetype === '*' ? 'everywhere'
+                : ($r->pagetype === 'lang' ? 'string override' : $r->pagetype))) .
             html_writer::tag('td', s((string) $r->value)) .
             html_writer::tag('td', $toggle) .
             html_writer::tag('td', $del));

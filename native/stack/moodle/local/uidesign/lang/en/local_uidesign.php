@@ -45,6 +45,12 @@ $string['import_done'] = '{$a} rule(s) imported.';
 $string['reset_done'] = 'All overrides removed.';
 $string['deleted'] = 'Override removed.';
 
+// Phase 2b - bake + label rename.
+$string['bake'] = 'Bake into the theme';
+$string['baked'] = '{$a} token(s) baked into the theme stylesheet.';
+$string['renamelabel'] = 'Rename a fixed label';
+$string['renamed'] = 'Label renamed site-wide.';
+
 // Errors.
 $string['err_invalidrule'] = 'Invalid rule: a kind and a selector are required.';
 $string['err_invalidprop'] = 'Invalid rule: an element override needs an allowed CSS property.';

@@ -83,6 +83,27 @@ try {
             echo json_encode(['ok' => true, 'rules' => array_values(rules::all()), 'rev' => rules::rev()]);
             break;
 
+        case 'bake':
+            $n = rules::bake_scss();
+            echo json_encode(['ok' => true, 'baked' => $n, 'rev' => rules::rev()]);
+            break;
+
+        case 'findstring':
+            $matches = rules::find_string_matches(required_param('text', PARAM_RAW_TRIMMED));
+            echo json_encode(['ok' => true, 'matches' => $matches]);
+            break;
+
+        case 'overridestring':
+            $id = rules::upsert([
+                'kind'     => 'lang',
+                'selector' => required_param('component', PARAM_RAW_TRIMMED)
+                    . '/' . required_param('stringid', PARAM_RAW_TRIMMED),
+                'value'    => required_param('value', PARAM_TEXT),
+                'label'    => optional_param('label', '', PARAM_TEXT),
+            ]);
+            echo json_encode(['ok' => true, 'id' => $id, 'rev' => rules::rev()]);
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['ok' => false, 'error' => 'unknown action']);

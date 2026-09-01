@@ -327,6 +327,31 @@
     frow.appendChild(frst);
     s3.appendChild(frow);
     host.appendChild(s3);
+
+    var s4 = el("div", "uid-sec");
+    s4.appendChild(el("h4", null, "Make it permanent"));
+    s4.appendChild(el("div", "uid-hint",
+      "Bake the colours, sizes and font above into the theme stylesheet — they stop being " +
+      "overrides and become the site's real defaults. Rebuilds the theme; give it a moment."));
+    var bake = el("button", "uid-btn", "Bake into the theme");
+    bake.addEventListener("click", function () {
+      if (!window.confirm("Fold every saved theme token into the site stylesheet and rebuild the theme?")) { return; }
+      bake.disabled = true;
+      post({ do: "bake" }).then(function (res) {
+        if (res && res.ok) {
+          if (previewStyle) { previewStyle.textContent = ""; }
+          toast((res.baked || 0) + " token(s) baked — reloading");
+          setTimeout(function () { location.reload(); }, 800);
+        } else {
+          bake.disabled = false;
+          toast((res && res.error) || "Error", true);
+        }
+      });
+    });
+    var ba = el("div", "uid-actions");
+    ba.appendChild(bake);
+    s4.appendChild(ba);
+    host.appendChild(s4);
   }
   function sliderRow(label, min, max, val, unit, onInput, onCommit, onReset) {
     var row = el("div", "uid-row");
@@ -368,15 +393,72 @@
     sec.appendChild(el("div", "uid-hint", "Tip: click text to retype it. Use the toolbar for size, colour, spacing."));
     host.appendChild(sec);
 
+    // --- rename a fixed Moodle label (string override, site-wide) ---
+    var lsec = el("div", "uid-sec");
+    lsec.appendChild(el("h4", null, "Rename a fixed label"));
+    lsec.appendChild(el("div", "uid-hint",
+      "For built-in words like “Dashboard” or “Grades” that Point & edit can't keep. " +
+      "Type the label exactly as shown, find it, then set your wording. Applies everywhere."));
+    var lrow = el("div", "uid-row");
+    var linp = el("input");
+    linp.type = "text";
+    linp.placeholder = "Current label text";
+    linp.className = "uid-txt";
+    var lfind = el("button", "uid-mini", "find");
+    lrow.appendChild(linp);
+    lrow.appendChild(lfind);
+    lsec.appendChild(lrow);
+    var lout = el("div");
+    lsec.appendChild(lout);
+    lfind.addEventListener("click", function () {
+      var q = linp.value.trim();
+      if (!q) { return; }
+      lout.textContent = "…";
+      post({ do: "findstring", text: q }).then(function (res) {
+        lout.textContent = "";
+        if (!res || !res.ok || !res.matches || !res.matches.length) {
+          lout.appendChild(el("div", "uid-row", "No exact match found."));
+          return;
+        }
+        var ul = el("ul", "uid-list");
+        res.matches.forEach(function (m) {
+          var li = el("li");
+          var lbl = el("span", "uid-lbl", m.current);
+          lbl.title = m.component + " / " + m.stringid;
+          li.appendChild(lbl);
+          var rn = el("button", "uid-mini", "rename");
+          rn.addEventListener("click", function () {
+            var nv = window.prompt('Replace "' + m.current + '" with:', m.current);
+            if (nv === null) { return; }
+            nv = nv.trim();
+            if (!nv || nv === m.current) { return; }
+            post({ do: "overridestring", component: m.component, stringid: m.stringid,
+                   value: nv, label: "Label " + m.component + "/" + m.stringid }).then(function (r) {
+              if (r && r.ok) { toast("Renamed — reloading"); setTimeout(function () { location.reload(); }, 800); }
+              else { toast((r && r.error) || "Error", true); }
+            });
+          });
+          li.appendChild(rn);
+          ul.appendChild(li);
+        });
+        lout.appendChild(ul);
+      });
+    });
+    host.appendChild(lsec);
+
     var elrules = (CFG.rules || []).filter(function (r) { return r.kind === "element"; });
     var hidden = (CFG.rules || []).filter(function (r) { return r.kind === "hide"; });
     var text = (CFG.rules || []).filter(function (r) { return r.kind === "text"; });
+    var langrules = (CFG.rules || []).filter(function (r) { return r.kind === "lang"; });
 
     host.appendChild(listSec("Element tweaks", elrules, function (r) {
       return r.property + ": " + r.value;
     }));
     host.appendChild(listSec("Retyped text", text, function (r) {
       return "“" + r.value.slice(0, 30) + "”";
+    }));
+    host.appendChild(listSec("Renamed labels", langrules, function (r) {
+      return (r.selector.split("/")[1] || r.selector) + " → “" + r.value.slice(0, 24) + "”";
     }));
     host.appendChild(listSec("Hidden elements", hidden, function () { return "hidden"; }, "unhide"));
   }
@@ -562,6 +644,7 @@
       '<button data-a="bold"  title="Bold on/off">B</button>' +
       '<button data-a="colour" title="Text colour">&#65039;&#127912;</button>' +
       '<button data-a="bg" title="Background colour">&#9632;</button>' +
+      '<button data-a="bgimg" title="Background image URL">&#128444;</button>' +
       '<button data-a="border" title="Border on/off">&#9707;</button>' +
       '<button data-a="padless" title="Less padding">&#8722;&#9647;</button>' +
       '<button data-a="padmore" title="More padding">+&#9647;</button>' +
@@ -625,6 +708,17 @@
     } else if (a === "bg") {
       var bi = toolbar.querySelector('[data-a="bginput"]');
       bi.value = toHex(cs.backgroundColor); bi.click();
+    } else if (a === "bgimg") {
+      var t2 = scopedSel(picked);
+      var url = window.prompt("Background image URL — https://… , /path , or data:image/… (blank to remove):", "");
+      if (url === null) { return; }
+      url = url.trim().replace(/['"\\]/g, "");
+      if (url === "") {
+        var ex = findRule({ kind: "element", pagetype: t2.pt, selector: t2.sel, property: "background-image" });
+        if (ex) { removeRule(ex.id); } else { toast("No background image set"); }
+        return;
+      }
+      applyProp("background-image", "url('" + url + "')", "Background image");
     } else if (a === "border") {
       var has = findRule({ kind: "element", pagetype: scopedSel(picked).pt,
         selector: scopedSel(picked).sel, property: "border" });
