@@ -77,6 +77,22 @@
 }
 #uid-tabs button.is-active { color: #7a1526; border-bottom-color: #7a1526; }
 
+#uid-publish {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .9rem;
+  background: #fbf1dd;
+  border-bottom: 1px solid #ecdcb8;
+  font-size: .78rem;
+  color: #7a5a15;
+}
+#uid-publish[hidden] { display: none; }
+#uid-publish span { flex: 1; }
+#uid-publish .uid-btn { padding: .3rem .7rem; font-size: .78rem; }
+
+.uid-warn { color: #b4232f; font-weight: 700; cursor: help; }
+
 #uid-body { flex: 1; overflow-y: auto; padding: .85rem .9rem 2rem; }
 .uid-tab[hidden] { display: none; }
 

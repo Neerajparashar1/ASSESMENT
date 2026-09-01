@@ -38,13 +38,14 @@ class rules {
      * @param string $pagetype $PAGE->pagetype
      * @return string CSS (no <style> wrapper)
      */
-    public static function compile_css(string $pagetype): string {
+    public static function compile_css(string $pagetype, bool $includedrafts = false): string {
         global $DB;
 
         $pagetype = self::clean_pagetype($pagetype);
         [$insql, $params] = $DB->get_in_or_equal(['*', $pagetype], SQL_PARAMS_NAMED, 'pt');
+        $draftsql = $includedrafts ? '' : ' AND published = 1';
         $rows = $DB->get_records_select('local_uidesign_rule',
-            "enabled = 1 AND pagetype $insql", $params, 'sortorder ASC, id ASC');
+            "enabled = 1 AND pagetype $insql" . $draftsql, $params, 'sortorder ASC, id ASC');
 
         $tokens = [];
         $blocks = [];
@@ -91,12 +92,13 @@ class rules {
      * @param string $pagetype
      * @return array
      */
-    public static function text_map(string $pagetype): array {
+    public static function text_map(string $pagetype, bool $includedrafts = false): array {
         global $DB;
         $pagetype = self::clean_pagetype($pagetype);
         [$insql, $params] = $DB->get_in_or_equal(['*', $pagetype], SQL_PARAMS_NAMED, 'pt');
+        $draftsql = $includedrafts ? '' : ' AND published = 1';
         $rows = $DB->get_records_select('local_uidesign_rule',
-            "enabled = 1 AND kind = 'text' AND pagetype $insql", $params, 'sortorder ASC, id ASC');
+            "enabled = 1 AND kind = 'text' AND pagetype $insql" . $draftsql, $params, 'sortorder ASC, id ASC');
         $map = [];
         foreach ($rows as $r) {
             $sel = self::clean_selector($r->selector);
@@ -141,6 +143,8 @@ class rules {
             'label'        => \core_text::substr(trim((string) ($data['label'] ?? '')), 0, 255),
             // Default enabled = 1 unless explicitly falsey.
             'enabled'      => array_key_exists('enabled', $data) ? (empty($data['enabled']) ? 0 : 1) : 1,
+            // New edits are drafts (published = 0) until the admin hits Publish.
+            'published'    => array_key_exists('published', $data) ? (empty($data['published']) ? 0 : 1) : 0,
             'sortorder'    => (int) ($data['sortorder'] ?? ($now % 100000)),
             'usermodified' => $USER->id,
             'timemodified' => $now,
@@ -209,6 +213,82 @@ class rules {
         self::bump_rev();
     }
 
+    // ---------------------------------------------------------------
+    //  Draft / publish + version history
+    // ---------------------------------------------------------------
+
+    /** How many unpublished (draft) changes are waiting. */
+    public static function pending_count(): int {
+        global $DB;
+        return $DB->count_records('local_uidesign_rule', ['published' => 0]);
+    }
+
+    /** Make every draft rule live for all users, and snapshot the result. */
+    public static function publish(string $note = ''): void {
+        global $DB, $USER;
+        if (!$DB->record_exists('local_uidesign_rule', ['published' => 0])) {
+            return;
+        }
+        $DB->set_field('local_uidesign_rule', 'published', 1, ['published' => 0]);
+        $DB->set_field('local_uidesign_rule', 'usermodified', $USER->id, []);
+        self::save_version($note !== '' ? $note : 'Published ' . userdate(time(), '%d %b %Y %H:%M'));
+        self::bump_rev();
+    }
+
+    /**
+     * Throw away all unpublished changes and return to the last published state
+     * (the newest version snapshot). Falls back to a full reset if never published.
+     */
+    public static function discard_drafts(): void {
+        global $DB;
+        $last = $DB->get_records('local_uidesign_version', null, 'timecreated DESC', 'id, snapshot', 0, 1);
+        self::reset_all();
+        if ($last) {
+            $v = reset($last);
+            self::import_json((string) $v->snapshot);
+            $DB->set_field('local_uidesign_rule', 'published', 1, []);
+        }
+        self::bump_rev();
+    }
+
+    /** Store a full snapshot of the current rule set. */
+    public static function save_version(string $note): int {
+        global $DB, $USER;
+        $rec = (object) [
+            'note'         => \core_text::substr(trim($note), 0, 255),
+            'rulecount'    => $DB->count_records('local_uidesign_rule'),
+            'snapshot'     => self::export_json(),
+            'usermodified' => $USER->id,
+            'timecreated'  => time(),
+        ];
+        $id = (int) $DB->insert_record('local_uidesign_version', $rec);
+        // Keep only the newest 25 versions.
+        $old = $DB->get_records('local_uidesign_version', null, 'timecreated DESC', 'id', 25, 1000);
+        if ($old) {
+            $DB->delete_records_list('local_uidesign_version', 'id', array_keys($old));
+        }
+        return $id;
+    }
+
+    /** Version list for the UI (no snapshot payload). */
+    public static function versions(): array {
+        global $DB;
+        return $DB->get_records('local_uidesign_version', null, 'timecreated DESC',
+            'id, note, rulecount, usermodified, timecreated', 0, 25);
+    }
+
+    /** Replace the whole rule set with a stored version and publish it. */
+    public static function rollback(int $versionid): int {
+        global $DB;
+        $v = $DB->get_record('local_uidesign_version', ['id' => $versionid], '*', MUST_EXIST);
+        self::reset_all();
+        $n = self::import_json((string) $v->snapshot);
+        $DB->set_field('local_uidesign_rule', 'published', 1, []);
+        self::save_version('Rolled back to ' . userdate($v->timecreated, '%d %b %Y %H:%M'));
+        self::bump_rev();
+        return $n;
+    }
+
     public static function export_json(): string {
         global $DB;
         $out = [];
@@ -216,10 +296,11 @@ class rules {
             $out[] = [
                 'kind' => $r->kind, 'pagetype' => $r->pagetype, 'selector' => $r->selector,
                 'property' => $r->property, 'value' => $r->value, 'label' => $r->label,
-                'enabled' => (int) $r->enabled, 'sortorder' => (int) $r->sortorder,
+                'enabled' => (int) $r->enabled, 'published' => (int) $r->published,
+                'sortorder' => (int) $r->sortorder,
             ];
         }
-        return json_encode(['plugin' => 'local_uidesign', 'version' => 1, 'rules' => $out],
+        return json_encode(['plugin' => 'local_uidesign', 'version' => 2, 'rules' => $out],
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 

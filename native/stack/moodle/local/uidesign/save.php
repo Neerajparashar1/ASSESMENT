@@ -55,6 +55,25 @@ try {
             echo json_encode(['ok' => true, 'rev' => rules::rev()]);
             break;
 
+        case 'publish':
+            rules::publish(optional_param('note', '', PARAM_TEXT));
+            echo json_encode(['ok' => true, 'rev' => rules::rev(), 'pending' => rules::pending_count()]);
+            break;
+
+        case 'discard':
+            rules::discard_drafts();
+            echo json_encode(['ok' => true, 'rev' => rules::rev(), 'pending' => rules::pending_count()]);
+            break;
+
+        case 'rollback':
+            $n = rules::rollback(required_param('id', PARAM_INT));
+            echo json_encode(['ok' => true, 'restored' => $n, 'rev' => rules::rev()]);
+            break;
+
+        case 'versions':
+            echo json_encode(['ok' => true, 'versions' => array_values(rules::versions())]);
+            break;
+
         case 'import':
             $n = rules::import_json(required_param('json', PARAM_RAW));
             echo json_encode(['ok' => true, 'imported' => $n, 'rev' => rules::rev()]);

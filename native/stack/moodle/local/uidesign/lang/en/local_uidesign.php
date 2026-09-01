@@ -20,7 +20,23 @@ $string['col_where'] = 'Where';
 $string['col_value'] = 'Value';
 $string['col_on'] = 'On';
 $string['col_actions'] = '';
-$string['norules'] = 'No overrides yet. Open the Design Studio from the navbar to start.';
+$string['norules'] = 'No overrides yet. Open the Design Studio from Site administration to start.';
+
+// Draft / publish + history.
+$string['pending'] = '{$a} unpublished change(s) — only admins can see them right now.';
+$string['publish'] = 'Publish (go live)';
+$string['published'] = 'Published — changes are now live for everyone.';
+$string['discard'] = 'Discard changes';
+$string['discard_confirm'] = 'Discard all unpublished changes and go back to what is live now?';
+$string['discarded'] = 'Unpublished changes discarded.';
+$string['draftbadge'] = 'draft';
+$string['history'] = 'Published history';
+$string['col_when'] = 'When';
+$string['col_note'] = 'Note';
+$string['col_rules'] = 'Rules';
+$string['restore_btn'] = 'Restore';
+$string['restore_confirm'] = 'Restore this snapshot? It replaces the current rules and publishes them.';
+$string['restored'] = 'Snapshot restored and published.';
 $string['resetall'] = 'Reset everything';
 $string['resetall_confirm'] = 'Delete every saved override and return the site to its default look?';
 $string['export'] = 'Export (JSON)';

@@ -106,6 +106,11 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
   }
+  function mkWarn(text) {
+    var w = el("span", "uid-warn", " ⚠");
+    w.title = text;
+    return w;
+  }
   function cssEsc(s) {
     return (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/[^\w-]/g, "\\$&");
   }
@@ -190,6 +195,11 @@
           '<button type="button" data-tab="edit">Edit</button>' +
           '<button type="button" data-tab="rules">Rules</button>' +
         '</div>' +
+        '<div id="uid-publish" hidden>' +
+          '<span></span>' +
+          '<button type="button" data-uid="publish" class="uid-btn">Publish</button>' +
+          '<button type="button" data-uid="discard" class="uid-btn ghost">Discard</button>' +
+        '</div>' +
         '<div id="uid-body">' +
           '<div class="uid-tab" data-tab="theme"></div>' +
           '<div class="uid-tab" data-tab="edit" hidden></div>' +
@@ -205,8 +215,11 @@
       if (t.dataset.uid === "close") { closeStudio(); return; }
       if (t.dataset.uid === "undo") { doUndo(); return; }
       if (t.dataset.uid === "redo") { doRedo(); return; }
+      if (t.dataset.uid === "publish") { doPublish(); return; }
+      if (t.dataset.uid === "discard") { doDiscard(); return; }
       if (t.dataset.tab && t.parentNode.id === "uid-tabs") { switchTab(t.dataset.tab); }
     });
+    syncPublishBar();
     renderTheme();
   }
 
@@ -340,8 +353,9 @@
     sc.innerHTML =
       '<label>Changes apply to</label>' +
       '<select data-uid="scope">' +
-        '<option value="page">This page only</option>' +
-        '<option value="*">Every page</option>' +
+        '<option value="one">Just this element (this page)</option>' +
+        '<option value="all">All elements like it (this page)</option>' +
+        '<option value="allsite">All like it, every page</option>' +
       '</select>';
     sec.appendChild(sc);
     var acts = el("div", "uid-actions");
@@ -402,9 +416,17 @@
         var cb = el("input"); cb.type = "checkbox"; cb.checked = !!(+r.enabled);
         cb.addEventListener("change", function () { toggleRule(r.id, cb.checked); });
         li.appendChild(cb);
-        var lbl = el("span", "uid-lbl", r.label || (r.kind + " " + r.selector));
+        var lbl = el("span", "uid-lbl", (r.label || (r.kind + " " + r.selector)) +
+          (!(+r.published) ? "  •draft" : ""));
         lbl.title = r.kind + " · " + (r.pagetype === "*" ? "every page" : r.pagetype) + "\n" +
           r.selector + (r.property ? " { " + r.property + ": " + r.value + " }" : "");
+        // stale check: does this selector match anything on the current page?
+        if ((r.kind === "element" || r.kind === "hide" || r.kind === "text") &&
+            (r.pagetype === "*" || r.pagetype === CFG.pagetype)) {
+          var hits = 0;
+          try { hits = document.querySelectorAll(r.selector).length; } catch (e) { hits = -1; }
+          if (hits === 0) { lbl.appendChild(mkWarn("matches nothing on this page")); }
+        }
         li.appendChild(lbl);
         var x = el("button", "uid-mini", "✕");
         x.addEventListener("click", function () { removeRule(r.id); });
@@ -414,6 +436,32 @@
       sec.appendChild(ul);
     }
     host.appendChild(sec);
+
+    // version history
+    post({ do: "versions" }).then(function (v) {
+      if (!v || !v.ok || !v.versions.length) { return; }
+      var vs = el("div", "uid-sec");
+      vs.appendChild(el("h4", null, "Published history"));
+      var vul = el("ul", "uid-list");
+      v.versions.forEach(function (ver) {
+        var li = el("li");
+        var d = new Date(ver.timecreated * 1000);
+        li.appendChild(el("span", "uid-lbl", (ver.note || "snapshot") + "  ·  " + ver.rulecount + " rules"));
+        li.querySelector(".uid-lbl").title = d.toLocaleString();
+        var rb = el("button", "uid-mini", "restore");
+        rb.addEventListener("click", function () {
+          if (!window.confirm("Restore this snapshot? It replaces the current rules and publishes.")) { return; }
+          post({ do: "rollback", id: ver.id }).then(function (res) {
+            if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
+            else { toast(res.error || "Error", true); }
+          });
+        });
+        li.appendChild(rb);
+        vul.appendChild(li);
+      });
+      vs.appendChild(vul);
+      host.appendChild(vs);
+    });
 
     var acts = el("div", "uid-actions");
     var reset = el("button", "uid-btn danger", "Reset everything");
@@ -487,13 +535,13 @@
 
   function scopeVal() {
     var s = studio.querySelector('[data-uid="scope"]');
-    return (s && s.value === "*") ? "*" : "page";
+    return (s && s.value) || "one";
   }
-  function scopedSel(node, useClassPath) {
-    var mode = scopeVal();
-    var sel = (mode === "*" || useClassPath) ? classPath(node) : cssPath(node);
-    if (!sel) { sel = cssPath(node); }
-    return { sel: sel, pt: mode === "*" ? "*" : CFG.pagetype };
+  function scopedSel(node) {
+    var mode = scopeVal();                       // one | all | allsite
+    var useClass = (mode === "all" || mode === "allsite");
+    var sel = useClass ? (classPath(node) || cssPath(node)) : cssPath(node);
+    return { sel: sel, pt: mode === "allsite" ? "*" : CFG.pagetype };
   }
 
   // ---- element toolbar --------------------------------
@@ -509,16 +557,19 @@
     toolbar = el("div"); toolbar.id = "uid-toolbar"; toolbar.hidden = true;
     toolbar.innerHTML =
       '<button data-a="text"  title="Retype text">&#9998;</button>' +
-      '<button data-a="smaller" title="Smaller">A&minus;</button>' +
-      '<button data-a="bigger"  title="Bigger">A+</button>' +
-      '<button data-a="bold"  title="Bold">B</button>' +
-      '<button data-a="colour" title="Text colour">&#127912;</button>' +
+      '<button data-a="smaller" title="Smaller text">A&minus;</button>' +
+      '<button data-a="bigger"  title="Bigger text">A+</button>' +
+      '<button data-a="bold"  title="Bold on/off">B</button>' +
+      '<button data-a="colour" title="Text colour">&#65039;&#127912;</button>' +
+      '<button data-a="bg" title="Background colour">&#9632;</button>' +
+      '<button data-a="border" title="Border on/off">&#9707;</button>' +
       '<button data-a="padless" title="Less padding">&#8722;&#9647;</button>' +
       '<button data-a="padmore" title="More padding">+&#9647;</button>' +
-      '<button data-a="align" title="Align">&#8801;</button>' +
-      '<button data-a="hide"  title="Hide">&#128065;</button>' +
+      '<button data-a="align" title="Text align">&#8801;</button>' +
+      '<button data-a="hide"  title="Hide this">&#128065;</button>' +
       '<button data-a="reset" title="Reset this element">&#8634;</button>' +
-      '<input type="color" data-a="colourinput" hidden>';
+      '<input type="color" data-a="colourinput" hidden>' +
+      '<input type="color" data-a="bginput" hidden>';
     document.body.appendChild(toolbar);
     toolbar.addEventListener("click", function (e) {
       var b = e.target.closest("button"); if (!b || !picked) { return; }
@@ -526,6 +577,9 @@
     });
     toolbar.querySelector('[data-a="colourinput"]').addEventListener("change", function (e) {
       applyProp("color", e.target.value, "Text colour");
+    });
+    toolbar.querySelector('[data-a="bginput"]').addEventListener("change", function (e) {
+      applyProp("background-color", e.target.value, "Background colour");
     });
     window.addEventListener("scroll", positionToolbar, true);
     window.addEventListener("resize", positionToolbar);
@@ -568,6 +622,14 @@
     } else if (a === "colour") {
       var ci = toolbar.querySelector('[data-a="colourinput"]');
       ci.value = toHex(cs.color); ci.click();
+    } else if (a === "bg") {
+      var bi = toolbar.querySelector('[data-a="bginput"]');
+      bi.value = toHex(cs.backgroundColor); bi.click();
+    } else if (a === "border") {
+      var has = findRule({ kind: "element", pagetype: scopedSel(picked).pt,
+        selector: scopedSel(picked).sel, property: "border" });
+      if (has) { removeRule(has.id); toast("Border off"); }
+      else { applyProp("border", "1px solid var(--itm-line)", "Border on"); }
     } else if (a === "padless" || a === "padmore") {
       var p = parseFloat(cs.paddingTop) || 0;
       p = Math.max(0, Math.round(p + (a === "padmore" ? 4 : -4)));
@@ -689,6 +751,32 @@
     if (u) { u.disabled = !undoStack.length; }
     if (r) { r.disabled = !redoStack.length; }
   }
+
+  // ---- draft / publish ----------------------------------
+  function pendingCount() {
+    return (CFG.rules || []).filter(function (r) { return !(+r.published); }).length;
+  }
+  function syncPublishBar() {
+    var bar = studio.querySelector("#uid-publish");
+    if (!bar) { return; }
+    var n = pendingCount();
+    bar.hidden = n === 0;
+    bar.querySelector("span").textContent = n === 1 ? "1 unpublished change — only you can see it"
+      : n + " unpublished changes — only you can see them";
+  }
+  function doPublish() {
+    post({ do: "publish" }).then(function (res) {
+      if (res.ok) { toast("Published — live for everyone"); refresh(); }
+      else { toast(res.error || "Error", true); }
+    });
+  }
+  function doDiscard() {
+    if (!window.confirm("Discard your unpublished changes and go back to what's live now?")) { return; }
+    post({ do: "discard" }).then(function (res) {
+      if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
+      else { toast(res.error || "Error", true); }
+    });
+  }
   function reapplyPreview() {
     if (!previewStyle) { return; }
     previewStyle.textContent = "";
@@ -720,11 +808,13 @@
       if (r && r.ok) {
         CFG.rules = r.rules.map(function (x) {
           return { id: +x.id, kind: x.kind, pagetype: x.pagetype, selector: x.selector,
-                   property: x.property, value: x.value, label: x.label, enabled: +x.enabled };
+                   property: x.property, value: x.value, label: x.label,
+                   enabled: +x.enabled, published: +x.published };
         });
         var active = studio.querySelector("#uid-tabs button.is-active");
         if (active && active.dataset.tab === "edit") { renderEdit(); }
         if (active && active.dataset.tab === "rules") { renderRules(); }
+        syncPublishBar();
         reapplyPreview();
       }
     });

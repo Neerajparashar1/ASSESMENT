@@ -6,7 +6,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_uidesign';
-$plugin->version   = 2026090133;
+$plugin->version   = 2026090140;
 $plugin->requires  = 2024100700;          // Moodle 4.5.
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.2.3 (Phase 1b: per-element toolbar - text/size/bold/colour/padding/align/hide/reset - + undo/redo)';
+$plugin->release   = '0.3.0 (Phase 2a: draft/publish workflow, version history + rollback, background/border toolbar, apply-to-all scope, stale-rule flags)';

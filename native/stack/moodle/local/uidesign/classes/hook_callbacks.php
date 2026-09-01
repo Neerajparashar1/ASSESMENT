@@ -37,14 +37,19 @@ class hook_callbacks {
         $assetver = (int) get_config('local_uidesign', 'version');   // cache-bust editor.js/.css
         $html = '';
 
-        // 1. The live overrides - for everyone.
-        $css = rules::compile_css($pagetype);
+        // Admins see draft (unpublished) rules too, so they can preview their
+        // work before it goes live for everyone.
+        $isadmin = isloggedin() && !isguestuser()
+            && (is_siteadmin() || has_capability('local/uidesign:manage', \context_system::instance()));
+
+        // 1. The live overrides.
+        $css = rules::compile_css($pagetype, $isadmin);
         if ($css !== '') {
             $html .= '<style id="uid-live">' . $css . '</style>';
         }
 
-        // 2. Text-swap shim - for everyone, only if there are text rules.
-        $textmap = rules::text_map($pagetype);
+        // 2. Text-swap shim, only if there are text rules to apply here.
+        $textmap = rules::text_map($pagetype, $isadmin);
         if ($textmap) {
             $json = json_encode($textmap, JSON_UNESCAPED_SLASHES);
             $html .= '<script>(function(){var m=' . $json . ';function a(){for(var s in m){'
@@ -54,8 +59,6 @@ class hook_callbacks {
         }
 
         // 3. The editor itself - admins only.
-        $isadmin = isloggedin() && !isguestuser()
-            && (is_siteadmin() || has_capability('local/uidesign:manage', \context_system::instance()));
         if ($isadmin && $pagetype !== 'local-uidesign-manage') {
             $base = '/local/uidesign/';
             $cfg = [
@@ -65,11 +68,13 @@ class hook_callbacks {
                 'bodyclass' => 'page-' . $pagetype,
                 'saveurl'   => $base . 'save.php',
                 'manageurl' => $base . 'manage.php',
+                'pending'   => rules::pending_count(),
                 'rules'     => array_values(array_map(static function ($r) {
                     return [
                         'id' => (int) $r->id, 'kind' => $r->kind, 'pagetype' => $r->pagetype,
                         'selector' => $r->selector, 'property' => $r->property,
-                        'value' => $r->value, 'label' => $r->label, 'enabled' => (int) $r->enabled,
+                        'value' => $r->value, 'label' => $r->label,
+                        'enabled' => (int) $r->enabled, 'published' => (int) $r->published,
                     ];
                 }, rules::all())),
             ];

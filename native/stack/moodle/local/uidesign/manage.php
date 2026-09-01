@@ -40,6 +40,18 @@ if ($data = data_submitted()) {
         rules::reset_all();
         redirect($baseurl, $s('reset_done'));
     }
+    if ($do === 'publish') {
+        rules::publish();
+        redirect($baseurl, $s('published'));
+    }
+    if ($do === 'discard') {
+        rules::discard_drafts();
+        redirect($baseurl, $s('discarded'));
+    }
+    if ($do === 'rollback') {
+        rules::rollback(required_param('id', PARAM_INT));
+        redirect($baseurl, $s('restored'));
+    }
     if ($do === 'import') {
         $json = optional_param('json', '', PARAM_RAW);
         try {
@@ -55,6 +67,23 @@ if ($data = data_submitted()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($s('managetitle'));
 echo html_writer::div($s('manageintro'), 'lead text-muted mb-3');
+
+// ---- draft / publish bar ----
+$pending = rules::pending_count();
+if ($pending > 0) {
+    $pf = html_writer::start_tag('form', ['method' => 'post', 'style' => 'display:inline']);
+    $pf .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+    $pf .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'do', 'value' => 'publish']);
+    $pf .= html_writer::tag('button', $s('publish'), ['type' => 'submit', 'class' => 'btn btn-primary btn-sm']);
+    $pf .= html_writer::end_tag('form');
+    $df = html_writer::start_tag('form', ['method' => 'post', 'style' => 'display:inline;margin-left:.4rem']);
+    $df .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+    $df .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'do', 'value' => 'discard']);
+    $df .= html_writer::tag('button', $s('discard'), ['type' => 'submit', 'class' => 'btn btn-outline-secondary btn-sm',
+        'onclick' => "return confirm('" . $s('discard_confirm') . "')"]);
+    $df .= html_writer::end_tag('form');
+    echo $OUTPUT->notification($s('pending', $pending) . ' ' . $pf . $df, \core\output\notification::NOTIFY_WARNING);
+}
 
 $rules = rules::all();
 
@@ -88,13 +117,45 @@ if (!$rules) {
             ['type' => 'submit', 'class' => 'btn btn-sm btn-outline-danger']);
         $del .= html_writer::end_tag('form');
 
+        $kindcell = html_writer::tag('code', s($r->kind)) .
+            (empty($r->published) ? ' ' . html_writer::tag('span', $s('draftbadge'),
+                ['class' => 'badge badge-warning']) : '');
+
         echo html_writer::tag('tr',
-            html_writer::tag('td', html_writer::tag('code', s($r->kind))) .
+            html_writer::tag('td', $kindcell) .
             html_writer::tag('td', html_writer::tag('code', s($target))) .
             html_writer::tag('td', s($r->pagetype === '*' ? 'everywhere' : $r->pagetype)) .
             html_writer::tag('td', s((string) $r->value)) .
             html_writer::tag('td', $toggle) .
             html_writer::tag('td', $del));
+    }
+    echo html_writer::end_tag('tbody');
+    echo html_writer::end_tag('table');
+}
+
+// ---- published history ----
+$versions = rules::versions();
+if ($versions) {
+    echo html_writer::tag('h3', $s('history'), ['class' => 'mt-4']);
+    echo html_writer::start_tag('table', ['class' => 'generaltable']);
+    echo html_writer::tag('thead', html_writer::tag('tr',
+        html_writer::tag('th', $s('col_when')) . html_writer::tag('th', $s('col_note')) .
+        html_writer::tag('th', $s('col_rules')) . html_writer::tag('th', '')));
+    echo html_writer::start_tag('tbody');
+    foreach ($versions as $v) {
+        $rb = html_writer::start_tag('form', ['method' => 'post', 'style' => 'display:inline']);
+        $rb .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+        $rb .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'do', 'value' => 'rollback']);
+        $rb .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'id', 'value' => $v->id]);
+        $rb .= html_writer::tag('button', $s('restore_btn'),
+            ['type' => 'submit', 'class' => 'btn btn-sm btn-outline-secondary',
+             'onclick' => "return confirm('" . $s('restore_confirm') . "')"]);
+        $rb .= html_writer::end_tag('form');
+        echo html_writer::tag('tr',
+            html_writer::tag('td', userdate($v->timecreated, get_string('strftimedatetimeshort'))) .
+            html_writer::tag('td', s($v->note)) .
+            html_writer::tag('td', (int) $v->rulecount) .
+            html_writer::tag('td', $rb));
     }
     echo html_writer::end_tag('tbody');
     echo html_writer::end_tag('table');
