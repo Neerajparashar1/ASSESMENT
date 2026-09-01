@@ -92,14 +92,30 @@ $DB->set_field('course', 'shortname', $shortname, ['id' => SITEID]);
 set_config('supportname', 'ITM GOI Examination Cell');
 out("site name -> \"$fullname\"  ($shortname)");
 
-// web fonts via <head> (SCSS @import of a remote URL breaks the compiler)
-$fontlink = '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-    . '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+// web fonts via <head> (SCSS @import of a remote URL breaks the compiler).
+// Loaded NON-render-blocking: preconnect to both font hosts, then pull the
+// stylesheet in with the media-swap trick so it never gates first paint
+// (display=swap already shows fallback text immediately, then swaps).
+$fonturl = 'https://fonts.googleapis.com/css2?'
     . 'family=Playfair+Display:wght@500;600;700;800;900&'
     . 'family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&'
-    . 'family=Inter:wght@400;500;600;700;800;900&display=swap">';
+    . 'family=Inter:wght@400;500;600;700;800;900&display=swap';
+$fontlink = '<link rel="preconnect" href="https://fonts.googleapis.com">'
+    . '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+    // Moodle 4.5 loads the MathJax loader (filter_mathjaxloader) on EVERY
+    // page - setup_page_for_globally_available_filters() ignores per-context
+    // state, so it can't be scoped without disabling math in quizzes too.
+    // Warm the CDN connection so that unavoidable fetch isn't blocked on a
+    // cold DNS/TLS handshake.
+    . '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>'
+    . '<link rel="stylesheet" href="' . $fonturl . '" media="print" '
+    . 'onload="this.media=\'all\';this.onload=null">'
+    . '<noscript><link rel="stylesheet" href="' . $fonturl . '"></noscript>';
 $head = (string) get_config('core', 'additionalhtmlhead');
-$head = preg_replace('~<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>~i', '', $head);
+// strip any prior font injection (links, their <noscript> wrapper) before re-adding
+$head = preg_replace('~<noscript>\s*<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>\s*</noscript>~i', '', $head);
+$head = preg_replace('~<link[^>]*(fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net)[^>]*>~i', '', $head);
+$head = preg_replace('~<noscript>\s*</noscript>~i', '', $head);
 set_config('additionalhtmlhead', trim($head) . "\n" . $fontlink);
 out('injected Google Fonts <link> into additionalhtmlhead');
 

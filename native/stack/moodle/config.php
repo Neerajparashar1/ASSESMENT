@@ -31,8 +31,21 @@ $CFG->cachejs           = true;
 $CFG->enablestats       = false;
 $CFG->pathtophp         = 'E:/ASSESMENT/native/stack/php/php.exe';
 $CFG->autosavefrequency = 15;
-$CFG->additionalhtmlfooter = '<!-- sebkiosk --><style>#page-mod-quiz-attempt .qtext,#page-mod-quiz-attempt .formulation,#page-mod-quiz-attempt .info,#page-mod-quiz-attempt #quiznavigation,#page-mod-quiz-attempt .qn_buttons{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}#page-mod-quiz-attempt input,#page-mod-quiz-attempt textarea,#page-mod-quiz-attempt select,#page-mod-quiz-attempt [contenteditable]{-webkit-user-select:text;-moz-user-select:text;user-select:text}</style><script defer src="/local/sebkiosk/exam-ui.js?v=37"></script>';
+$CFG->additionalhtmlfooter = '<!-- sebkiosk --><style>#page-mod-quiz-attempt .qtext,#page-mod-quiz-attempt .formulation,#page-mod-quiz-attempt .info,#page-mod-quiz-attempt #quiznavigation,#page-mod-quiz-attempt .qn_buttons{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}#page-mod-quiz-attempt input,#page-mod-quiz-attempt textarea,#page-mod-quiz-attempt select,#page-mod-quiz-attempt [contenteditable]{-webkit-user-select:text;-moz-user-select:text;user-select:text}</style><script defer src="/local/sebkiosk/exam-ui.js?v=40"></script>';
 // ==== /EAP MANAGED CONFIG ==========================================
+
+// ---- ITM: server-rendered top utility strip -------------------------
+// Emitted right after <body> opens so it is in the initial HTML - no
+// post-load JS insert, no layout jump. custom.scss hides it + zeroes
+// --itm-topstrip-h on the login / quiz-attempt / maintenance / secure
+// layouts. (Was injected by exam-ui.js after load, which shifted the
+// whole page down ~30px on every navigation.)
+$CFG->additionalhtmltopofbody =
+    '<div id="itm-topstrip">'
+  . '<span class="itm-topstrip-l">Online Examination Portal</span>'
+  . '<span class="itm-topstrip-r">Secure&nbsp;&middot;&nbsp;AI&#8209;proctored&nbsp;&middot;&nbsp;Instant results</span>'
+  . '</div>'
+  . '<script>document.body.classList.add("itm-has-topstrip");</script>';
 
 require_once(__DIR__ . '/lib/setup.php');
 

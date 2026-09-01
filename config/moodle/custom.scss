@@ -80,21 +80,41 @@ $itm-card-accents: (
 // ---------- Base type -----------------------------------------------
 body {
   font-family: var(--itm-sans);
-  font-feature-settings: "cv05" 1, "ss01" 1;   // Inter: friendlier l, single-story g
+  // "cv05"/"ss01" = Inter's friendlier l + single-story g.
+  // "lnum" = lining figures - forces Playfair Display's digits onto the
+  // baseline everywhere (its default old-style figures dip below it and
+  // look broken in course codes like "TAP CELL TEST 02"). Inherits to all
+  // headings; a no-op on Inter / Source Serif (already lining). Does NOT
+  // touch "tabular-nums" - elements that ask for it still get it.
+  font-feature-settings: "cv05" 1, "ss01" 1, "lnum" 1;
+  font-variant-numeric: lining-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-// Serif only for real display headings - NOT every h3/h4/h5 in the admin UI.
+// Playfair (--itm-display) = the high-contrast display face. Keep it for
+// the brand + the marketing hero copy only.
 .navbar-brand,
-#page-header h1, #page-header .h1,
-.page-context-header .page-header-headings h1,
-h1.h1, .pagelayout-login h1, .pagelayout-login h2,
+.pagelayout-login h1, .pagelayout-login h2,
 .loginform h1 {
   font-family: var(--itm-display);
   font-weight: 600;
   letter-spacing: -0.015em;
+  font-optical-sizing: auto;
+}
+
+// Page / course / section titles are IDENTIFIERS (often with codes +
+// numbers like "TAP CELL TEST 02"). Playfair's ornate Didone digits read
+// as decorative and sit small next to the caps - wrong here. Use the
+// text-weight serif (Source Serif 4) instead: still elegant, but clean
+// lining numerals that hold the baseline.
+#page-header h1, #page-header .h1,
+.page-context-header .page-header-headings h1,
+h1.h1 {
+  font-family: var(--itm-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   font-optical-sizing: auto;
 }
 
@@ -121,8 +141,11 @@ a.dimmed, .dimmed_text { color: var(--itm-slate); }
 //  TOP STRIP + WHITE NAVBAR   --   modelled on itmgoi.in's header
 //  itmgoi.in = a thin dark-maroon utility strip over a WHITE main bar
 //  so the full ITM logo (mark + name + tagline) reads on its natural
-//  background. #itm-topstrip is injected by exam-ui.js (not on the
-//  login page or a live exam attempt); it also adds .itm-has-topstrip.
+//  background. #itm-topstrip is server-rendered (config.php
+//  additionalhtmltopofbody) on every page + an inline script adds
+//  .itm-has-topstrip to <body> before first paint - no layout jump.
+//  It is collapsed on login / exam-attempt / secure / maintenance
+//  (see the .itm-has-topstrip block below).
 // ==================================================================
 :root { --itm-topstrip-h: 30px; --itm-navbar-h: 80px; }
 
@@ -176,6 +199,18 @@ body:not(.pagelayout-login) .drawer { top: var(--itm-navbar-h) !important; }
   [data-region="secondary-navigation"].is-sticky {
     top: calc(var(--itm-navbar-h) + var(--itm-topstrip-h)) !important;
   }
+}
+
+// The strip is server-rendered on EVERY page now, so collapse it where
+// it must not show: login has its own full-bleed branding; the exam
+// attempt / secure / maintenance layouts stay distraction-free.
+// Zeroing --itm-topstrip-h makes every offset above fall back to nav-only.
+body.pagelayout-login,
+body.pagelayout-secure,
+body.pagelayout-maintenance,
+body#page-mod-quiz-attempt {
+  --itm-topstrip-h: 0px;
+  #itm-topstrip { display: none; }
 }
 
 // ---------- white navbar ----------
@@ -1722,7 +1757,7 @@ body#page-site-index {
     z-index: -1;
     background:
       linear-gradient(180deg, rgba(31, 7, 13, .12) 0%, rgba(31, 7, 13, .22) 100%),
-      url("/local/sebkiosk/campus.jpg") center center / cover no-repeat;
+      url("/local/sebkiosk/campus.jpg?v=2") center center / cover no-repeat;
   }
 
   // the plain "Dashboard" title is replaced by the welcome banner
@@ -3351,6 +3386,20 @@ body#page-user-index {
     background: #e6e9f8;
     box-shadow: 0 12px 22px -12px rgba(66, 80, 155, .5);
   }
+  // destructive - red tint so it never gets clicked by reflex
+  .itm-removeusers { margin-left: .5rem; padding-right: .25rem; }
+  .itm-removeusers .itm-bulkimport-btn {
+    background: var(--itm-danger-tint, #fbecec);
+    border-color: #e6bcc0;
+    color: var(--itm-danger, #b4232f);
+    box-shadow: 0 8px 18px -12px rgba(180, 35, 47, .4);
+  }
+  .itm-removeusers .itm-bulkimport-btn:hover {
+    color: #fff;
+    background: var(--itm-danger, #b4232f);
+    border-color: #8f1a24;
+    box-shadow: 0 12px 22px -12px rgba(180, 35, 47, .55);
+  }
 
   // ---- filter panel ----
   .filter-group {
@@ -3758,10 +3807,320 @@ body#page-admin-tool-uploaduser-preview {
 }
 
 // =================================================================
+//  COURSE VIEW  (/course/view.php)  --  student-facing course page.
+//  Boost renders a flat list of sections + activity rows. This turns
+//  it into a branded, card-based layout: a proper course header, clean
+//  section cards, activity cards with coloured icon tiles, and a
+//  distinct "exam" treatment for quizzes (the point of this portal).
+//  Scoped to real course-content pages (any format), never participants.
+//  The card conversion is held back in edit mode so teachers keep the
+//  familiar drag/drop + action-menu layout.
+// =================================================================
+body.path-course-view:not(#page-course-view-participants) {
+
+  // ---- course header -------------------------------------------
+  #page-header {
+    position: relative;
+    padding-bottom: .85rem;
+    margin-bottom: 1.1rem;
+    border-bottom: 1px solid var(--itm-line);
+  }
+  #page-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 78px;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--itm-gold), var(--itm-maroon) 75%);
+  }
+  #page-header .page-header-headings h1,
+  #page-header .page-context-header h1 {
+    font-family: var(--itm-serif);  // text serif, not Playfair - clean digits for course codes
+    font-weight: 600;
+    font-size: unquote("clamp(1.7rem, 1.3rem + 1.7vw, 2.4rem)"); // unquote: scssphp can't do vw+rem arithmetic itself
+    line-height: 1.14;
+    letter-spacing: -.015em;
+    color: var(--itm-maroon-900);
+    margin: 0;
+  }
+
+  // ---- section card -------------------------------------------
+  .course-content ul.topics,
+  .course-content ul.weeks,
+  .course-content .course-content-list {
+    margin: 0;
+    padding: 0;
+  }
+  .course-content li.section {
+    // colour-cycle each section through the same accent palette as the
+    // front-page course cards / admin card grid, so a multi-section
+    // course reads as distinct blocks, not a wall of identical cards.
+    // Section 1 ("General") lands on accent 1 = maroon = the brand.
+    --sec-accent: var(--itm-maroon);
+    --sec-tint:   var(--itm-maroon-050);
+    --sec-dark:   var(--itm-maroon-900);
+
+    list-style: none;
+    background: #fff;
+    border: 1px solid var(--itm-line);
+    border-top: 3px solid var(--sec-accent);
+    border-radius: var(--itm-radius-lg);
+    box-shadow: 0 1px 2px rgba(74, 13, 23, .04), 0 14px 30px -24px rgba(74, 13, 23, .28);
+    margin: 0 0 1rem;
+    padding: .35rem .3rem .5rem;
+    overflow: hidden;
+    transition: box-shadow .16s ease;
+  }
+  @each $n, $c in $itm-card-accents {
+    .course-content li.section:nth-of-type(8n + #{$n}) {
+      --sec-accent: #{nth($c, 1)};
+      --sec-tint:   #{nth($c, 2)};
+      --sec-dark:   #{nth($c, 3)};
+    }
+  }
+  .course-content li.section:hover {
+    box-shadow: 0 1px 2px rgba(74, 13, 23, .05), 0 20px 38px -22px rgba(74, 13, 23, .34);
+  }
+
+  // section header : name + branded collapse chevron
+  .course-section-header {
+    align-items: center;
+    padding: .7rem .85rem .55rem;
+    gap: .1rem;
+  }
+  .course-section-header .sectionname,
+  h3.sectionname {
+    // plain sans, not the display serif - a list of section labels reads
+    // far better in Inter than in decorative Playfair at this size.
+    font-family: var(--itm-sans);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--sec-dark, var(--itm-maroon-900));
+    letter-spacing: -.005em;
+  }
+  .course-section-header .sectionname a,
+  h3.sectionname a { color: inherit; }
+  .course-section-header .sectionname a:hover { color: var(--itm-maroon); }
+
+  a[data-for="sectiontoggler"],
+  .course-section-header .icons-collapse-expand {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--itm-line);
+    background: var(--sec-tint, var(--itm-maroon-050));
+    color: var(--sec-dark, var(--itm-maroon-700));
+    transition: background .14s ease, color .14s ease, border-color .14s ease;
+  }
+  a[data-for="sectiontoggler"]:hover {
+    background: var(--sec-accent, var(--itm-maroon));
+    border-color: var(--sec-dark, var(--itm-maroon-900));
+    color: #fff;
+  }
+  a[data-for="sectiontoggler"] .icon { font-size: .8rem; }
+
+  // "Collapse all" toggle
+  .course-content .collapsesections .collapseexpand,
+  [data-toggle="course-collapse"] {
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--itm-maroon-700);
+  }
+
+  .course-section-header + .content,
+  .course-content-item-content {
+    padding: 0 .55rem .35rem;
+  }
+}
+
+body.path-course-view:not(#page-course-view-participants):not(.editing) {
+
+  .course-content ul.section {
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+    margin: 0;
+    padding: .2rem;
+    list-style: none;
+  }
+  .course-content li.activity {
+    list-style: none;
+    margin: 0;
+  }
+  .course-content li.activity .activity-item {
+    padding: .8rem .95rem;
+    border: 1px solid var(--itm-line);
+    border-radius: var(--itm-radius);
+    background: #fff;
+    transition: border-color .14s ease, box-shadow .14s ease, transform .14s ease;
+  }
+  .course-content li.activity .activity-item::before { display: none; } // Boost divider
+  .course-content li.activity .activity-item:hover {
+    border-color: var(--itm-gold-600);
+    box-shadow: 0 14px 26px -18px rgba(74, 13, 23, .4);
+    transform: translateY(-1px);
+  }
+
+  // coloured icon tile, re-tinted to the ITM accent palette by purpose
+  .activity-icon.activityiconcontainer {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .activity-icon.activityiconcontainer img { width: 22px; height: 22px; }
+  // solid, saturated tile per Boost "purpose" - each activity TYPE gets
+  // its own colour identity at a glance, not just quizzes.
+  .activityiconcontainer.assessment         { background: var(--itm-maroon); }
+  .activityiconcontainer.collaboration      { background: var(--itm-indigo); }
+  .activityiconcontainer.communication      { background: var(--itm-teal); }
+  .activityiconcontainer.content            { background: var(--itm-steel); }
+  .activityiconcontainer.administration     { background: var(--itm-amber); }
+  .activityiconcontainer.interface,
+  .activityiconcontainer.interactivecontent { background: var(--itm-forest); }
+  .activityiconcontainer.assessment img,
+  .activityiconcontainer.collaboration img,
+  .activityiconcontainer.communication img,
+  .activityiconcontainer.content img,
+  .activityiconcontainer.administration img,
+  .activityiconcontainer.interface img,
+  .activityiconcontainer.interactivecontent img { filter: brightness(0) invert(1); }
+
+  // a thin left accent on the row itself, matching the icon's hue
+  li.activity:has(.activityiconcontainer.collaboration) .activity-item    { border-left: 2px solid var(--itm-indigo); }
+  li.activity:has(.activityiconcontainer.communication) .activity-item   { border-left: 2px solid var(--itm-teal); }
+  li.activity:has(.activityiconcontainer.content) .activity-item         { border-left: 2px solid var(--itm-steel); }
+  li.activity:has(.activityiconcontainer.administration) .activity-item  { border-left: 2px solid var(--itm-amber); }
+  li.activity:has(.activityiconcontainer.interface) .activity-item,
+  li.activity:has(.activityiconcontainer.interactivecontent) .activity-item { border-left: 2px solid var(--itm-forest); }
+
+  // activity name
+  .activity-item .activityname a,
+  .activity-item .instancename {
+    font-weight: 600;
+    font-size: .98rem;
+    color: var(--itm-ink);
+  }
+  .activity-item:hover .instancename { color: var(--itm-maroon-700); }
+
+  // dates / meta row
+  .activity-item .activity-dates {
+    margin-top: .3rem;
+    font-size: .8rem;
+    color: var(--itm-slate);
+    display: flex;
+    gap: 1.15rem;
+    flex-wrap: wrap;
+  }
+  .activity-item .activity-dates strong {
+    display: inline-block;
+    margin-right: .35rem;
+    font-size: .66rem;
+    font-weight: 700;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--itm-gold-deep);
+  }
+
+  // ---- QUIZ = the exam. Make it unmistakable. ----------------
+  li.modtype_quiz .activity-item {
+    background: linear-gradient(180deg, #fffdfb 0%, var(--itm-maroon-050) 100%);
+    border-color: #e8cf9f;
+    border-left: 3px solid var(--itm-maroon);
+    padding-left: .8rem;
+  }
+  li.modtype_quiz .activity-item:hover {
+    border-color: var(--itm-gold);
+    box-shadow: 0 18px 32px -18px rgba(74, 13, 23, .5);
+  }
+  // (icon tile is already solid maroon via the .assessment rule above -
+  // quizzes stand out through the badge + gradient + thicker border, not
+  // a one-off icon colour, so assignments read consistently too.)
+  li.modtype_quiz .instancename { color: var(--itm-maroon-900); font-weight: 700; }
+  // an "EXAM" tag pill after the name
+  li.modtype_quiz .activitytitle .instancename::after {
+    content: "Exam";
+    display: inline-block;
+    margin-left: .55rem;
+    padding: .12rem .5rem;
+    border-radius: 999px;
+    font-family: var(--itm-sans);
+    font-size: .62rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #fdf7ea;
+    background: linear-gradient(135deg, var(--itm-maroon), var(--itm-maroon-700));
+    vertical-align: middle;
+  }
+  li.modtype_quiz .activitytitle .instancename .accesshide::after { content: none; }
+
+  // ---- de-clutter empty visible sections --------------------
+  .course-content li.section:not(:has(.activity)):not(:has(.summarytext)):not(:has(.section_availability)) {
+    box-shadow: none;
+    border-style: dashed;
+    background: transparent;
+    opacity: .62;
+  }
+  .course-content li.section:not(:has(.activity)):not(:has(.summarytext)) .course-section-header {
+    padding-block: .5rem;
+  }
+  .course-content li.section:not(:has(.activity)):not(:has(.summarytext)) .sectionname {
+    font-size: 1rem;
+    color: var(--itm-slate);
+  }
+}
+
+// ---- course index drawer : lighter active/hover state ---------
+body.path-course-view:not(#page-course-view-participants) {
+  #courseindex .courseindex-item.pageitem,
+  #courseindex .courseindex-link.pageitem {
+    background: var(--itm-maroon-050);
+    border-left: 3px solid var(--itm-maroon);
+  }
+  #courseindex .courseindex-link:hover { color: var(--itm-maroon-700); }
+  #courseindex .courseindex-section-title { font-weight: 600; }
+}
+
+// =================================================================
 //  DARK MODE  (light touch)
 // =================================================================
 @media (prefers-color-scheme: dark) {
   ::selection      { background: var(--itm-gold); color: #1a0c10; }
   ::-moz-selection { background: var(--itm-gold); color: #1a0c10; }
   body:not(.pagelayout-login) a { color: #e3b872; }
+}
+
+// =================================================================
+//  PERFORMANCE  --  smoothness, not looks
+// =================================================================
+// NOTE: `content-visibility: auto` was trialled here on the admin card
+// grid / course list / dashboard blocks to cut style-recalc scope. It
+// BROKE the JS-built `.itm-admin-card` grid (cards rendered unstyled) and
+// showed no measurable recalc win on pages without those grids, so it was
+// removed. The remaining recalc cost lives in the 1.37 MB / ~11k-rule
+// Boost Union bundle itself - the real fix is trimming that (own task).
+
+// Bound recalc/layout scope for the one big self-contained, non-grid,
+// overflow-hidden widget where it's demonstrably safe.
+#itm-topstrip { contain: layout style; }
+
+// Honour reduced-motion everywhere: kill the decorative animation cost
+// (Ken-Burns hero zoom, scroll-reveal, hover lifts) for users who ask
+// for it. Cheap for them, correct for accessibility.
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .itm-hero-slide,
+  .itm-loginhero .itm-hero-slide,
+  .itm-dashhero .itm-hero-slide { transform: none !important; }
 }

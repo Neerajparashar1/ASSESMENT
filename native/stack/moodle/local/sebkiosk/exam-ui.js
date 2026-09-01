@@ -28,15 +28,17 @@
   }
 
   /* -----------------------------------------------------------------
-   * Thin maroon utility strip above the navbar (echoes itmgoi.in's
-   * two-tier header). Skipped on the login page (its own full-bleed
-   * branding) and on a live exam attempt (kept distraction-free).
-   * CSS: custom.scss #itm-topstrip / .itm-has-topstrip.
+   * Thin maroon utility strip above the navbar (#itm-topstrip).
+   * MOVED SERVER-SIDE: it is now emitted by $CFG->additionalhtmltopofbody
+   * (config.php) so it is in the initial HTML - no post-load insert, no
+   * layout jump. custom.scss hides it + zeroes --itm-topstrip-h on the
+   * login / exam-attempt / embedded / maintenance layouts.
+   * (Legacy safety net: if some page ever ships without the server strip,
+   * add it here - but normally this is a no-op.)
    * --------------------------------------------------------------- */
-  if (body &&
-      !/ pagelayout-login /.test(" " + body.className + " ") &&
-      body.id !== "page-mod-quiz-attempt" &&
-      !document.getElementById("itm-topstrip")) {
+  if (body && !document.getElementById("itm-topstrip") &&
+      !/ pagelayout-(login|embedded|maintenance|secure) /.test(" " + body.className + " ") &&
+      body.id !== "page-mod-quiz-attempt") {
     var itmStrip = document.createElement("div");
     itmStrip.id = "itm-topstrip";
     itmStrip.innerHTML =
@@ -80,7 +82,7 @@
       // LEFT : auto-advancing ITM GOI campus slideshow + college info
       if (!document.querySelector(".itm-loginhero")) {
         var base = "/local/sebkiosk/";   // root-relative: works on localhost or a tunnel host
-        var pics = ["campus3.jpg", "campus.jpg", "campus2.jpg"];   // Sandipani block + the two itmgoi.in sliders
+        var pics = ["campus3.jpg", "campus.jpg?v=2", "campus2.jpg?v=2"];   // ?v=2 = recompressed (was 605/458KB -> 182/143KB)
         var slides = pics.map(function (f, i) {
           return '<div class="itm-hero-slide' + (i === 0 ? " is-active" : "") +
                  '" style="background-image:url(' + base + f + ')"></div>';
@@ -183,7 +185,7 @@
         months[now.getMonth()] + " " + now.getFullYear();
 
       var base = "/local/sebkiosk/";   // root-relative: works on localhost or a tunnel host
-      var pics = ["campus.jpg", "campus2.jpg"];
+      var pics = ["campus.jpg?v=2", "campus2.jpg?v=2"];
       var slides = pics.map(function (f, i) {
         return '<div class="itm-hero-slide' + (i === 0 ? " is-active" : "") +
                '" style="background-image:url(' + base + f + ')"></div>';
@@ -249,7 +251,7 @@
 
         var base = "/local/sebkiosk/";   // root-relative: works on localhost or a tunnel host
         // Sandipani Prakhand academic block leads the home-page slideshow.
-        var pics = ["campus3.jpg", "campus.jpg", "campus2.jpg"];
+        var pics = ["campus3.jpg", "campus.jpg?v=2", "campus2.jpg?v=2"];
         var slides = pics.map(function (f, i) {
           return '<div class="itm-hero-slide' + (i === 0 ? " is-active" : "") +
                  '" style="background-image:url(' + base + f + ')"></div>';
@@ -847,6 +849,22 @@
           '</svg>' +
           'Batches</a>';
       row.appendChild(bat);
+
+      // Delete user accounts in bulk -> Moodle's own hardened tool
+      // (Site admin > Users > Bulk user actions). Needs moodle/user:delete;
+      // that page filters, selects, and runs a delete with its OWN
+      // confirmation. Red-tinted so it reads as destructive.
+      var del = document.createElement("div");
+      del.className = "navitem itm-removeusers";
+      del.innerHTML =
+        '<a class="btn itm-bulkimport-btn" href="/admin/user/user_bulk.php">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/>' +
+            '<path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/>' +
+            '<path d="M9 7V4h6v3"/>' +
+          '</svg>' +
+          'Remove users</a>';
+      row.appendChild(del);
     })();
   }
 
