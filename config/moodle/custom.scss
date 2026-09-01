@@ -50,7 +50,14 @@
 
   --itm-radius:      12px;
   --itm-radius-lg:   20px;
+
+  // Global text-size multiplier - the Design Studio (local_uidesign) drives this
+  // live. 1 = default. Scales everything sized in rem across the site.
+  --itm-scale:       1;
 }
+
+// One knob to grow / shrink all rem-based text at once.
+html { font-size: calc(100% * var(--itm-scale)); }
 
 // Accent palette for card grids (front-page courses + admin landing).
 // data-accent 1..8, cycled by exam-ui.js. Muted jewel/earth tones that

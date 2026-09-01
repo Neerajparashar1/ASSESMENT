@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/uidesign/db" VERSION="20260901" COMMENT="XMLDB file for local_uidesign"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_uidesign_rule" COMMENT="One presentation override applied to the live site.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="kind" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="token | element | hide | text"/>
+        <FIELD NAME="pagetype" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="*" SEQUENCE="false" COMMENT="PAGE-&gt;pagetype this rule targets, or * for site-wide"/>
+        <FIELD NAME="selector" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="CSS selector; for kind=token this is the custom property name e.g. --itm-maroon"/>
+        <FIELD NAME="property" TYPE="char" LENGTH="64" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="CSS property e.g. color, font-size; empty for token/hide/text"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="CSS value / hex / scale factor / replacement text"/>
+        <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Human summary shown in the rule manager"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Later rules win"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="kind_pagetype_enabled" UNIQUE="false" FIELDS="kind, pagetype, enabled"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
