@@ -12,10 +12,10 @@
 // Moodle's SCSS compiler.
 
 :root {
-  // Fraunces = the display serif for big headings across the site. The
-  // login brand panel overrides this with Playfair Display (see LOGIN PAGE).
-  // Source Serif 4 stays the workhorse serif; Inter carries all UI / body.
-  --itm-display: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
+  // Playfair Display = the display serif for big headings across the whole site
+  // (replaced Fraunces - its f / j letterforms read oddly). Source Serif 4 stays
+  // the workhorse serif; Inter carries all UI / body text.
+  --itm-display: "Playfair Display", "Source Serif 4", Georgia, "Times New Roman", serif;
   --itm-serif:  "Source Serif 4", Georgia, "Times New Roman", serif;
   --itm-sans:   "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
@@ -353,8 +353,8 @@ body#page-grade-report-user-index {
   .page-context-header .page-header-headings h1,
   #page-header h1, #region-main > h2:first-of-type {
     font-family: var(--itm-display);
-    font-weight: 600;
-    letter-spacing: -.01em;
+    font-weight: 700;
+    letter-spacing: 0;
     color: var(--itm-maroon-900);
   }
 
@@ -923,7 +923,7 @@ body.pagelayout-login {
     text-shadow: 0 1px 10px rgba(0, 0, 0, .5);
   }
   .itm-loginhero h2 {
-    font-family: "Playfair Display", var(--itm-display);
+    font-family: var(--itm-display);
     font-optical-sizing: auto;
     font-weight: 700;
     font-size: clamp(1.95rem, 2.9vw, 2.5rem);
@@ -1008,7 +1008,7 @@ body.pagelayout-login {
       linear-gradient(165deg, #fdfcfa 0%, #f7f2ed 60%, #f2ebe5 100%);
     overflow: hidden;
   }
-  // oversized faint Fraunces monogram, bottom-right (echoes the site footer)
+  // oversized faint serif monogram, bottom-right (echoes the site footer)
   #page-content::before {
     content: "ITM";
     position: absolute;
