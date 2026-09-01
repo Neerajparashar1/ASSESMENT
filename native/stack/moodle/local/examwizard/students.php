@@ -139,7 +139,8 @@ if ($data = $mform->get_data()) {
     echo html_writer::tag('thead', html_writer::tag('tr',
         html_writer::tag('th', '#') . html_writer::tag('th', get_string('st_name', 'local_examwizard')) .
         html_writer::tag('th', get_string('st_username', 'local_examwizard')) .
-        html_writer::tag('th', get_string('email')) . html_writer::tag('th', '')));
+        html_writer::tag('th', get_string('email')) .
+        html_writer::tag('th', get_string('b_name', 'local_examwizard')) . html_writer::tag('th', '')));
     echo html_writer::start_tag('tbody');
     foreach ($parsed['rows'] as $r) {
         $bad = !empty($r['errors']);
@@ -148,6 +149,7 @@ if ($data = $mform->get_data()) {
             html_writer::tag('td', s(trim($r['firstname'] . ' ' . ($r['lastname'] === '.' ? '' : $r['lastname'])))) .
             html_writer::tag('td', html_writer::tag('code', s($r['username']))) .
             html_writer::tag('td', s($r['email'])) .
+            html_writer::tag('td', $r['batch'] !== '' ? s($r['batch']) : '') .
             html_writer::tag('td', $bad ? html_writer::tag('span', implode('; ', array_map('s', $r['errors'])),
                 ['class' => 'text-danger small']) : ''),
             ['class' => $bad ? 'ew-row-bad' : '']);

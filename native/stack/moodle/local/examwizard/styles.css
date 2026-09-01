@@ -12,6 +12,21 @@
     --ew-ok-bg:    #e7f3ec;
     --ew-err:      #a11226;
     --ew-err-bg:   #fbeaec;
+
+    /* secondary accents - brand stays maroon+gold, these tell card types
+       and statuses apart (fall back gracefully without the ITM theme). */
+    --ew-teal:      var(--itm-teal,       #1f7a6f);
+    --ew-teal-d:    var(--itm-teal-700,   #175f56);
+    --ew-teal-bg:   var(--itm-teal-050,   #ecf5f3);
+    --ew-indigo:    var(--itm-indigo,     #42509b);
+    --ew-indigo-d:  var(--itm-indigo-700, #333f7d);
+    --ew-indigo-bg: var(--itm-indigo-050, #eef0f9);
+    --ew-amber:     var(--itm-amber,      #b5652d);
+    --ew-amber-d:   var(--itm-amber-700,  #8f4f22);
+    --ew-amber-bg:  var(--itm-amber-050,  #fbf1e8);
+    --ew-steel:     var(--itm-steel,      #3a6ea5);
+    --ew-steel-d:   var(--itm-steel-700,  #2d5782);
+    --ew-steel-bg:  var(--itm-steel-050,  #edf3f9);
 }
 
 /* ---- stepper ---- */
@@ -93,10 +108,11 @@
     max-width: 640px;
     margin: .8rem 0 0;
     padding: .6rem .6rem .6rem 1.4rem;
-    background: var(--ew-tint);
+    background: var(--ew-teal-bg);
+    border-left: 3px solid var(--ew-teal);
     border-radius: 8px;
     font-size: .85rem;
-    color: var(--ew-maroon-d);
+    color: var(--ew-teal-d);
 }
 
 /* ---- review summary pills ---- */
@@ -142,8 +158,8 @@
 .path-local-examwizard .ew-qtype {
     padding: .1rem .5rem;
     border-radius: 6px;
-    background: var(--ew-tint);
-    color: var(--ew-maroon-d);
+    background: var(--ew-indigo-bg);
+    color: var(--ew-indigo-d);
 }
 .path-local-examwizard .ew-qmarks { margin-left: auto; color: var(--ew-slate); }
 .path-local-examwizard .ew-qtext {
@@ -199,6 +215,13 @@
 }
 .path-local-examwizard .ew-glance-n { font-size: 1.6rem; font-weight: 800; color: var(--ew-maroon-d); line-height: 1; }
 .path-local-examwizard .ew-glance-l { font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; color: var(--ew-slate); }
+/* one accent per metric so the strip isn't four maroon tiles */
+.path-local-examwizard .ew-glance-exams { border-left-color: var(--ew-indigo); }
+.path-local-examwizard .ew-glance-exams .ew-glance-n { color: var(--ew-indigo-d); }
+.path-local-examwizard .ew-glance-students { border-left-color: var(--ew-teal); }
+.path-local-examwizard .ew-glance-students .ew-glance-n { color: var(--ew-teal-d); }
+.path-local-examwizard .ew-glance-courses { border-left-color: var(--ew-amber); }
+.path-local-examwizard .ew-glance-courses .ew-glance-n { color: var(--ew-amber-d); }
 .path-local-examwizard .ew-glance-live { border-left-color: var(--ew-ok); }
 .path-local-examwizard .ew-glance-live .ew-glance-n { color: var(--ew-ok); }
 
@@ -227,13 +250,14 @@
 .path-local-examwizard .ew-chk-progress {
     font-size: .8rem;
     font-weight: 700;
-    color: var(--ew-slate);
-    background: var(--ew-tint);
+    color: var(--ew-steel-d);
+    background: var(--ew-steel-bg);
     padding: .15rem .6rem;
     border-radius: 999px;
 }
 .path-local-examwizard .ew-chk-dismiss { font-size: .8rem; }
 .path-local-examwizard .ew-card-checklist { border-left: 3px solid var(--ew-gold); }
+.path-local-examwizard .ew-card-help { border-left: 3px solid var(--ew-teal); }
 .path-local-examwizard .ew-checklist { list-style: none; padding: 0; margin: 0; }
 .path-local-examwizard .ew-checklist li {
     display: flex;
@@ -307,8 +331,8 @@
     letter-spacing: .3px;
 }
 .path-local-examwizard .ew-badge-live { background: var(--ew-ok-bg); color: #14512f; }
-.path-local-examwizard .ew-badge-open { background: #eaf2fb; color: #2d5782; }
-.path-local-examwizard .ew-badge-scheduled { background: var(--ew-tint); color: var(--ew-maroon-d); }
+.path-local-examwizard .ew-badge-open { background: var(--ew-steel-bg); color: var(--ew-steel-d); }
+.path-local-examwizard .ew-badge-scheduled { background: var(--ew-amber-bg); color: var(--ew-amber-d); }
 .path-local-examwizard .ew-badge-closed { background: #f1f0f0; color: #6b6b6b; }
 
 .path-local-examwizard .ew-card-help dl.ew-help { margin: 0; }
@@ -384,3 +408,16 @@
 }
 
 .path-local-examwizard .ew-tlink-strong { font-weight: 700; color: var(--ew-maroon); }
+
+/* ---- credentials page: the issued password, meant to be read once ---- */
+.path-local-examwizard code.ew-pw {
+    display: inline-block;
+    padding: .2rem .55rem;
+    border-radius: 7px;
+    background: var(--ew-amber-bg);
+    border: 1px solid #e6cdb0;
+    color: var(--ew-amber-d);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+}

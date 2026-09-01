@@ -44,6 +44,7 @@ class student_csv {
             'email' => 'email', 'e-mail' => 'email', 'mail' => 'email',
             'password' => 'password', 'pass' => 'password', 'pwd' => 'password',
             'name' => 'fullname', 'full name' => 'fullname', 'student name' => 'fullname',
+            'batch' => 'batch', 'section' => 'batch', 'cohort' => 'batch', 'class' => 'batch', 'group' => 'batch',
         ];
         $map = [];
         foreach (array_shift($rows) as $i => $label) {
@@ -83,6 +84,7 @@ class student_csv {
                 'lastname' => $last !== '' ? $last : '.',
                 'email' => \core_text::strtolower($get('email')),
                 'password' => $get('password'),
+                'batch' => $get('batch'),
                 'errors' => [],
             ];
 
@@ -118,6 +120,8 @@ class student_csv {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/user/lib.php');
         require_once($CFG->libdir . '/enrollib.php');
+        require_once($CFG->dirroot . '/cohort/lib.php');
+        require_once($CFG->dirroot . '/local/examwizard/lib.php');
 
         $course = get_course($courseid);
         $manual = enrol_get_plugin('manual');
@@ -131,6 +135,8 @@ class student_csv {
         $created = 0;
         $existing = 0;
         $enrolled = 0;
+        $batched = 0;
+        $batchcache = [];
         foreach ($rows as $r) {
             if (!empty($r['errors'])) {
                 continue;
@@ -156,17 +162,27 @@ class student_csv {
                 $manual->enrol_user($instance, $user->id, $studentroleid);
                 $enrolled++;
             }
+
+            if (trim((string) ($r['batch'] ?? '')) !== '') {
+                $label = trim($r['batch']);
+                $cohortid = $batchcache[$label]
+                    ?? ($batchcache[$label] = local_examwizard_find_or_create_batch($label));
+                if (!cohort_is_member($cohortid, $user->id)) {
+                    cohort_add_member($cohortid, $user->id);
+                    $batched++;
+                }
+            }
         }
         return ['created' => $created, 'existing' => $existing, 'enrolled' => $enrolled,
-            'defaultpassword' => $defaultpassword];
+            'batched' => $batched, 'defaultpassword' => $defaultpassword];
     }
 
     public static function template_rows(): array {
         return [
-            ['firstname', 'lastname', 'username', 'email', 'password'],
-            ['Aarav', 'Sharma', 's2026101', 'aarav.sharma@example.com', 'Exam@2026'],
-            ['Diya', 'Verma', 's2026102', 'diya.verma@example.com', 'Exam@2026'],
-            ['Kabir', 'Singh', 's2026103', '', 'Exam@2026'],
+            ['firstname', 'lastname', 'username', 'email', 'password', 'batch'],
+            ['Aarav', 'Sharma', 's2026101', 'aarav.sharma@example.com', 'Exam@2026', 'CS - A Batch 2024'],
+            ['Diya', 'Verma', 's2026102', 'diya.verma@example.com', 'Exam@2026', 'CS - A Batch 2024'],
+            ['Kabir', 'Singh', 's2026103', '', 'Exam@2026', 'CS - B Batch 2024'],
         ];
     }
 }

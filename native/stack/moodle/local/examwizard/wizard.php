@@ -6,6 +6,8 @@
 require(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->libdir . '/questionlib.php');
+require_once($CFG->dirroot . '/cohort/lib.php');
+require_once(__DIR__ . '/lib.php');
 
 use local_examwizard\local\csv_questions;
 use local_examwizard\local\importer;
@@ -67,6 +69,18 @@ if ($step === 4) {
 
         [$cmid, $quiz, $cm] = quiz_builder::create($course, $basics, $rules);
 
+        // Enrol the chosen batches into this course so their members can sit it.
+        $batchcount = 0;
+        if (!empty($basics['cohortids']) && has_capability('enrol/cohort:config', $coursecontext)) {
+            $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+            foreach ($basics['cohortids'] as $cid) {
+                if ($DB->record_exists('cohort', ['id' => $cid])) {
+                    local_examwizard_ensure_batch_sync((int) $cid, $course, (int) $studentroleid);
+                    $batchcount++;
+                }
+            }
+        }
+
         $qsummary = '';
         $qsrc = $state['questions']['source'] ?? 'later';
         if ($qsrc === 'upload' && !empty($state['questions']['rows'])) {
@@ -101,6 +115,9 @@ if ($step === 4) {
             (object) ['name' => format_string($quiz->name), 'questions' => $qsummary]),
             \core\output\notification::NOTIFY_SUCCESS);
         $wires = [];
+        if ($batchcount) {
+            $wires[] = get_string('w_wired_batches', 'local_examwizard', $batchcount);
+        }
         if (!empty($rules['seb'])) {
             $wires[] = get_string('w_wired_seb', 'local_examwizard');
         }
@@ -133,8 +150,18 @@ if ($step === 4) {
 // =====================================================================
 //  STEPS 1-3 - forms
 // =====================================================================
+// Batches the wizard can enrol into this course (only if the user may configure
+// cohort sync here). id => "name (N students)".
+$cohortmenu = [];
+if (has_capability('enrol/cohort:config', $coursecontext)) {
+    foreach (cohort_get_all_cohorts(0, 1000)['cohorts'] as $c) {
+        $cohortmenu[$c->id] = format_string($c->name) . ' ('
+            . $DB->count_records('cohort_members', ['cohortid' => $c->id]) . ')';
+    }
+}
+
 $formmap = [
-    1 => [\local_examwizard\form\wizard_basics_form::class, ['sections' => $sections]],
+    1 => [\local_examwizard\form\wizard_basics_form::class, ['sections' => $sections, 'cohorts' => $cohortmenu]],
     2 => [\local_examwizard\form\wizard_questions_form::class, ['contexts' => $contexts, 'courseid' => $courseid]],
     3 => [\local_examwizard\form\wizard_rules_form::class, []],
 ];
@@ -164,6 +191,7 @@ if ($data = $mform->get_data()) {
             'timeclose' => (int) ($data['timeclose'] ?? 0),
             'timelimit' => max(0, (int) $data['timelimit']),
             'intro' => is_array($ed) ? ($ed['text'] ?? '') : (string) $ed,
+            'cohortids' => array_values(array_filter(array_map('intval', (array) ($data['cohortids'] ?? [])))),
         ];
         $state['step'] = 2;
         redirect($baseurl);
@@ -254,10 +282,20 @@ function local_examwizard_wizard_stepper(int $active): string {
 }
 
 function local_examwizard_wizard_review(array $state, array $sections, moodle_url $baseurl): string {
+    global $DB;
     $b = $state['basics'] ?? [];
     $q = $state['questions'] ?? [];
     $r = $state['rules'] ?? [];
     $s = fn($id, $a = null) => get_string($id, 'local_examwizard', $a);
+
+    $batchtext = $s('w_none');
+    if (!empty($b['cohortids'])) {
+        [$insql, $inparams] = $DB->get_in_or_equal($b['cohortids']);
+        $names = $DB->get_fieldset_select('cohort', 'name', "id $insql", $inparams);
+        if ($names) {
+            $batchtext = s(implode(', ', $names));
+        }
+    }
 
     $when = '';
     if (!empty($b['timeopen'])) {
@@ -279,6 +317,7 @@ function local_examwizard_wizard_review(array $state, array $sections, moodle_ur
     $rows = [
         [$s('w_examname'), s($b['name'] ?? '')],
         [$s('w_section'), s($sections[$b['section'] ?? 0] ?? '')],
+        [$s('w_rev_batches'), $batchtext],
         [$s('w_rev_when'), $when],
         [$s('w_timelimit'), ($b['timelimit'] ?? 0) ? ($b['timelimit'] . ' ' . $s('w_minutes')) : $s('w_none')],
         [$s('w_step_questions'), $qtext],

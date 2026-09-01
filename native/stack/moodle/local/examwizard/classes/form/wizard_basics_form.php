@@ -34,6 +34,13 @@ class wizard_basics_form extends \moodleform {
             ['rows' => 4]);
         $mform->setType('introeditor', PARAM_RAW);
 
+        $cohorts = $this->_customdata['cohorts'] ?? [];   // array<int,string> id => "name (N)"
+        if ($cohorts) {
+            $mform->addElement('autocomplete', 'cohortids',
+                get_string('w_batches', 'local_examwizard'), $cohorts, ['multiple' => true]);
+            $mform->addHelpButton('cohortids', 'w_batches', 'local_examwizard');
+        }
+
         $this->add_action_buttons(false, get_string('w_next', 'local_examwizard'));
     }
 

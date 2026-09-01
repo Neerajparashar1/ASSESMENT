@@ -762,10 +762,11 @@
 
   /* -----------------------------------------------------------------
    * 0e. PARTICIPANTS : prominent "Bulk import users" + "Reset passwords"
-   *     actions. Admins only (bulk import needs moodle/site:uploadusers,
-   *     reset needs local/examwizard:resetpassword) - gated on the
-   *     "Site administration" primary-nav link being present; each
-   *     target page re-checks the real capability.
+   *     + "Batches" actions. Admins only (each needs its own capability:
+   *     moodle/site:uploadusers, local/examwizard:resetpassword,
+   *     moodle/cohort:manage) - gated on the "Site administration"
+   *     primary-nav link being present; each target page re-checks the
+   *     real capability.
    * --------------------------------------------------------------- */
   if (body && (body.id === "page-course-view-participants" ||
                body.id === "page-user-index")) {
@@ -803,6 +804,21 @@
           '</svg>' +
           'Reset passwords</a>';
       row.appendChild(rst);
+
+      var batchHref = "/local/examwizard/batches.php" +
+        (courseId && String(courseId) !== "1" && body.id === "page-course-view-participants"
+          ? "?enrolinto=" + encodeURIComponent(courseId) : "");
+      var bat = document.createElement("div");
+      bat.className = "navitem itm-batches";
+      bat.innerHTML =
+        '<a class="btn itm-bulkimport-btn" href="' + batchHref + '">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>' +
+            '<path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/>' +
+            '<path d="M16 3.5a3 3 0 0 1 0 5"/><path d="M21 20v-1a5 5 0 0 0-3.6-4.8"/>' +
+          '</svg>' +
+          'Batches</a>';
+      row.appendChild(bat);
     })();
   }
 

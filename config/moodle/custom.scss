@@ -35,6 +35,15 @@
   --itm-slate:       #5f575a;
   --itm-line:        #e7dfe0;
 
+  // Secondary accents (drawn from $itm-card-accents). Maroon + gold stay
+  // the brand; these differentiate sections, card types and statuses so
+  // the admin UI isn't one flat maroon wash.
+  --itm-teal:        #1f7a6f;  --itm-teal-050:   #ecf5f3;  --itm-teal-700:   #175f56;
+  --itm-indigo:      #42509b;  --itm-indigo-050: #eef0f9;  --itm-indigo-700: #333f7d;
+  --itm-amber:       #b5652d;  --itm-amber-050:  #fbf1e8;  --itm-amber-700:  #8f4f22;
+  --itm-steel:       #3a6ea5;  --itm-steel-050:  #edf3f9;  --itm-steel-700:  #2d5782;
+  --itm-forest:      #3f7a45;  --itm-forest-050: #edf5ee;  --itm-forest-700: #315f36;
+
   // warm neutral tints for the alternating section bands
   --itm-cream:       #faf4ec;
   --itm-tint:        #f6ede8;
@@ -3018,7 +3027,14 @@ body#page-user-index {
 
   // ---- "Enrolled users" tertiary selector ----
   .tertiary-navigation { padding: 0; margin: 0 0 1rem; border: 0; }
-  .tertiary-navigation .row { align-items: center; }
+  // Bootstrap's .row has negative side margins that jam the selector against
+  // the left edge - reset that and give it the same 1.5rem indent as the A-Z bar.
+  .tertiary-navigation .row {
+    align-items: center;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 1.5rem;
+  }
   .tertiary-navigation .navitem:not(.itm-bulkimport) > *:first-child,
   .tertiary-navigation .dropdown-toggle {
     font-family: var(--itm-serif);
@@ -3058,6 +3074,34 @@ body#page-user-index {
     width: 15px; height: 15px;
     fill: none; stroke: currentColor;
     stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  // injected "Reset passwords" (teal) + "Batches" (indigo) actions - soft
+  // tinted pills so they read as secondary tools next to the solid maroon
+  // "Bulk import users" pill.
+  .itm-pwreset { margin-left: .5rem; padding-right: .25rem; }
+  .itm-pwreset .itm-bulkimport-btn {
+    background: var(--itm-teal-050);
+    border-color: #bfe0da;
+    color: var(--itm-teal-700);
+    box-shadow: 0 8px 18px -12px rgba(31, 122, 111, .4);
+  }
+  .itm-pwreset .itm-bulkimport-btn:hover {
+    color: var(--itm-teal-700);
+    background: #e0f0ec;
+    box-shadow: 0 12px 22px -12px rgba(31, 122, 111, .5);
+  }
+  .itm-batches { margin-left: .5rem; padding-right: .25rem; }
+  .itm-batches .itm-bulkimport-btn {
+    background: var(--itm-indigo-050);
+    border-color: #cdd3ef;
+    color: var(--itm-indigo-700);
+    box-shadow: 0 8px 18px -12px rgba(66, 80, 155, .4);
+  }
+  .itm-batches .itm-bulkimport-btn:hover {
+    color: var(--itm-indigo-700);
+    background: #e6e9f8;
+    box-shadow: 0 12px 22px -12px rgba(66, 80, 155, .5);
   }
 
   // ---- filter panel ----
@@ -3190,20 +3234,20 @@ body#page-user-index {
   #participants { margin: 0; }
   #participants thead th,
   #participants thead .header {
-    background: linear-gradient(180deg, #fbf3f4 0%, #f6eae9 100%);
+    background: linear-gradient(180deg, var(--itm-indigo-050) 0%, #e6e9f5 100%);
     border: 0 !important;
-    border-bottom: 2px solid var(--itm-line) !important;
+    border-bottom: 2px solid #d3d8ee !important;
     padding: .85rem 1rem;
     font-family: var(--itm-sans);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: .05em;
     text-transform: uppercase;
-    color: var(--itm-maroon-900);
+    color: var(--itm-indigo-700);
     vertical-align: middle;
   }
   #participants thead th a,
-  #participants thead .header a { color: var(--itm-maroon-900) !important; }
+  #participants thead .header a { color: var(--itm-indigo-700) !important; }
   #participants thead th .commands,
   #participants thead th::after,
   #participants thead .header::after { display: none !important; }
@@ -3220,11 +3264,25 @@ body#page-user-index {
   #participants.table-striped tbody tr:nth-of-type(even) > * { background: #fdf8f6; }
   #participants.table-hover tbody tr:hover > * { background: var(--itm-maroon-050) !important; }
 
+  // Avatars cycle through the accent palette so a long roster reads as a
+  // list of people, not a column of identical maroon discs.
   #participants .userinitials {
-    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%) !important;
-    color: #f3e6c7 !important;
     font-weight: 700;
-    box-shadow: 0 4px 10px -5px rgba(138, 27, 44, .6);
+    color: #fdf3e3 !important;
+    box-shadow: 0 4px 10px -5px rgba(33, 24, 26, .5);
+    background: linear-gradient(135deg, var(--itm-maroon) 0%, var(--itm-maroon-700) 100%) !important;
+  }
+  #participants tbody tr:nth-of-type(5n + 2) .userinitials {
+    background: linear-gradient(135deg, var(--itm-teal) 0%, var(--itm-teal-700) 100%) !important;
+  }
+  #participants tbody tr:nth-of-type(5n + 3) .userinitials {
+    background: linear-gradient(135deg, var(--itm-indigo) 0%, var(--itm-indigo-700) 100%) !important;
+  }
+  #participants tbody tr:nth-of-type(5n + 4) .userinitials {
+    background: linear-gradient(135deg, var(--itm-amber) 0%, var(--itm-amber-700) 100%) !important;
+  }
+  #participants tbody tr:nth-of-type(5n + 5) .userinitials {
+    background: linear-gradient(135deg, var(--itm-forest) 0%, var(--itm-forest-700) 100%) !important;
   }
   #participants .userpicture { border-radius: 50%; }
   #participants tbody .c1 a {
