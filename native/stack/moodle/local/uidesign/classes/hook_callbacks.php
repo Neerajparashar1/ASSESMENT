@@ -82,7 +82,12 @@ class hook_callbacks {
                 }, rules::all())),
             ];
             $html .= '<script>window.UIDESIGN=' . json_encode($cfg, JSON_UNESCAPED_SLASHES) . ';</script>';
-            $html .= '<link rel="stylesheet" href="' . $base . 'editor.css?v=' . $assetver . '">';
+            // Non-render-blocking: the Design Studio overlay is hidden until an
+            // admin opens it, so its CSS never needs to gate first paint.
+            $css = $base . 'editor.css?v=' . $assetver;
+            $html .= '<link rel="stylesheet" href="' . $css . '" media="print" '
+                . 'onload="this.media=\'all\';this.onload=null">';
+            $html .= '<noscript><link rel="stylesheet" href="' . $css . '"></noscript>';
             $html .= '<script defer src="' . $base . 'editor.js?v=' . $assetver . '"></script>';
         }
 

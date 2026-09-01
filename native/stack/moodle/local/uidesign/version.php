@@ -6,7 +6,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_uidesign';
-$plugin->version   = 2026090151;
+$plugin->version   = 2026090152;
 $plugin->requires  = 2024100700;          // Moodle 4.5.
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.4.1 (Phase 2b + a "Design" launcher appears when Edit mode is on)';
+$plugin->release   = '0.5.0 (Design Studio UI redesign: light ITM design system, SVG icon toolbar, in-panel dialogs)';

@@ -17,6 +17,7 @@
   var studio = null;
   var pickMode = null;        // 'hide' | 'style' | null
   var outline = null;
+  var pickframe = null;       // dim frame shown while picking
   var toolbar = null;
   var picked = null;          // currently selected element (style mode)
   var undoStack = [];
@@ -61,6 +62,34 @@
     if (text != null) { n.textContent = text; }
     return n;
   }
+
+  // Feather-style line icons (24x24 viewBox, stroked with currentColor).
+  var ICONS = {
+    undo:     '<path d="M9 14 4 9l5-5"/><path d="M4 9h11a6 6 0 0 1 0 12H9"/>',
+    redo:     '<path d="m15 14 5-5-5-5"/><path d="M20 9H9a6 6 0 0 0 0 12h6"/>',
+    close:    '<path d="M18 6 6 18M6 6l12 12"/>',
+    text:     '<path d="M5 5h14M12 5v14M9 19h6"/>',
+    minus:    '<path d="M5 12h14"/>',
+    plus:     '<path d="M12 5v14M5 12h14"/>',
+    bold:     '<path d="M6 4h8a4 4 0 0 1 0 8H6zM6 12h9a4 4 0 0 1 0 8H6z"/>',
+    palette:  '<path d="M12 3a9 9 0 1 0 0 18c1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.8-.5-1.2a1.6 1.6 0 0 1 1.6-1.6H16a5 5 0 0 0 5-5c0-3.9-4-6.8-9-6.8Z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/>',
+    fill:     '<path d="m11 3 8 8-8 8a2 2 0 0 1-3 0l-5-5a2 2 0 0 1 0-3z"/><path d="m5 13 8 0"/><path d="M20 15s2 2.3 2 3.6A2 2 0 0 1 20 21a2 2 0 0 1-2-2.4C18 17.3 20 15 20 15Z"/>',
+    image:    '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 16-5-5L5 20"/>',
+    square:   '<rect x="4" y="4" width="16" height="16" rx="1"/>',
+    align:    '<path d="M4 6h16M4 12h10M4 18h16"/>',
+    eyeoff:   '<path d="M10.7 5.1A9.6 9.6 0 0 1 12 5c6 0 10 7 10 7a17.6 17.6 0 0 1-2.4 3.2M6.6 6.6A17.3 17.3 0 0 0 2 12s4 7 10 7a9.5 9.5 0 0 0 5.4-1.6"/><path d="m2 2 20 20"/><path d="M9.5 9.5a3 3 0 0 0 4.2 4.2"/>',
+    reset:    '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+    search:   '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+    external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>',
+    trash:    '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13M9 7V4h6v3"/>',
+    check:    '<path d="M20 6 9 17l-5-5"/>',
+    wand:     '<path d="M15 4V2M15 10V8M9 15H7M23 15h-2M17.5 6.5 19 5"/><path d="m14 7 3 3L8 19l-3-3z"/>'
+  };
+  function svg(name, size) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"' +
+      (size ? ' width="' + size + '" height="' + size + '"' : '') + '>' + (ICONS[name] || '') + '</svg>';
+  }
   function getVar(name) { return getComputedStyle(ROOT).getPropertyValue(name).trim(); }
   function toHex(c) {
     c = (c || "").trim();
@@ -91,6 +120,75 @@
     t.className = isErr ? "err show" : "show";
     clearTimeout(toast._t);
     toast._t = setTimeout(function () { t.className = t.className.replace(" show", ""); }, 1700);
+  }
+
+  // ---- in-panel dialog (replaces window.prompt / window.confirm) ----
+  function uiDialog(opts) {
+    return new Promise(function (resolve) {
+      var m = studio.querySelector("#uid-modal");
+      m.textContent = "";
+      m.hidden = false;
+      var card = el("div", "uid-modal-card");
+      card.setAttribute("role", "dialog");
+      card.setAttribute("aria-modal", "true");
+      card.appendChild(el("h3", null, opts.title || "Confirm"));
+      if (opts.message) { card.appendChild(el("p", null, opts.message)); }
+      var input = null;
+      if (opts.prompt) {
+        input = el("input");
+        input.type = "text";
+        input.value = opts.value || "";
+        if (opts.placeholder) { input.placeholder = opts.placeholder; }
+        card.appendChild(input);
+      }
+      var acts = el("div", "uid-modal-actions");
+      var cancel = el("button", "uid-btn ghost", opts.cancelLabel || "Cancel");
+      var ok = el("button", "uid-btn" + (opts.danger ? " danger" : ""), opts.okLabel || "OK");
+      cancel.type = "button";
+      ok.type = "button";
+      acts.appendChild(cancel);
+      acts.appendChild(ok);
+      card.appendChild(acts);
+      m.appendChild(card);
+      void m.offsetWidth;
+      m.classList.add("is-open");
+      (input || ok).focus();
+      if (input) { input.select(); }
+
+      var noVal = opts.prompt ? null : false;
+      function done(val) {
+        m.removeEventListener("keydown", onKey, true);
+        m.removeEventListener("click", onClick);
+        m.classList.remove("is-open");
+        setTimeout(function () { m.hidden = true; m.textContent = ""; }, 160);
+        resolve(val);
+      }
+      function onKey(e) {
+        if (e.key === "Escape") { e.preventDefault(); done(noVal); }
+        else if (e.key === "Enter") { e.preventDefault(); done(opts.prompt ? input.value : true); }
+        else if (e.key === "Tab") {
+          var f = card.querySelectorAll("input,button");
+          var first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
+      function onClick(e) {
+        if (e.target === m || e.target === cancel) { done(noVal); }
+        else if (e.target === ok) { done(opts.prompt ? input.value : true); }
+      }
+      m.addEventListener("keydown", onKey, true);
+      m.addEventListener("click", onClick);
+    });
+  }
+  function uiConfirm(title, message, opts) {
+    opts = opts || {};
+    return uiDialog({ title: title, message: message, okLabel: opts.okLabel, danger: opts.danger });
+  }
+  function uiPrompt(title, message, value, opts) {
+    opts = opts || {};
+    return uiDialog({ title: title, message: message, prompt: true, value: value,
+      placeholder: opts.placeholder, okLabel: opts.okLabel });
   }
   function previewSheet() {
     if (!previewStyle) {
@@ -183,31 +281,44 @@
     studio.id = "uid-root";
     studio.hidden = true;
     studio.innerHTML =
-      '<div id="uid-panel">' +
+      '<div id="uid-panel" role="dialog" aria-label="Design Studio">' +
         '<header>' +
-          '<b>Design Studio</b>' +
-          '<button type="button" class="uid-h" data-uid="undo" title="Undo" disabled>&#8630;</button>' +
-          '<button type="button" class="uid-h" data-uid="redo" title="Redo" disabled>&#8631;</button>' +
-          '<button type="button" class="uid-h" data-uid="close" title="Close">&times;</button>' +
+          '<span class="uid-title">' +
+            '<span class="uid-eyebrow">ITM Portal</span>' +
+            '<b><span class="uid-dot"></span>Design Studio</b>' +
+          '</span>' +
+          '<button type="button" class="uid-h" data-uid="undo" title="Undo" aria-label="Undo" disabled>' + svg("undo") + '</button>' +
+          '<button type="button" class="uid-h" data-uid="redo" title="Redo" aria-label="Redo" disabled>' + svg("redo") + '</button>' +
+          '<button type="button" class="uid-h" data-uid="close" title="Close" aria-label="Close">' + svg("close") + '</button>' +
         '</header>' +
-        '<div id="uid-tabs">' +
-          '<button type="button" data-tab="theme" class="is-active">Theme</button>' +
-          '<button type="button" data-tab="edit">Edit</button>' +
-          '<button type="button" data-tab="rules">Rules</button>' +
+        '<div id="uid-tabs" role="tablist">' +
+          '<button type="button" role="tab" data-tab="theme" class="is-active" aria-selected="true">Theme</button>' +
+          '<button type="button" role="tab" data-tab="edit" aria-selected="false">Edit</button>' +
+          '<button type="button" role="tab" data-tab="rules" aria-selected="false">Rules</button>' +
         '</div>' +
         '<div id="uid-publish" hidden>' +
           '<span></span>' +
-          '<button type="button" data-uid="publish" class="uid-btn">Publish</button>' +
+          '<button type="button" data-uid="publish" class="uid-btn">' + svg("check", 14) + 'Publish</button>' +
           '<button type="button" data-uid="discard" class="uid-btn ghost">Discard</button>' +
         '</div>' +
         '<div id="uid-body">' +
-          '<div class="uid-tab" data-tab="theme"></div>' +
-          '<div class="uid-tab" data-tab="edit" hidden></div>' +
-          '<div class="uid-tab" data-tab="rules" hidden></div>' +
+          '<div class="uid-tab" data-tab="theme" role="tabpanel"></div>' +
+          '<div class="uid-tab" data-tab="edit" role="tabpanel" hidden></div>' +
+          '<div class="uid-tab" data-tab="rules" role="tabpanel" hidden></div>' +
         '</div>' +
       '</div>' +
+      '<div id="uid-modal" hidden></div>' +
       '<div id="uid-toast"></div>';
     document.body.appendChild(studio);
+
+    // Esc closes the Studio (unless a pick / modal / text edit owns it).
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape" || !studio || studio.hidden || pickMode) { return; }
+      if (!studio.querySelector("#uid-modal[hidden]")) { return; }
+      var a = document.activeElement;
+      if (a && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) { return; }
+      closeStudio();
+    });
 
     studio.addEventListener("click", function (e) {
       var t = e.target.closest("[data-uid],[data-tab]");
@@ -225,7 +336,9 @@
 
   function switchTab(name) {
     Array.prototype.forEach.call(studio.querySelectorAll("#uid-tabs button"), function (b) {
-      b.classList.toggle("is-active", b.dataset.tab === name);
+      var on = b.dataset.tab === name;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
     });
     Array.prototype.forEach.call(studio.querySelectorAll(".uid-tab"), function (p) {
       p.hidden = p.dataset.tab !== name;
@@ -251,9 +364,10 @@
   var handle = null;
   function showLauncher() {
     if (!handle) {
-      handle = el("button", "uid-reopen", "Design");
+      handle = el("button", "uid-reopen");
       handle.type = "button";
       handle.title = "Open the Design Studio";
+      handle.innerHTML = svg("wand", 16) + "<span>Design</span>";
       handle.addEventListener("click", openStudio);
       document.body.appendChild(handle);
     }
@@ -275,18 +389,25 @@
         var row = el("div", "uid-row");
         row.appendChild(el("label", null, it.label));
         var inp = el("input"); inp.type = "color"; inp.value = toHex(getVar(it.n));
+        var hex = el("span", "uid-hex", inp.value);
         var prev = null;
         inp.addEventListener("focus", function () { prev = getVar(it.n) || toHex(getVar(it.n)); });
-        inp.addEventListener("input", function () { ROOT.style.setProperty(it.n, inp.value); });
+        inp.addEventListener("input", function () {
+          ROOT.style.setProperty(it.n, inp.value);
+          hex.textContent = inp.value;
+        });
         inp.addEventListener("change", function () {
           ROOT.style.setProperty(it.n, inp.value);
+          hex.textContent = inp.value;
           saveToken(it.n, inp.value, it.label + " → " + inp.value, prev);
         });
         row.appendChild(inp);
+        row.appendChild(hex);
         var rst = el("button", "uid-mini", "reset");
         rst.addEventListener("click", function () {
           ROOT.style.removeProperty(it.n);
           inp.value = toHex(getVar(it.n));
+          hex.textContent = inp.value;
           deleteRuleBy("token", "*", it.n, "");
         });
         row.appendChild(rst);
@@ -337,19 +458,24 @@
     s4.appendChild(el("div", "uid-hint",
       "Bake the colours, sizes and font above into the theme stylesheet — they stop being " +
       "overrides and become the site's real defaults. Rebuilds the theme; give it a moment."));
-    var bake = el("button", "uid-btn", "Bake into the theme");
+    var bake = el("button", "uid-btn", "");
+    bake.innerHTML = svg("check", 14) + "Bake into the theme";
     bake.addEventListener("click", function () {
-      if (!window.confirm("Fold every saved theme token into the site stylesheet and rebuild the theme?")) { return; }
-      bake.disabled = true;
-      post({ do: "bake" }).then(function (res) {
-        if (res && res.ok) {
-          if (previewStyle) { previewStyle.textContent = ""; }
-          toast((res.baked || 0) + " token(s) baked — reloading");
-          setTimeout(function () { location.reload(); }, 800);
-        } else {
-          bake.disabled = false;
-          toast((res && res.error) || "Error", true);
-        }
+      uiConfirm("Bake into the theme",
+        "Fold every saved theme token into the site stylesheet and rebuild the theme? This can take a moment.",
+        { okLabel: "Bake" }).then(function (ok) {
+        if (!ok) { return; }
+        bake.disabled = true;
+        post({ do: "bake" }).then(function (res) {
+          if (res && res.ok) {
+            if (previewStyle) { previewStyle.textContent = ""; }
+            toast((res.baked || 0) + " token(s) baked — reloading");
+            setTimeout(function () { location.reload(); }, 800);
+          } else {
+            bake.disabled = false;
+            toast((res && res.error) || "Error", true);
+          }
+        });
       });
     });
     var ba = el("div", "uid-actions");
@@ -432,14 +558,16 @@
           li.appendChild(lbl);
           var rn = el("button", "uid-mini", "rename");
           rn.addEventListener("click", function () {
-            var nv = window.prompt('Replace "' + m.current + '" with:', m.current);
-            if (nv === null) { return; }
-            nv = nv.trim();
-            if (!nv || nv === m.current) { return; }
-            post({ do: "overridestring", component: m.component, stringid: m.stringid,
-                   value: nv, label: "Label " + m.component + "/" + m.stringid }).then(function (r) {
-              if (r && r.ok) { toast("Renamed — reloading"); setTimeout(function () { location.reload(); }, 800); }
-              else { toast((r && r.error) || "Error", true); }
+            uiPrompt("Rename label", 'Replace "' + m.current + '" everywhere with:', m.current,
+              { okLabel: "Rename" }).then(function (nv) {
+              if (nv === null) { return; }
+              nv = nv.trim();
+              if (!nv || nv === m.current) { return; }
+              post({ do: "overridestring", component: m.component, stringid: m.stringid,
+                     value: nv, label: "Label " + m.component + "/" + m.stringid }).then(function (r) {
+                if (r && r.ok) { toast("Renamed — reloading"); setTimeout(function () { location.reload(); }, 800); }
+                else { toast((r && r.error) || "Error", true); }
+              });
             });
           });
           li.appendChild(rn);
@@ -536,10 +664,14 @@
         li.querySelector(".uid-lbl").title = d.toLocaleString();
         var rb = el("button", "uid-mini", "restore");
         rb.addEventListener("click", function () {
-          if (!window.confirm("Restore this snapshot? It replaces the current rules and publishes.")) { return; }
-          post({ do: "rollback", id: ver.id }).then(function (res) {
-            if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
-            else { toast(res.error || "Error", true); }
+          uiConfirm("Restore snapshot",
+            "Replace the current rules with this snapshot and publish it?",
+            { okLabel: "Restore" }).then(function (ok) {
+            if (!ok) { return; }
+            post({ do: "rollback", id: ver.id }).then(function (res) {
+              if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
+              else { toast(res.error || "Error", true); }
+            });
           });
         });
         li.appendChild(rb);
@@ -550,31 +682,55 @@
     });
 
     var acts = el("div", "uid-actions");
-    var reset = el("button", "uid-btn danger", "Reset everything");
+    var reset = el("button", "uid-btn danger", "");
+    reset.innerHTML = svg("trash", 15) + "Reset everything";
     reset.addEventListener("click", function () {
-      if (!window.confirm("Delete every override and restore the default look?")) { return; }
-      post({ do: "resetall" }).then(function (res) {
-        if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
-        else { toast(res.error || "Error", true); }
+      uiConfirm("Reset everything",
+        "Delete every override and restore the site's default look? This cannot be undone.",
+        { okLabel: "Reset everything", danger: true }).then(function (ok) {
+        if (!ok) { return; }
+        post({ do: "resetall" }).then(function (res) {
+          if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
+          else { toast(res.error || "Error", true); }
+        });
       });
     });
     acts.appendChild(reset);
-    var mg = el("a", "uid-btn ghost", "Rule manager");
+    var mg = el("a", "uid-btn ghost", "");
+    mg.innerHTML = svg("external", 15) + "Rule manager";
     mg.href = CFG.manageurl; mg.target = "_blank";
     acts.appendChild(mg);
     host.appendChild(acts);
   }
 
   // ---- pick mode ----------------------------------------
+  function ensureOutline() {
+    if (!outline) {
+      outline = el("div", "uid-outline");
+      outline.appendChild(el("span", "uid-tag"));
+      document.body.appendChild(outline);
+    }
+    return outline;
+  }
+  function tagLabel(node) {
+    var s = node.tagName.toLowerCase();
+    if (node.id && /^[A-Za-z][\w-]*$/.test(node.id)) { return s + "#" + node.id; }
+    var c = (typeof node.className === "string" ? node.className.trim().split(/\s+/)[0] : "");
+    return c ? s + "." + c : s;
+  }
   function startPick(mode) {
     hideToolbar();
     pickMode = mode;
     document.body.classList.add("uid-picking");
-    if (!outline) { outline = el("div", "uid-outline"); document.body.appendChild(outline); }
+    ensureOutline();
     outline.style.display = "block";
+    if (!pickframe) { pickframe = el("div"); pickframe.id = "uid-pickframe"; document.body.appendChild(pickframe); }
+    pickframe.hidden = false;
     var hint = el("div"); hint.id = "uid-pickhint";
-    hint.innerHTML = (mode === "hide" ? "Click an element to hide it" : "Click an element to edit it") +
-      ' <button type="button">cancel</button>';
+    hint.innerHTML = svg("search", 15) +
+      '<span>' + (mode === "hide" ? "Click any element to hide it" : "Click any element to restyle it") + '</span>' +
+      '<kbd>Esc</kbd>' +
+      '<button type="button">Cancel</button>';
     studio.appendChild(hint);
     hint.querySelector("button").addEventListener("click", stopPick);
     document.addEventListener("mousemove", onPickMove, true);
@@ -585,6 +741,7 @@
     pickMode = null;
     document.body.classList.remove("uid-picking");
     if (outline) { outline.style.display = "none"; }
+    if (pickframe) { pickframe.hidden = true; }
     var h = studio && studio.querySelector("#uid-pickhint");
     if (h) { h.remove(); }
     document.removeEventListener("mousemove", onPickMove, true);
@@ -597,6 +754,7 @@
     if (!pickable(t)) { outline.style.display = "none"; return; }
     var r = t.getBoundingClientRect();
     outline.style.display = "block";
+    outline.firstChild.textContent = tagLabel(t);
     outline.style.left = (r.left + window.scrollX) + "px";
     outline.style.top = (r.top + window.scrollY) + "px";
     outline.style.width = r.width + "px";
@@ -642,19 +800,23 @@
     if (toolbar) { return; }
     toolbar = el("div"); toolbar.id = "uid-toolbar"; toolbar.hidden = true;
     toolbar.innerHTML =
-      '<button data-a="text"  title="Retype text">&#9998;</button>' +
-      '<button data-a="smaller" title="Smaller text">A&minus;</button>' +
-      '<button data-a="bigger"  title="Bigger text">A+</button>' +
-      '<button data-a="bold"  title="Bold on/off">B</button>' +
-      '<button data-a="colour" title="Text colour">&#65039;&#127912;</button>' +
-      '<button data-a="bg" title="Background colour">&#9632;</button>' +
-      '<button data-a="bgimg" title="Background image URL">&#128444;</button>' +
-      '<button data-a="border" title="Border on/off">&#9707;</button>' +
-      '<button data-a="padless" title="Less padding">&#8722;&#9647;</button>' +
-      '<button data-a="padmore" title="More padding">+&#9647;</button>' +
-      '<button data-a="align" title="Text align">&#8801;</button>' +
-      '<button data-a="hide"  title="Hide this">&#128065;</button>' +
-      '<button data-a="reset" title="Reset this element">&#8634;</button>' +
+      '<button data-a="text" title="Retype text" aria-label="Retype text">' + svg("text") + '</button>' +
+      '<span class="uid-div"></span>' +
+      '<button data-a="smaller" title="Smaller text" aria-label="Smaller text">' + svg("minus") + '</button>' +
+      '<button data-a="bigger" title="Bigger text" aria-label="Bigger text">' + svg("plus") + '</button>' +
+      '<button data-a="bold" title="Bold on/off" aria-label="Bold on/off">' + svg("bold") + '</button>' +
+      '<span class="uid-div"></span>' +
+      '<button data-a="colour" title="Text colour" aria-label="Text colour">' + svg("palette") + '</button>' +
+      '<button data-a="bg" title="Background colour" aria-label="Background colour">' + svg("fill") + '</button>' +
+      '<button data-a="bgimg" title="Background image" aria-label="Background image">' + svg("image") + '</button>' +
+      '<span class="uid-div"></span>' +
+      '<button data-a="border" title="Border on/off" aria-label="Border on/off">' + svg("square") + '</button>' +
+      '<button data-a="padless" title="Less padding" aria-label="Less padding">' + svg("minus") + '</button>' +
+      '<button data-a="padmore" title="More padding" aria-label="More padding">' + svg("plus") + '</button>' +
+      '<button data-a="align" title="Text align" aria-label="Text align">' + svg("align") + '</button>' +
+      '<span class="uid-div"></span>' +
+      '<button data-a="hide" title="Hide this" aria-label="Hide this">' + svg("eyeoff") + '</button>' +
+      '<button data-a="reset" title="Reset this element" aria-label="Reset this element">' + svg("reset") + '</button>' +
       '<input type="color" data-a="colourinput" hidden>' +
       '<input type="color" data-a="bginput" hidden>';
     document.body.appendChild(toolbar);
@@ -674,15 +836,18 @@
   function positionToolbar() {
     if (!toolbar || toolbar.hidden || !picked) { return; }
     var r = picked.getBoundingClientRect();
-    var top = r.top + window.scrollY - 44;
-    if (top < window.scrollY + 4) { top = r.bottom + window.scrollY + 6; }
+    var below = false;
+    var top = r.top + window.scrollY - 46;
+    if (top < window.scrollY + 4) { top = r.bottom + window.scrollY + 8; below = true; }
+    toolbar.classList.toggle("is-below", below);
     toolbar.style.top = top + "px";
     toolbar.style.left = Math.max(6, r.left + window.scrollX) + "px";
   }
   function outlineElement(node) {
-    if (!outline) { outline = el("div", "uid-outline"); document.body.appendChild(outline); }
+    ensureOutline();
     var r = node.getBoundingClientRect();
     outline.style.display = "block";
+    outline.firstChild.textContent = tagLabel(node);
     outline.style.left = (r.left + window.scrollX) + "px";
     outline.style.top = (r.top + window.scrollY) + "px";
     outline.style.width = r.width + "px";
@@ -714,15 +879,18 @@
       bi.value = toHex(cs.backgroundColor); bi.click();
     } else if (a === "bgimg") {
       var t2 = scopedSel(picked);
-      var url = window.prompt("Background image URL — https://… , /path , or data:image/… (blank to remove):", "");
-      if (url === null) { return; }
-      url = url.trim().replace(/['"\\]/g, "");
-      if (url === "") {
-        var ex = findRule({ kind: "element", pagetype: t2.pt, selector: t2.sel, property: "background-image" });
-        if (ex) { removeRule(ex.id); } else { toast("No background image set"); }
-        return;
-      }
-      applyProp("background-image", "url('" + url + "')", "Background image");
+      uiPrompt("Background image",
+        "Paste an image URL — https://… , /path , or data:image/… . Leave blank to remove.",
+        "", { placeholder: "https://…", okLabel: "Apply" }).then(function (url) {
+        if (url === null) { return; }
+        url = url.trim().replace(/['"\\]/g, "");
+        if (url === "") {
+          var ex = findRule({ kind: "element", pagetype: t2.pt, selector: t2.sel, property: "background-image" });
+          if (ex) { removeRule(ex.id); } else { toast("No background image set"); }
+          return;
+        }
+        applyProp("background-image", "url('" + url + "')", "Background image");
+      });
     } else if (a === "border") {
       var has = findRule({ kind: "element", pagetype: scopedSel(picked).pt,
         selector: scopedSel(picked).sel, property: "border" });
@@ -861,6 +1029,8 @@
     bar.hidden = n === 0;
     bar.querySelector("span").textContent = n === 1 ? "1 unpublished change — only you can see it"
       : n + " unpublished changes — only you can see them";
+    var hdr = studio.querySelector("#uid-panel header");
+    if (hdr) { hdr.classList.toggle("is-draft", n > 0); }
   }
   function doPublish() {
     post({ do: "publish" }).then(function (res) {
@@ -869,10 +1039,14 @@
     });
   }
   function doDiscard() {
-    if (!window.confirm("Discard your unpublished changes and go back to what's live now?")) { return; }
-    post({ do: "discard" }).then(function (res) {
-      if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
-      else { toast(res.error || "Error", true); }
+    uiConfirm("Discard changes",
+      "Discard your unpublished changes and go back to what's live now?",
+      { okLabel: "Discard", danger: true }).then(function (ok) {
+      if (!ok) { return; }
+      post({ do: "discard" }).then(function (res) {
+        if (res.ok) { if (previewStyle) { previewStyle.textContent = ""; } location.reload(); }
+        else { toast(res.error || "Error", true); }
+      });
     });
   }
   function reapplyPreview() {
