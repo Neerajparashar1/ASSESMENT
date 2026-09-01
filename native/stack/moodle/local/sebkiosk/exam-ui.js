@@ -761,14 +761,15 @@
   }
 
   /* -----------------------------------------------------------------
-   * 0e. PARTICIPANTS : a prominent "Bulk import users" action that
-   *     jumps to Moodle's CSV upload tool. Admins only (needs
-   *     moodle/site:uploadusers) - gated on the "Site administration"
-   *     primary-nav link being present.
+   * 0e. PARTICIPANTS : prominent "Bulk import users" + "Reset passwords"
+   *     actions. Admins only (bulk import needs moodle/site:uploadusers,
+   *     reset needs local/examwizard:resetpassword) - gated on the
+   *     "Site administration" primary-nav link being present; each
+   *     target page re-checks the real capability.
    * --------------------------------------------------------------- */
   if (body && (body.id === "page-course-view-participants" ||
                body.id === "page-user-index")) {
-    (function addBulkImport() {
+    (function addParticipantActions() {
       if (document.querySelector(".itm-bulkimport")) { return; }
       var isAdmin = !!document.querySelector(
         '.primary-navigation a[href*="/admin/"], #usernavigation a[href*="/admin/search.php"]');
@@ -776,15 +777,32 @@
       var row = document.querySelector(".tertiary-navigation .row") ||
                 document.querySelector(".tertiary-navigation");
       if (!row) { return; }
-      var item = document.createElement("div");
-      item.className = "navitem itm-bulkimport";
-      item.innerHTML =
+
+      var courseId = (window.M && window.M.cfg && window.M.cfg.courseId) ||
+                     new URLSearchParams(location.search).get("id") || "";
+
+      var imp = document.createElement("div");
+      imp.className = "navitem itm-bulkimport";
+      imp.innerHTML =
         '<a class="btn itm-bulkimport-btn" href="/admin/tool/uploaduser/index.php">' +
           '<svg viewBox="0 0 24 24" aria-hidden="true">' +
             '<path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M5 20h14"/>' +
           '</svg>' +
           'Bulk import users</a>';
-      row.appendChild(item);
+      row.appendChild(imp);
+
+      var resetHref = "/local/examwizard/credentials.php" +
+        (courseId ? "?courseid=" + encodeURIComponent(courseId) : "");
+      var rst = document.createElement("div");
+      rst.className = "navitem itm-pwreset";
+      rst.innerHTML =
+        '<a class="btn itm-bulkimport-btn" href="' + resetHref + '">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M4 12a8 8 0 0 1 13.7-5.7L20 8"/><path d="M20 4v4h-4"/>' +
+            '<path d="M20 12a8 8 0 0 1-13.7 5.7L4 16"/><path d="M4 20v-4h4"/>' +
+          '</svg>' +
+          'Reset passwords</a>';
+      row.appendChild(rst);
     })();
   }
 

@@ -28,4 +28,18 @@ $capabilities = [
             'manager'        => CAP_ALLOW,
         ],
     ],
+
+    // Reset a candidate's login password from the exam cell and read the new
+    // one back once. Moodle only ever stores a one-way hash, so an EXISTING
+    // password can never be shown - this issues a fresh, policy-valid one.
+    // Deliberately manager-only (site admins bypass anyway); keep it off any
+    // publicly reachable tunnel.
+    'local/examwizard:resetpassword' => [
+        'riskbitmask'  => RISK_DATALOSS | RISK_PERSONAL,
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 ];

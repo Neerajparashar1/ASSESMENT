@@ -281,6 +281,9 @@ if ($caneditexams) {
 if (has_capability('moodle/site:config', context_system::instance())) {
     $actions[] = ['i/down', $s('qa_seb'), new moodle_url('/local/examwizard/seb.php'), 'secondary'];
 }
+if (has_capability('local/examwizard:resetpassword', context_system::instance())) {
+    $actions[] = ['i/permissions', $s('qa_credentials'), new moodle_url('/local/examwizard/credentials.php'), 'secondary'];
+}
 if ($actions) {
     echo html_writer::start_div('ew-card');
     echo html_writer::tag('h3', $s('qa_title'), ['class' => 'ew-card-h']);

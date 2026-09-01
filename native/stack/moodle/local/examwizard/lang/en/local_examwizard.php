@@ -293,4 +293,29 @@ $string['st_done_msg'] = '{$a->created} new account(s) created, {$a->existing} a
 $string['st_viewparticipants'] = 'View participants';
 $string['st_addmore'] = 'Add more students';
 
+// ===== Candidate password reset =====
+$string['examwizard:resetpassword'] = 'Reset a candidate\'s login password and read the new one back once';
+$string['cred_title'] = 'Candidate passwords';
+$string['cred_intro'] = 'Issue a fresh login password to a candidate who has forgotten theirs, then read it back once to hand over.';
+$string['cred_hashwarning'] = 'Existing passwords cannot be shown - Moodle only stores a one-way hash. This page sets a NEW password and shows it a single time. Do not leave this page reachable on a public link.';
+$string['cred_search'] = 'Find a person';
+$string['cred_search_ph'] = 'name, username or email';
+$string['cred_search_go'] = 'Search';
+$string['cred_searchresults'] = 'Results for "{$a}"';
+$string['cred_incourse'] = 'Enrolled in {$a}';
+$string['cred_none'] = 'No matching users.';
+$string['cred_startsearch'] = 'Search by name, username or email above, or open this page from a subject to list its participants.';
+$string['cred_never'] = 'never';
+$string['cred_forcechange'] = 'Make each candidate set their own password at next login';
+$string['cred_resetselected'] = 'Reset password for selected';
+$string['cred_isadmin'] = 'site admin - not allowed here';
+$string['cred_isself'] = 'that is you';
+$string['cred_notmanual'] = 'external login ({$a})';
+$string['cred_issued'] = '{$a} password(s) issued';
+$string['cred_issued_once'] = 'Copy or download these now - they are not stored and cannot be shown again.';
+$string['cred_newpassword'] = 'New password';
+$string['cred_downloadcsv'] = 'Download as CSV';
+$string['cred_skipped'] = 'Skipped (cannot set a password): {$a}';
+$string['qa_credentials'] = 'Candidate passwords';
+
 $string['privacy:metadata'] = 'The Exam Wizard plugin does not store any personal data; imported questions are stored by Moodle\'s question bank.';

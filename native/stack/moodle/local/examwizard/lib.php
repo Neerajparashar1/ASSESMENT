@@ -39,3 +39,41 @@ function local_examwizard_extend_navigation_course(navigation_node $navigation, 
         new pix_icon('i/import', '')
     );
 }
+
+/**
+ * Build a random login password that satisfies Moodle's current password policy
+ * (default: >= 8 chars, at least one upper, one lower, one digit, one symbol).
+ *
+ * Ambiguous glyphs (0/O, 1/l/I) are left out so staff can read it aloud without
+ * confusion. Used by credentials.php when the exam cell resets a candidate.
+ *
+ * @return string
+ */
+function local_examwizard_generate_password(): string {
+    $upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    $lower = 'abcdefghijkmnpqrstuvwxyz';
+    $digit = '23456789';
+    $sym   = '@#$%*!?';
+
+    $pick = fn($set) => $set[random_int(0, strlen($set) - 1)];
+
+    $pw = '';
+    for ($try = 0; $try < 30; $try++) {
+        $chars = [
+            $pick($upper), $pick($upper),
+            $pick($lower), $pick($lower), $pick($lower),
+            $pick($digit), $pick($digit),
+            $pick($sym),
+        ];
+        shuffle($chars);
+        $pw = implode('', $chars);
+        $err = '';
+        if (check_password_policy($pw, $err)) {
+            return $pw;
+        }
+    }
+    // Policy is stricter than expected - fall back to a longer shape.
+    return $pick($upper) . $pick($upper) . $pick($lower) . $pick($lower)
+        . $pick($lower) . $pick($lower) . $pick($digit) . $pick($digit)
+        . $pick($digit) . $pick($sym) . $pick($sym);
+}
