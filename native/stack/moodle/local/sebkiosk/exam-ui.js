@@ -47,6 +47,28 @@
   }
 
   /* -----------------------------------------------------------------
+   * A non-admin never gets an "Edit mode" toggle. Moodle shows the
+   * dashboard block-customisation switch to every authenticated user
+   * (moodle/my:manageblocks); an exam candidate has no use for it.
+   * The capability is prevented server-side too - this strips any that
+   * still renders, so students never see it.
+   * --------------------------------------------------------------- */
+  (function stripEditMode() {
+    var isAdmin = !!document.querySelector(
+      '.primary-navigation a[href*="/admin/"], #usernavigation a[href*="/admin/search.php"]');
+    if (isAdmin) { return; }
+    var kill = function () {
+      var f = document.querySelectorAll(".editmode-switch-form");
+      for (var i = 0; i < f.length; i++) { f[i].remove(); }
+    };
+    kill();
+    setTimeout(kill, 600);
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", kill);
+    }
+  })();
+
+  /* -----------------------------------------------------------------
    * 0. LOGIN PAGE : build the split-view left panel (campus photo +
    *    college info). CSS in custom.scss styles .itm-loginhero.
    * --------------------------------------------------------------- */
@@ -131,21 +153,27 @@
       if (!main) { return; }
 
       var name = "";
-      var srcs = [
-        document.querySelector(".usermenu .usertext"),
-        document.querySelector(".usermenu img.userpicture"),
-        document.querySelector('.usermenu a[title], .usermenu a[aria-label]'),
-        document.querySelector(".logininfo a")
-      ];
-      for (var i = 0; i < srcs.length && !name; i++) {
-        var e = srcs[i];
-        if (!e) { continue; }
-        name = (e.getAttribute("title") || e.getAttribute("aria-label") ||
-                e.getAttribute("alt") || e.textContent || "").trim();
+      // first choice: the server-rendered navbar identity chip (exact fullname)
+      var chip = document.querySelector(".itm-idchip-name");
+      if (chip && chip.textContent.trim()) {
+        name = chip.textContent.trim().split(/\s+/)[0];
       }
-      name = name.replace(/^\s*(picture of|user menu|log ?in as)\s*/i, "")
-                 .replace(/[(),]/g, " ").trim().split(/\s+/)[0];
-      if (/^(you|are|as)$/i.test(name)) { name = ""; }
+      if (!name) {
+        // fallback: "You are logged in as First Last (Log out)"
+        var li = document.querySelector(".logininfo");
+        var m = li && /logged in as\s+(.+?)\s*(?:\(|$)/i.exec(li.textContent || "");
+        if (m) { name = m[1].trim().split(/\s+/)[0]; }
+      }
+      if (!name) {
+        var e = document.querySelector(".usermenu .usertext, .usermenu img.userpicture");
+        name = ((e && (e.getAttribute("alt") || e.textContent)) || "")
+                 .replace(/^\s*picture of\s*/i, "").trim().split(/\s+/)[0];
+      }
+      if (/^(you|are|as|log|user)$/i.test(name)) { name = ""; }
+      // Title-case an ALL-CAPS name so "ABHAY" reads as "Abhay"
+      if (name && name === name.toUpperCase()) {
+        name = name.charAt(0) + name.slice(1).toLowerCase();
+      }
 
       var now = new Date();
       var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -937,6 +965,47 @@
     return true;
   }
 
+  /* The quiz question navigation is a "side-pre" block, which Boost renders
+   * inside the right-hand blocks drawer. That drawer is collapsed unless the
+   * viewer previously opened it - and SEB starts every session with a clean
+   * profile, so candidates see no question navigation at all. Force it open. */
+  var navDrawerDone = false, navDrawerAsked = false;
+  function showNavDrawer() {
+    if (navDrawerDone) { return true; }
+    var navblock = document.getElementById("mod_quiz_navblock");
+    if (!navblock) { return false; }
+    var drawer = navblock.closest(
+      '#theme_boost-drawers-blocks, [data-region="fixed-drawer"], .drawer');
+    if (!drawer) { navDrawerDone = true; return true; }   // not drawered on this theme
+    if (drawer.classList.contains("show")) { navDrawerDone = true; return true; }
+    if (navDrawerAsked) { return false; }   // open already requested - wait for it
+    navDrawerAsked = true;
+
+    var togId = drawer.id || "theme_boost-drawers-blocks";
+    var tog = document.querySelector(
+      '[data-action="toggle"][data-target="' + togId + '"]');
+
+    if (window.require) {
+      window.require(["theme_boost/drawers"], function (Drawers) {
+        try {
+          var inst = Drawers.getDrawerInstanceForNode &&
+                     Drawers.getDrawerInstanceForNode(drawer);
+          if (inst && inst.openDrawer) {
+            inst.openDrawer({ focusOnCloseButton: false });
+            return;
+          }
+        } catch (e) { /* fall through */ }
+        if (tog && !drawer.classList.contains("show")) { tog.click(); }
+      });
+    } else if (tog) {
+      tog.click();
+    }
+
+    // enhance() keeps retrying; mark done only once the drawer is actually open
+    navDrawerDone = drawer.classList.contains("show");
+    return navDrawerDone;
+  }
+
   function buildLegend() {
     var navblock = document.getElementById("mod_quiz_navblock");
     if (!navblock || navblock.querySelector(".itm-navlegend")) { return !!navblock; }
@@ -1032,12 +1101,13 @@
 
   var tries = 0;
   function enhance() {
+    var z = showNavDrawer();
     var a = buildProgressBar();
     var b = buildLegend();
     var c = hookTimer();
     var d = wireOptionCards();
     var e = wireFlagState();
-    if ((a && b && c && d && e) || ++tries > 12) { return; }
+    if ((z && a && b && c && d && e) || ++tries > 12) { return; }
     setTimeout(enhance, 400);
   }
   if (document.readyState === "loading") {

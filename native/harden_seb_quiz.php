@@ -39,7 +39,7 @@ $endpoint = $www . '/local/sebkiosk/finish.php';
 //    (which holds the clipboard block, the SEB-only auto-submit beacon,
 //    and the candidate-UX polish). ONE physical line, NO single quotes.
 // ---------------------------------------------------------------------
-$jsver  = 35;   // bump to cache-bust local/sebkiosk/exam-ui.js
+$jsver  = 37;   // bump to cache-bust local/sebkiosk/exam-ui.js
 $jsurl  = '/local/sebkiosk/exam-ui.js?v=' . $jsver;   // root-relative: host-independent (localhost or a demo tunnel)
 $footer = '<!-- sebkiosk -->'
   . '<style>'
