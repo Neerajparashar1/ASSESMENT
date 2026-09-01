@@ -249,14 +249,18 @@
   }
 
   var handle = null;
-  function reopenHandle() {
+  function showLauncher() {
     if (!handle) {
       handle = el("button", "uid-reopen", "Design");
       handle.type = "button";
-      handle.title = "Reopen the Design Studio";
+      handle.title = "Open the Design Studio";
       handle.addEventListener("click", openStudio);
       document.body.appendChild(handle);
     }
+    handle.hidden = false;
+  }
+  function reopenHandle() {
+    showLauncher();
     handle.hidden = !studio.hidden;
   }
 
@@ -917,13 +921,17 @@
   // ---- boot ---------------------------------------
   function boot() {
     var auto = /[?&]uidstudio=1(\b|&|$)/.test(location.search) || location.hash === "#uidstudio";
-    if (!auto) { return; }
-    openStudio();
-    try {
-      var u = new URL(location.href);
-      u.searchParams.delete("uidstudio");
-      history.replaceState(null, "", u.pathname + u.search + (u.hash === "#uidstudio" ? "" : u.hash));
-    } catch (e) { /* ignore */ }
+    if (auto) {
+      openStudio();
+      try {
+        var u = new URL(location.href);
+        u.searchParams.delete("uidstudio");
+        history.replaceState(null, "", u.pathname + u.search + (u.hash === "#uidstudio" ? "" : u.hash));
+      } catch (e) { /* ignore */ }
+      return;
+    }
+    // Edit mode on -> put a "Design" launcher on the page (bottom-left).
+    if (CFG.editing) { showLauncher(); }
   }
   if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", boot); }
   else { boot(); }

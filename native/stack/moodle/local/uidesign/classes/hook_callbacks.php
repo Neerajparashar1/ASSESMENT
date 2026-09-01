@@ -69,6 +69,9 @@ class hook_callbacks {
                 'saveurl'   => $base . 'save.php',
                 'manageurl' => $base . 'manage.php',
                 'pending'   => rules::pending_count(),
+                // When the admin flips Moodle's Edit-mode switch on, editor.js
+                // surfaces a "Design" launcher right on the page.
+                'editing'   => (bool) $PAGE->user_is_editing(),
                 'rules'     => array_values(array_map(static function ($r) {
                     return [
                         'id' => (int) $r->id, 'kind' => $r->kind, 'pagetype' => $r->pagetype,
