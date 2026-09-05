@@ -213,6 +213,15 @@ body#page-mod-quiz-attempt {
   #itm-topstrip { display: none; }
 }
 
+// Login has no ITM navbar row at all (full-bleed hero instead), but the
+// .itm-has-topstrip #page rule above still adds --itm-navbar-h (only
+// --itm-topstrip-h is zeroed by the block above) - leaving a blank
+// 80px strip above the hero. Zero it out here, login only.
+body.pagelayout-login.itm-has-topstrip #page,
+body.pagelayout-login.itm-has-topstrip #page.drawers {
+  margin-top: 0 !important;
+}
+
 // ---------- white navbar ----------
 .navbar.fixed-top {
   background: #ffffff !important;
@@ -3880,6 +3889,11 @@ body.path-course-view:not(#page-course-view-participants) {
       --sec-dark:   #{nth($c, 3)};
     }
   }
+  // Edit mode: activities have an action-menu dropdown (Edit settings /
+  // Move / Hide / Duplicate / Delete...) that must pop out below the
+  // section card. overflow:hidden above (for the rounded-card look while
+  // browsing) was clipping it, hiding "Delete" and anything after it.
+  &.editing .course-content li.section { overflow: visible; }
   .course-content li.section:hover {
     box-shadow: 0 1px 2px rgba(74, 13, 23, .05), 0 20px 38px -22px rgba(74, 13, 23, .34);
   }
