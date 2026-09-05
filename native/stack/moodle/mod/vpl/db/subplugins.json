@@ -1,8 +1,0 @@
-{
-    "subplugintypes": {
-        "vplevaluator": "evaluator"
-    },
-    "plugintypes": {
-        "vplevaluator": "mod/vpl/evaluator"
-    }
-}
